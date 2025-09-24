@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: mediflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mediflow
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: mediflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - mediflow_clean_data:/var/lib/postgresql/data
+
+volumes:
+  mediflow_clean_data:
