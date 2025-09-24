@@ -23,7 +23,8 @@ This project is intended to **practice and showcase professional-level Spring Bo
 - **Querydsl / Specification API**  
 - **Spring AOP**  
 - **Spring REST Docs**
-- **Lombok**  
+- **Lombok**
+- **Flyway**
 ---
 ## Learning Goals
 
