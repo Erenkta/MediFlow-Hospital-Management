@@ -1,0 +1,3 @@
+CREATE SEQUENCE id_generator_seq
+    START 100000
+    INCREMENT 10;
