@@ -20,7 +20,7 @@ CREATE TYPE billing_status_enum AS ENUM ('PENDING','APPROVED','TRANSFERRED','INV
 -- TABLE: patients
 -- ======================
 CREATE TABLE patients (
-                          id SERIAL PRIMARY KEY,
+                          id BIGSERIAL PRIMARY KEY,
                           first_name VARCHAR(50) NOT NULL,
                           last_name VARCHAR(50) NOT NULL,
                           date_of_birth DATE,
@@ -37,7 +37,7 @@ CREATE TABLE patients (
 -- TABLE: doctors
 -- ======================
 CREATE TABLE doctors (
-                         id SERIAL PRIMARY KEY,
+                         id BIGSERIAL PRIMARY KEY,
                          doctor_code BIGINT,
                          title title_enum,
                          first_name VARCHAR(50) NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE doctors (
 -- TABLE: appointments
 -- ======================
 CREATE TABLE appointments (
-                              id SERIAL PRIMARY KEY,
+                              id BIGSERIAL PRIMARY KEY,
                               patient_id INT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
                               doctor_id INT NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
                               appointment_date TIMESTAMP NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE appointments (
 -- TABLE: medical_records
 -- ======================
 CREATE TABLE medical_records (
-                                 id SERIAL PRIMARY KEY,
+                                 id BIGSERIAL PRIMARY KEY,
                                  patient_id INT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
                                  doctor_id INT REFERENCES doctors(id),
                                  diagnosis TEXT,
@@ -85,7 +85,7 @@ CREATE TABLE medical_records (
 -- TABLE: departments
 -- ======================
 CREATE TABLE departments (
-                             id SERIAL PRIMARY KEY,
+                             id BIGSERIAL PRIMARY KEY,
                              name VARCHAR(100) NOT NULL UNIQUE,
                              description TEXT,
                              version BIGINT DEFAULT 0,
@@ -109,7 +109,7 @@ CREATE TABLE doctor_department (
 -- TABLE: billing
 -- ======================
 CREATE TABLE billing (
-                         id SERIAL PRIMARY KEY,
+                         id BIGSERIAL PRIMARY KEY,
                          patient_id INT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
                          amount DECIMAL(10,2) NOT NULL,
                          status billing_status_enum DEFAULT 'PENDING',
