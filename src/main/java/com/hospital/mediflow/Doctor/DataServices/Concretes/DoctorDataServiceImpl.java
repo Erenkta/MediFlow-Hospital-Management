@@ -1,6 +1,8 @@
 package com.hospital.mediflow.Doctor.DataServices.Concretes;
 
 
+import com.hospital.mediflow.Common.Exceptions.ErrorCode;
+import com.hospital.mediflow.Common.Exceptions.RecordAlreadyExistException;
 import com.hospital.mediflow.Common.Helpers.Predicate.DoctorPredicateBuilder;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
@@ -33,8 +35,11 @@ public class DoctorDataServiceImpl implements DoctorDataService {
     public DoctorResponseDto save(DoctorRequestDto requestDto) {
         Doctor entity = mapper.toEntity(requestDto);
         if(repository.existsByDoctorCode(entity.getDoctorCode())){
-            //  throw new RecordAlreadyExistException("Doctor with {} doctor code is already exists. Please Change the specialty or title and try again.",requestDto.doctorCode());
+            String exceptionMessage = String.format("Doctor with %s doctor code is already exists. Please Change the specialty or title and try again.",
+                    requestDto.doctorCode());
+            throw new RecordAlreadyExistException(exceptionMessage, ErrorCode.RECORD_ALREADY_EXISTS);
         }
+        log.info("A new doctor is registering to system. Doctor code : {}",entity.getDoctorCode());
         return mapper.toDto(repository.save(entity));
     }
 
