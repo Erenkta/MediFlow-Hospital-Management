@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Helpers;
+package com.hospital.mediflow.Common.Helpers.Annotations;
 
 import com.hospital.mediflow.Common.Annotations.CountryPhoneFormatEnum;
 import com.hospital.mediflow.Common.Annotations.ValidatePhone;

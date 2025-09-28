@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Helpers;
+package com.hospital.mediflow.Common.Helpers.Annotations;
 
 import com.hospital.mediflow.Common.Annotations.ValidateEnum;
 import jakarta.validation.ConstraintValidator;
