@@ -6,7 +6,7 @@ import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import java.util.List;
 
 public record DoctorFilterDto(
-   Integer id,
+   Long id,
    String firstName,
    String lastName,
    List<SpecialtyEnum> specialties,

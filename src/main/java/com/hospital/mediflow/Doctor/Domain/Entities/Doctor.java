@@ -26,7 +26,7 @@ public class Doctor extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "custom_seq")
     @SequenceGenerator(name = "custom_seq",sequenceName = "id_generator_seq",allocationSize = 10)
     @Setter(AccessLevel.NONE)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true)
     @Setter(AccessLevel.NONE)
