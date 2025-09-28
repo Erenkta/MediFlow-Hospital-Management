@@ -1,0 +1,5 @@
+ALTER TABLE mediflow_schema.doctors DROP COLUMN specialty;
+DROP TYPE specialty_enum;
+
+CREATE TYPE specialty_enum AS ENUM ('CARDIOLOGY','DERMATOLOGY','HERMATOLOGY','NEUROLOGY','IMMUNOLOGY','INTERNAL_MEDICINE','EMERGENCY_MEDICINE','NEPHROLOGY','N/A');
+ALTER TABLE mediflow_schema.doctors ADD COLUMN specialty specialty_enum NOT NULL DEFAULT 'N/A';
