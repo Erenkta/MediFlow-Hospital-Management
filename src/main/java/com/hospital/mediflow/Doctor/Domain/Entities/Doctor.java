@@ -5,21 +5,20 @@ import com.hospital.mediflow.Common.Annotations.ValidatePhone;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
 import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
 
 @Table(name = "doctors",schema = "mediflow_schema")
 @Entity
 @Getter
 @Setter
-@RequiredArgsConstructor
 @ToString(exclude = {"phone","email"})
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder(toBuilder = true)
 public class Doctor extends BaseEntity {
 
