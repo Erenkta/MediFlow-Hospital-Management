@@ -1,6 +1,6 @@
 package com.hospital.mediflow.Common.Annotations;
 
-import com.hospital.mediflow.Common.Helpers.EnumValidatorImpl;
+import com.hospital.mediflow.Common.Helpers.Annotations.EnumValidatorImpl;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
