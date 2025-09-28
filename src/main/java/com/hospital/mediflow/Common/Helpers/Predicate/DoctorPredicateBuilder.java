@@ -15,7 +15,7 @@ public class DoctorPredicateBuilder {
     private final QDoctor qDoctor = QDoctor.doctor;
     private final List<BooleanExpression> predicates = new ArrayList<>();
 
-    public DoctorPredicateBuilder withId(Integer id){
+    public DoctorPredicateBuilder withId(Long id){
         if(id != null){
             predicates.add(qDoctor.id.eq(id));
         }

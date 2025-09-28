@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface DoctorDataService {
     DoctorResponseDto save(DoctorRequestDto requestDto);
+    DoctorResponseDto update(Long id,DoctorRequestDto requestDto);
     Optional<DoctorResponseDto> findById(Long id);
     Optional<DoctorResponseDto> findByDoctorCode(Long doctorCode);
     List<DoctorResponseDto> findAll();

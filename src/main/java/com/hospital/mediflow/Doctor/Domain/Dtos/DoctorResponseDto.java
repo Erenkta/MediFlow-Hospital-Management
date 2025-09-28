@@ -4,7 +4,7 @@ import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 
 public record DoctorResponseDto(
-                                Integer id,
+                                Long id,
                                 Long doctorCode,
                                 TitleEnum title,
                                 String firstName,

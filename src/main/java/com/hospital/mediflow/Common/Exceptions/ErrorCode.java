@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
     RECORD_NOT_FOUND("404"),
+    VALIDATION_ERROR("403"),
     METHOD_ARGUMENT_NOT_VALID("400"),
     RECORD_ALREADY_EXISTS("400");
 

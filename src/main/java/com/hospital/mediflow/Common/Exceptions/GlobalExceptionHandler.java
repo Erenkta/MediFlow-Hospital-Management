@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Common.Exceptions;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,16 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response,HttpStatus.valueOf(response.statusCode()));
     }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .errorCode(ErrorCode.VALIDATION_ERROR)
+                .occurredAt(LocalDateTime.now())
+                .build();
 
+        return ResponseEntity.badRequest().body(response);
+    }
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
         ErrorResponse response = ErrorResponse.builder()

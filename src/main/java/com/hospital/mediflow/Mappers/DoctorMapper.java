@@ -28,4 +28,6 @@ public interface DoctorMapper {
                 .doctorCode(Long.parseLong(requestDto.title()+requestDto.specialty().getServiceCode()))
                 .build();
     }
+
+    Doctor toUpdatedEntity(@MappingTarget Doctor entity, DoctorRequestDto requestDto);
 }

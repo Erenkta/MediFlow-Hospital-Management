@@ -3,6 +3,7 @@ package com.hospital.mediflow.Doctor.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordAlreadyExistException;
+import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Helpers.Predicate.DoctorPredicateBuilder;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
@@ -12,8 +13,8 @@ import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
 import com.hospital.mediflow.Mappers.DoctorMapper;
 import com.querydsl.core.types.Predicate;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.Pageable;
@@ -21,9 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class DoctorDataServiceImpl implements DoctorDataService {
@@ -39,8 +40,18 @@ public class DoctorDataServiceImpl implements DoctorDataService {
                     requestDto.doctorCode());
             throw new RecordAlreadyExistException(exceptionMessage, ErrorCode.RECORD_ALREADY_EXISTS);
         }
-        log.info("A new doctor is registering to system. Doctor code : {}",entity.getDoctorCode());
         return mapper.toDto(repository.save(entity));
+    }
+
+    @Override
+    public DoctorResponseDto update(Long id, DoctorRequestDto requestDto) {
+            Doctor entity = repository.findById(id)
+                    .orElseThrow(() -> new RecordNotFoundException(
+                            String.format("Doctor with id %s couldn't be found. Please try again with different ID", id),
+                            ErrorCode.RECORD_NOT_FOUND
+                    ));
+            Doctor updatedEntity = mapper.toUpdatedEntity(entity,requestDto);
+        return mapper.toDto(repository.save(updatedEntity));
     }
 
     @Override
