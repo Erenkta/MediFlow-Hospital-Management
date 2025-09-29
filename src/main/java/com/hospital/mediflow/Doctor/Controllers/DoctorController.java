@@ -6,6 +6,8 @@ import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,8 +28,8 @@ public class DoctorController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getDoctors(@Nullable Pageable pageable, DoctorFilterDto filter){
-        return pageable == null
+    public ResponseEntity<?> getDoctors(@NotNull Pageable pageable, DoctorFilterDto filter){
+        return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(filter))
                 : ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(pageable,filter));
     }
