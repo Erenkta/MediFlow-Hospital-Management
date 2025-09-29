@@ -36,7 +36,7 @@ public class DoctorPredicateBuilder {
         return this;
     }
     public DoctorPredicateBuilder withSpecialty(List<SpecialtyEnum> specialties){
-        if (!specialties.isEmpty()) {
+        if (specialties != null && !specialties.isEmpty()) {
             predicates.add(qDoctor.specialty.in(specialties));
         }
         return this;
