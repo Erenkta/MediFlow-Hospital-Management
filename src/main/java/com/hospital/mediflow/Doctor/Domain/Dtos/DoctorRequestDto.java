@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 
 public record DoctorRequestDto(
         @NotNull(message = "Title cannot be null")
+        @ValidateEnum(enumClass = TitleEnum.class,message = "Invalid title value")
         TitleEnum title,
 
         @NotBlank(message = "First name cannot be empty")
@@ -25,7 +26,7 @@ public record DoctorRequestDto(
         String lastName,
 
         @NotNull(message = "Specialty cannot be null")
-        @ValidateEnum(enumClass = TitleEnum.class,message = "Invalid title value")
+        @ValidateEnum(enumClass = SpecialtyEnum.class,message = "Invalid specialty value")
         SpecialtyEnum specialty,
 
         @NotBlank(message = "Phone cannot be empty")

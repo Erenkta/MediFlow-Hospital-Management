@@ -12,7 +12,6 @@ public interface DoctorMapper {
 
     DoctorResponseDto toDto(Doctor entity);
 
-
     default Optional<DoctorResponseDto> toDtoOptional(Doctor entity) {
         return entity == null ? Optional.empty() : Optional.of(toDto(entity));
     }
@@ -25,7 +24,7 @@ public interface DoctorMapper {
                 .email(requestDto.email())
                 .title(requestDto.title())
                 .specialty(requestDto.specialty())
-                .doctorCode(Long.parseLong(requestDto.title()+requestDto.specialty().getServiceCode()))
+                .doctorCode(Long.parseLong(requestDto.title().getValue()+requestDto.specialty().getServiceCode()))
                 .build();
     }
 
