@@ -23,8 +23,12 @@ import lombok.*;
 public class Doctor extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "custom_seq")
-    @SequenceGenerator(name = "custom_seq",sequenceName = "id_generator_seq",allocationSize = 10)
+    @SequenceGenerator(
+            name = "doctor_seq",  // internal generator name
+            sequenceName = "mediflow_schema.id_generator_seq", // DB sequence name
+            allocationSize = 10
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_seq")
     @Setter(AccessLevel.NONE)
     private Long id;
 
