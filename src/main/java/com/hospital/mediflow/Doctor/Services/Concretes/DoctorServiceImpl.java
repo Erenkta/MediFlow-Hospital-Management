@@ -7,6 +7,7 @@ import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Page<DoctorResponseDto> findDoctors(Pageable pageable, DoctorFilterDto filter) {
+    public Page<DoctorResponseDto> findDoctors(@Nullable Pageable pageable, DoctorFilterDto filter) {
         return dataService.findAll(pageable,filter);
     }
 }
