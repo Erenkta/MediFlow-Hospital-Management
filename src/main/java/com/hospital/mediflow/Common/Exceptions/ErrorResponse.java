@@ -1,10 +1,11 @@
 package com.hospital.mediflow.Common.Exceptions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import lombok.Builder;
-import org.springframework.validation.FieldError;
+
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,13 +15,22 @@ import java.util.List;
 public record ErrorResponse (
         String message,
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        List<FieldError> fieldErrors,
+        String path,
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        List<SimpleFieldError> fieldErrorList,
         LocalDateTime occurredAt,
         ErrorCode errorCode,
-        StackTraceElement[] trace
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        String trace
 )
 {
-    public String statusCode(){
-        return errorCode().getStatusCode();
+    public int statusCode(){
+        return Integer.parseInt(errorCode.getStatusCode());
     }
 }
+
+record SimpleFieldError(
+        String field,
+        String rejectedValue,
+        String message
+) {}

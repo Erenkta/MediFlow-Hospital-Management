@@ -36,7 +36,7 @@ public class DoctorDataServiceImpl implements DoctorDataService {
     public DoctorResponseDto save(DoctorRequestDto requestDto) {
         Doctor entity = mapper.toEntity(requestDto);
         if(repository.existsByDoctorCode(entity.getDoctorCode())){
-            String exceptionMessage = String.format("Doctor with %s doctor code is already exists. Please Change the specialty or title and try again.",
+            String exceptionMessage = String.format("Doctor with %d doctor code is already exists. Please Change the specialty or title and try again.",
                     requestDto.doctorCode());
             throw new RecordAlreadyExistException(exceptionMessage, ErrorCode.RECORD_ALREADY_EXISTS);
         }
