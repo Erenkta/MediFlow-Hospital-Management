@@ -6,6 +6,8 @@ import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
+import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
+import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
@@ -47,11 +49,13 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResponseDto findDoctorByDoctorCode(@NotNull Long doctorCode) {
-        return dataService.findByDoctorCode(doctorCode).orElseThrow(() -> new RecordNotFoundException(
-                String.format("Doctor with doctor code %s couldn't be found. Please try again with different doctor code", doctorCode),
-                ErrorCode.RECORD_NOT_FOUND
-        ));
+    public List<DoctorResponseDto> findDoctorsByDoctorCode(SpecialtyEnum specialty, TitleEnum title) {
+        return dataService.findByDoctorCode(specialty,title);
+    }
+
+    @Override
+    public Page<DoctorResponseDto> findDoctorsByDoctorCode(Pageable pageable, SpecialtyEnum specialty, TitleEnum title) {
+        return dataService.findByDoctorCode(pageable,specialty,title);
     }
 
     @Override
@@ -62,5 +66,11 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Page<DoctorResponseDto> findDoctors(@Nullable Pageable pageable, DoctorFilterDto filter) {
         return dataService.findAll(pageable,filter);
+    }
+
+    @Override
+    public void deleteDoctor(@NotNull Long id) {
+        dataService.deleteDoctor(id);
+        log.info("Doctor with id {} deleted successfully.", id);
     }
 }
