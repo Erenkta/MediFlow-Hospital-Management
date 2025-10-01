@@ -66,8 +66,17 @@ public class Doctor extends BaseEntity {
     @Size(max = 100)
     private String email;
 
+    private Long generateDoctorCode(){
+        return Long.parseLong(this.title.getValue()+this.specialty.getServiceCode());
+    }
+
     @PrePersist
     public void prePersist(){
-        this.doctorCode =Long.parseLong(this.title.getValue()+this.specialty.getServiceCode());
+        this.doctorCode =generateDoctorCode();
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.doctorCode =generateDoctorCode();
     }
 }
