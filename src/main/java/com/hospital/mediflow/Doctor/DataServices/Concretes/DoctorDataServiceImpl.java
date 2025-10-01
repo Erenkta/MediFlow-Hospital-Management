@@ -108,4 +108,9 @@ public class DoctorDataServiceImpl implements DoctorDataService {
                 .build();
         return repository.findAll(predicate).stream().map(mapper::toDto).toList();
     }
+
+    @Override
+    public void deleteDoctor(Long id) {
+        repository.deleteById(id);
+    }
 }

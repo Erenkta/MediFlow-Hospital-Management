@@ -63,4 +63,10 @@ public class DoctorServiceImpl implements DoctorService {
     public Page<DoctorResponseDto> findDoctors(@Nullable Pageable pageable, DoctorFilterDto filter) {
         return dataService.findAll(pageable,filter);
     }
+
+    @Override
+    public void deleteDoctor(@NotNull Long id) {
+        dataService.deleteDoctor(id);
+        log.info("Doctor with id {} deleted successfully.", id);
+    }
 }

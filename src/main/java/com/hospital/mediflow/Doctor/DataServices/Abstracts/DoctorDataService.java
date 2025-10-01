@@ -18,4 +18,5 @@ public interface DoctorDataService {
     List<DoctorResponseDto> findAll();
     Page<DoctorResponseDto> findAll(Pageable pageable, DoctorFilterDto filter);
     List<DoctorResponseDto> findAll(DoctorFilterDto filter);
+    void deleteDoctor(Long id);
 }

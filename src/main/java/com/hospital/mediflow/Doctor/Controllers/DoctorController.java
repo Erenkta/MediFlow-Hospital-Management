@@ -42,4 +42,10 @@ public class DoctorController {
     public ResponseEntity<DoctorResponseDto> updateDoctor(@PathVariable("id") Long id,@RequestBody DoctorRequestDto request){
        return ResponseEntity.status(HttpStatus.OK).body(service.updateDoctor(id,request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteDoctor(@PathVariable("id") Long id){
+        service.deleteDoctor(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

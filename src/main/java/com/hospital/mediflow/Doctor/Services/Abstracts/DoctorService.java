@@ -18,5 +18,6 @@ public interface DoctorService {
     DoctorResponseDto findDoctorByDoctorCode(@NotNull Long doctorCode);
     List<DoctorResponseDto> findDoctors(DoctorFilterDto filter);
     Page<DoctorResponseDto> findDoctors(@Nullable Pageable pageable, DoctorFilterDto filter);
+    void deleteDoctor(@NotNull Long id);
 
 }
