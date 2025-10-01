@@ -18,7 +18,7 @@ public interface DoctorService {
     DoctorResponseDto updateDoctor(@NotNull Long id,DoctorRequestDto requestDto);
     DoctorResponseDto findDoctorById(@NotNull Long id);
     List<DoctorResponseDto> findDoctorsByDoctorCode(@Nullable SpecialtyEnum specialty, @Nullable TitleEnum title);
-    List<DoctorResponseDto> findDoctorsByDoctorCode(@Nullable Pageable pageable,@Nullable SpecialtyEnum specialty, @Nullable TitleEnum title);
+    Page<DoctorResponseDto> findDoctorsByDoctorCode(@Nullable Pageable pageable,@Nullable SpecialtyEnum specialty, @Nullable TitleEnum title);
     List<DoctorResponseDto> findDoctors(DoctorFilterDto filter);
     Page<DoctorResponseDto> findDoctors(@Nullable Pageable pageable, DoctorFilterDto filter);
     void deleteDoctor(@NotNull Long id);

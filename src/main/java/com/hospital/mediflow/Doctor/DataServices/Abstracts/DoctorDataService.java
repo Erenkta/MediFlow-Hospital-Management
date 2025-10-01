@@ -17,6 +17,8 @@ public interface DoctorDataService {
     DoctorResponseDto update(Long id,DoctorRequestDto requestDto);
     Optional<DoctorResponseDto> findById(Long id);
     List<DoctorResponseDto> findByDoctorCode(SpecialtyEnum specialty, TitleEnum title) ;
+    Page<DoctorResponseDto> findByDoctorCode(Pageable pageable,SpecialtyEnum specialty, TitleEnum title) ;
+
     List<DoctorResponseDto> findAll();
     Page<DoctorResponseDto> findAll(Pageable pageable, DoctorFilterDto filter);
     List<DoctorResponseDto> findAll(DoctorFilterDto filter);

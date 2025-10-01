@@ -54,8 +54,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorResponseDto> findDoctorsByDoctorCode(Pageable pageable, SpecialtyEnum specialty, TitleEnum title) {
-        return List.of();
+    public Page<DoctorResponseDto> findDoctorsByDoctorCode(Pageable pageable, SpecialtyEnum specialty, TitleEnum title) {
+        return dataService.findByDoctorCode(pageable,specialty,title);
     }
 
     @Override

@@ -75,6 +75,11 @@ public class DoctorDataServiceImpl implements DoctorDataService {
     }
 
     @Override
+    public Page<DoctorResponseDto> findByDoctorCode(Pageable pageable, SpecialtyEnum specialty, TitleEnum title) {
+        return repository.findAll(DoctorSpecification.hasDoctorCode(specialty,title),pageable).map(mapper::toDto);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<DoctorResponseDto> findAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
