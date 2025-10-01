@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ErrorCode {
     RECORD_NOT_FOUND("404"),
     VALIDATION_ERROR("403"),
+    ILLEGAL_ARGUMENT("400"),
     METHOD_ARGUMENT_NOT_VALID("400"),
     RECORD_ALREADY_EXISTS("400");
 
