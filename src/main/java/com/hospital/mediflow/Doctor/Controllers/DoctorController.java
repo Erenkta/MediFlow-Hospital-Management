@@ -3,8 +3,9 @@ package com.hospital.mediflow.Doctor.Controllers;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
+import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
+import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,12 @@ public class DoctorController {
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(filter))
                 : ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(pageable,filter));
+    }
+    @GetMapping
+    public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) SpecialtyEnum specialty, @RequestParam(value = "title",required = false) TitleEnum title){
+        return pageable.isUnpaged()
+                ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(specialty,title))
+                : ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(pageable,specialty,title));
     }
 
     @GetMapping("/{id}")

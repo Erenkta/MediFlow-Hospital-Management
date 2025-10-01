@@ -6,6 +6,8 @@ import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
+import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
+import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
@@ -47,11 +49,13 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResponseDto findDoctorByDoctorCode(@NotNull Long doctorCode) {
-        return dataService.findByDoctorCode(doctorCode).orElseThrow(() -> new RecordNotFoundException(
-                String.format("Doctor with doctor code %s couldn't be found. Please try again with different doctor code", doctorCode),
-                ErrorCode.RECORD_NOT_FOUND
-        ));
+    public List<DoctorResponseDto> findDoctorsByDoctorCode(SpecialtyEnum specialty, TitleEnum title) {
+        return dataService.findByDoctorCode(specialty,title);
+    }
+
+    @Override
+    public List<DoctorResponseDto> findDoctorsByDoctorCode(Pageable pageable, SpecialtyEnum specialty, TitleEnum title) {
+        return List.of();
     }
 
     @Override
