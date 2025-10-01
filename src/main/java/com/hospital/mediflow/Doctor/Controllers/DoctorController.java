@@ -33,7 +33,7 @@ public class DoctorController {
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(filter))
                 : ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(pageable,filter));
     }
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) SpecialtyEnum specialty, @RequestParam(value = "title",required = false) TitleEnum title){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(specialty,title))
