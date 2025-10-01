@@ -15,6 +15,8 @@ import java.util.List;
 
 public interface DoctorService {
     DoctorResponseDto saveDoctor(DoctorRequestDto requestDto);
+
+    //    DoctorResponseDto saveDoctor(DoctorRequestDto requestDto);
     DoctorResponseDto updateDoctor(@NotNull Long id,DoctorRequestDto requestDto);
     DoctorResponseDto findDoctorById(@NotNull Long id);
     List<DoctorResponseDto> findDoctorsByDoctorCode(@Nullable SpecialtyEnum specialty, @Nullable TitleEnum title);

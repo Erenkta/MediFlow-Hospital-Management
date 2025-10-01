@@ -9,9 +9,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
+@Builder(toBuilder = true)
 public record DoctorRequestDto(
         @NotNull(message = "Title cannot be null")
         @ValidateEnum(enumClass = TitleEnum.class,message = "Invalid title value")

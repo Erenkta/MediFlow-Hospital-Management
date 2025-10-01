@@ -76,7 +76,21 @@ public class GlobalExceptionHandler {
 
         return  ResponseEntity.status(HttpStatus.valueOf(response.statusCode())).body(response);
     }
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(WebRequest request,IllegalArgumentException exception){
+        Map<String, Object> errorMap = getErrorAttributes(request);
+        errorMap.put("path",((ServletWebRequest) request).getRequest().getRequestURI());
 
+        ErrorResponse response = ErrorResponse.builder()
+                .message("Argument validation has failed.")
+                .path(errorMap.getOrDefault("path","").toString())
+                .trace(errorMap.getOrDefault("trace","").toString())
+                .occurredAt(LocalDateTime.now())
+                .errorCode(ErrorCode.METHOD_ARGUMENT_NOT_VALID)
+                .build();
+
+        return  ResponseEntity.status(HttpStatus.valueOf(response.statusCode())).body(response);
+    }
     private Map<String,Object> getErrorAttributes(WebRequest request){
         Collection<ErrorAttributeOptions.Include> attributeList = new ArrayList<>();
         if(Boolean.TRUE.equals(request.getAttribute("trace",WebRequest.SCOPE_REQUEST))){
