@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.Attributes;
 
 @RestControllerAdvice
@@ -76,6 +74,20 @@ public class GlobalExceptionHandler {
 
         return  ResponseEntity.status(HttpStatus.valueOf(response.statusCode())).body(response);
     }
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(WebRequest request,MethodArgumentTypeMismatchException exception){
+        Map<String, Object> errorMap = getErrorAttributes(request);
+        errorMap.put("path",((ServletWebRequest) request).getRequest().getRequestURI());
+        ErrorResponse response = ErrorResponse.builder()
+                .message(String.format("Argument validation has failed. Please check the parameter value : %s",exception.getValue()))
+                .path(errorMap.getOrDefault("path","").toString())
+                .trace(errorMap.getOrDefault("trace","").toString())
+                .occurredAt(LocalDateTime.now())
+                .errorCode(ErrorCode.METHOD_ARGUMENT_NOT_VALID)
+                .build();
+
+        return  ResponseEntity.status(HttpStatus.valueOf(response.statusCode())).body(response);
+    }
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(WebRequest request,IllegalArgumentException exception){
         Map<String, Object> errorMap = getErrorAttributes(request);
@@ -106,7 +118,7 @@ public class GlobalExceptionHandler {
         return fieldErrors.stream()
                 .map(fe -> new SimpleFieldError(
                         fe.getField(),
-                        fe.getRejectedValue().toString(),
+                        String.valueOf(fe.getRejectedValue()),
                         fe.getDefaultMessage()
                 ))
                 .toList();

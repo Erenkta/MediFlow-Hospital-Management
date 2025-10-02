@@ -19,7 +19,7 @@ public enum SpecialtyEnum {
     private final String serviceCode;
     private final String value;
 
-    SpecialtyEnum(String serviceCode ){
+    SpecialtyEnum(String serviceCode){
         this.serviceCode = serviceCode;
         this.value = StringUtils.capitalize(this.name().toLowerCase());
     }
