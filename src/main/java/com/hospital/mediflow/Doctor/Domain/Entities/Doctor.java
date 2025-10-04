@@ -3,15 +3,15 @@ package com.hospital.mediflow.Doctor.Domain.Entities;
 import com.hospital.mediflow.Common.Annotations.ValidateEnum;
 import com.hospital.mediflow.Common.Annotations.ValidatePhone;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
+import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.Type;
+
 
 @Table(name = "doctors",schema = "mediflow_schema")
 @Entity
@@ -51,10 +51,9 @@ public class Doctor extends BaseEntity {
     private String lastName;
 
 
-    @Enumerated(EnumType.STRING)
-    @ValidateEnum(enumClass = SpecialtyEnum.class,message = "Invalid specialty value")
-    @NotNull
-    private SpecialtyEnum specialty;
+    @OneToOne
+    @JoinColumn(name = "specialty", referencedColumnName = "code")
+    private Specialty specialty;
 
     @NotBlank
     @Size(max=20)
@@ -67,7 +66,7 @@ public class Doctor extends BaseEntity {
     private String email;
 
     private Long generateDoctorCode(){
-        return Long.parseLong(this.title.getValue()+this.specialty.getServiceCode());
+        return Long.parseLong(this.title.getValue()+this.specialty.getCode());
     }
 
     @PrePersist

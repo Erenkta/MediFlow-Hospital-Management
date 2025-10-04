@@ -1,9 +1,9 @@
 package com.hospital.mediflow.Doctor.Domain.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.hospital.mediflow.Common.Annotations.ValidateEnum;
 import com.hospital.mediflow.Common.Annotations.ValidatePhone;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,8 +31,8 @@ public record DoctorRequestDto(
         String lastName,
 
         @NotNull(message = "Specialty cannot be null")
-        @ValidateEnum(enumClass = SpecialtyEnum.class,message = "Invalid specialty value")
-        SpecialtyEnum specialty,
+        @Size(min = 3,max = 3,message = "Specialty code must be 3 digits.")
+        String specialty,
 
         @NotBlank(message = "Phone cannot be empty")
         @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 characters")

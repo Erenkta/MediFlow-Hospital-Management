@@ -5,11 +5,9 @@ import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
-import com.hospital.mediflow.Mappers.DoctorMapper;
-import lombok.RequiredArgsConstructor;
+import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +31,6 @@ public class DoctorControllerIntegrationTest {
     private  DoctorRepository doctorRepository;
     @Autowired
     private  ObjectMapper mapper;
-    @Autowired
-    private DoctorMapper doctorMapper;
 
     private final String API_URI ="/api/v1/doctors";
 
@@ -53,7 +49,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty("005")
                 .title(TitleEnum.INTERN)
                 .build();
 
@@ -95,12 +91,13 @@ public class DoctorControllerIntegrationTest {
     //Get Doctors Endpoint tests
     @Test
     void should_find_doctors_return_doctor_list() throws Exception {
+        Specialty specialty = Specialty.builder().code("005").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -108,7 +105,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.ASSISTANT)
                 .build();
 
@@ -129,12 +126,14 @@ public class DoctorControllerIntegrationTest {
     }
     @Test
     void should_find_doctors_return_doctor_list_filtered() throws Exception {
+        Specialty specialty = Specialty.builder().code("005").build();
+
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -142,7 +141,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.ASSISTANT)
                 .build();
 
@@ -173,12 +172,14 @@ public class DoctorControllerIntegrationTest {
     }
     @Test
     void should_find_doctors_return_doctor_page() throws Exception {
+        Specialty specialty = Specialty.builder().code("005").build();
+
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -186,7 +187,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.ASSISTANT)
                 .build();
 
@@ -216,12 +217,14 @@ public class DoctorControllerIntegrationTest {
     }
     @Test
     void should_find_doctors_return_doctor_page_filtered() throws Exception {
+        Specialty specialty = Specialty.builder().code("005").build();
+
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -229,7 +232,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(specialty)
                 .title(TitleEnum.ASSISTANT)
                 .build();
 
@@ -269,12 +272,15 @@ public class DoctorControllerIntegrationTest {
     //Get Doctors By Doctor Code Endpoint tests
     @Test
     void should_find_by_doctor_code_return_doctor_list_title_filtered() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
+        Specialty hematology = Specialty.builder().code("003").build();
+
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -282,7 +288,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(hematology)
                 .title(TitleEnum.ASSISTANT)
                 .build();
         doctorRepository.save(first_doctor);
@@ -298,12 +304,14 @@ public class DoctorControllerIntegrationTest {
 
     @Test
     void should_find_by_doctor_code_throw_exception_when_title_filter_is_invalid() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
+        Specialty hematology = Specialty.builder().code("003").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -311,7 +319,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(hematology)
                 .title(TitleEnum.ASSISTANT)
                 .build();
         doctorRepository.save(first_doctor);
@@ -336,12 +344,14 @@ public class DoctorControllerIntegrationTest {
 
     @Test
     void should_find_by_doctor_code_return_doctor_list_specialty_filtered() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
+        Specialty hematology = Specialty.builder().code("003").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -349,7 +359,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(hematology)
                 .title(TitleEnum.ASSISTANT)
                 .build();
         doctorRepository.save(first_doctor);
@@ -357,7 +367,7 @@ public class DoctorControllerIntegrationTest {
 
         mockMvc.perform(get(API_URI+"/search")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .queryParam("specialty","HEMATOLOGY"))
+                        .queryParam("specialty","Hematology"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName").value("Jane"))
                 .andExpect(jsonPath("length()").value(1));
@@ -365,12 +375,14 @@ public class DoctorControllerIntegrationTest {
 
     @Test
     void should_find_by_doctor_code_throw_exception_when_specialty_filter_is_invalid() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
+        Specialty hematology = Specialty.builder().code("003").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -378,7 +390,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(hematology)
                 .title(TitleEnum.ASSISTANT)
                 .build();
         doctorRepository.save(first_doctor);
@@ -386,28 +398,30 @@ public class DoctorControllerIntegrationTest {
 
         mockMvc.perform(get(API_URI+"/search")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .queryParam("specialty","Hematology"))
+                        .queryParam("title","President"))
                 .andExpect(status().is(Integer.parseInt(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatusCode())))
                 .andExpect(jsonPath("$.errorCode").value("METHOD_ARGUMENT_NOT_VALID"))
-                .andExpect(jsonPath("$.message").value("Argument validation has failed. Please check the parameter value : Hematology"));
+                .andExpect(jsonPath("$.message").value("Argument validation has failed. Please check the parameter value : President"));
     }
 
     @Test
     void should_find_by_doctor_code_return_doctor_list_empty_specialty_filtered() throws Exception{
         mockMvc.perform(get(API_URI+"/search")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .queryParam("specialty","HEMATOLOGY"))
+                        .requestAttr("specialty","Invalid Specialty"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("length()").value(0));
     }
     @Test
     void should_find_by_doctor_code_return_doctor_list_doctorCode_filtered() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
+        Specialty hematology = Specialty.builder().code("003").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -415,7 +429,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(hematology)
                 .title(TitleEnum.ASSISTANT)
                 .build();
         doctorRepository.save(first_doctor);
@@ -424,7 +438,7 @@ public class DoctorControllerIntegrationTest {
         mockMvc.perform(get(API_URI+"/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .queryParam("title","ASSISTANT")
-                        .queryParam("specialty","HEMATOLOGY"))
+                        .requestAttr("specialty","Hematology"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].doctorCode").value(201003L))
                 .andExpect(jsonPath("length()").value(1));
@@ -432,12 +446,14 @@ public class DoctorControllerIntegrationTest {
 
     @Test
     void should_find_by_doctor_code_throw_exception_when_doctorCode_filter_is_invalid() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
+        Specialty hematology = Specialty.builder().code("003").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor second_doctor = Doctor.builder()
@@ -445,7 +461,7 @@ public class DoctorControllerIntegrationTest {
                 .lastName("Doe")
                 .email("Jane@doe.com")
                 .phone("0559654512")
-                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .specialty(hematology)
                 .title(TitleEnum.ASSISTANT)
                 .build();
         doctorRepository.save(first_doctor);
@@ -453,19 +469,19 @@ public class DoctorControllerIntegrationTest {
 
         mockMvc.perform(get(API_URI+"/search")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .queryParam("title","ASSISTANT")
+                        .queryParam("title","President")
                         .queryParam("specialty","Hematology"))
                 .andExpect(status().is(Integer.parseInt(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatusCode())))
                 .andExpect(jsonPath("$.errorCode").value("METHOD_ARGUMENT_NOT_VALID"))
-                .andExpect(jsonPath("$.message").value("Argument validation has failed. Please check the parameter value : Hematology"));
+                .andExpect(jsonPath("$.message").value("Argument validation has failed. Please check the parameter value : President"));
     }
 
     @Test
     void should_return_doctor_list_empty_doctorCode_filtered() throws Exception{
         mockMvc.perform(get(API_URI+"/search")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .queryParam("title","ASSISTANT")
-                        .queryParam("specialty","HEMATOLOGY"))
+                        .param("title","ASSISTANT")
+                        .param("specialty","HEMATOLOGY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("length()").value(0));
     }
@@ -474,12 +490,13 @@ public class DoctorControllerIntegrationTest {
     //Get Doctors By ID Endpoint tests
     @Test
     void should_find_doctor_by_id_return_doctor() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor createdDoctor = doctorRepository.save(first_doctor);
@@ -500,26 +517,34 @@ public class DoctorControllerIntegrationTest {
     // Update Doctor Endpoint Tests
     @Test
     void should_update_doctor_successfully() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").name("Immunology").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor savedDoctor = doctorRepository.save(first_doctor);
-        savedDoctor.setTitle(TitleEnum.PROFESSOR);
 
-        String content = mapper.writeValueAsString(savedDoctor);
+        DoctorRequestDto requestDto = DoctorRequestDto.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty("004")
+                .title(TitleEnum.PROFESSOR)
+                .build();
+
+        String content = mapper.writeValueAsString(requestDto);
 
         mockMvc.perform(put(API_URI+"/"+savedDoctor.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().is(200))
+                .andExpect(jsonPath("$.specialty").value("Neurology"))
                 .andExpect(jsonPath("$.title").value("Professor"));
-
-
     }
 
     @Test
@@ -544,12 +569,13 @@ public class DoctorControllerIntegrationTest {
     // Delete Doctor Endpoint Tests
     @Test
     void should_delete_doctor_successfully() throws Exception{
+        Specialty immunology = Specialty.builder().code("005").build();
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty(immunology)
                 .title(TitleEnum.INTERN)
                 .build();
         Doctor savedDoctor = doctorRepository.save(first_doctor);
