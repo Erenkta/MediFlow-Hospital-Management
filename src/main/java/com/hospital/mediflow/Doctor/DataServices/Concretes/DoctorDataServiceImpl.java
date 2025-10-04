@@ -2,7 +2,6 @@ package com.hospital.mediflow.Doctor.DataServices.Concretes;
 
 
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
-import com.hospital.mediflow.Common.Exceptions.RecordAlreadyExistException;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Helpers.Predicate.DoctorPredicateBuilder;
 import com.hospital.mediflow.Common.Specifications.DoctorSpecification;
@@ -11,22 +10,20 @@ import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
 import com.hospital.mediflow.Mappers.DoctorMapper;
+import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyDto;
+import com.hospital.mediflow.Specialty.Services.Abstracts.SpecialtyService;
 import com.querydsl.core.types.Predicate;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -34,11 +31,14 @@ import java.util.Optional;
 public class DoctorDataServiceImpl implements DoctorDataService {
     private final DoctorRepository repository;
     private final DoctorMapper mapper;
+    private final SpecialtyService specialtyService;
 
     @Override
     @Transactional
     public DoctorResponseDto save(DoctorRequestDto requestDto) {
         Doctor entity = mapper.toEntity(requestDto);
+        SpecialtyDto specialtyDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
+        entity.getSpecialty().setName(specialtyDto.name());
         return mapper.toDto(repository.save(entity));
     }
 
@@ -50,6 +50,10 @@ public class DoctorDataServiceImpl implements DoctorDataService {
                             ErrorCode.RECORD_NOT_FOUND
                     ));
             Doctor updatedEntity = mapper.toUpdatedEntity(entity,requestDto);
+
+            SpecialtyDto specialtyDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
+            updatedEntity.getSpecialty().setName(specialtyDto.name());
+            updatedEntity.getSpecialty().setName(specialtyDto.name());
         return mapper.toDto(repository.save(updatedEntity));
     }
 
@@ -65,12 +69,12 @@ public class DoctorDataServiceImpl implements DoctorDataService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<DoctorResponseDto> findByDoctorCode(SpecialtyEnum specialty, TitleEnum title) {
+    public List<DoctorResponseDto> findByDoctorCode(String specialty, TitleEnum title) {
         return repository.findAll(DoctorSpecification.hasDoctorCode(specialty,title)).stream().map(mapper::toDto).toList();
     }
 
     @Override
-    public Page<DoctorResponseDto> findByDoctorCode(Pageable pageable, SpecialtyEnum specialty, TitleEnum title) {
+    public Page<DoctorResponseDto> findByDoctorCode(Pageable pageable, String specialty, TitleEnum title) {
         return repository.findAll(DoctorSpecification.hasDoctorCode(specialty,title),pageable).map(mapper::toDto);
     }
 

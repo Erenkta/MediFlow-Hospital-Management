@@ -6,10 +6,7 @@ import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
-import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
-import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
 import com.hospital.mediflow.Doctor.Services.Concretes.DoctorServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +39,7 @@ public class DoctorServiceTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty("005")
                 .title(TitleEnum.INTERN)
                 .doctorCode(101005L)
                 .build();
@@ -53,7 +49,7 @@ public class DoctorServiceTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty("005")
                 .title(TitleEnum.INTERN)
                 .build();
 
@@ -70,7 +66,7 @@ public class DoctorServiceTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .specialty("005")
                 .build();
 
         Mockito.when(dataService.save(Mockito.any(DoctorRequestDto.class)))
@@ -90,7 +86,7 @@ public class DoctorServiceTest {
                 .lastName("Doe Updated")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.CARDIOLOGY)
+                .specialty("Cardiology")
                 .title(TitleEnum.INTERN)
                 .build();
 
@@ -99,7 +95,7 @@ public class DoctorServiceTest {
                 .lastName("Doe Updated")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.CARDIOLOGY)
+                .specialty("001")
                 .title(TitleEnum.INTERN)
                 .build();
 
@@ -110,7 +106,7 @@ public class DoctorServiceTest {
         DoctorResponseDto response = service.updateDoctor(10000L,updateRequestDto);
         Assertions.assertNotNull(response);
         Assertions.assertEquals("John Updated", response.firstName());
-        Assertions.assertEquals(SpecialtyEnum.CARDIOLOGY, response.specialty());
+        Assertions.assertEquals("Cardiology", response.specialty());
     }
 
     @Test
@@ -121,7 +117,7 @@ public class DoctorServiceTest {
                 .lastName("Doe Updated")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.CARDIOLOGY)
+                .specialty("001")
                 .title(TitleEnum.INTERN)
                 .build();
 
@@ -146,7 +142,7 @@ public class DoctorServiceTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.CARDIOLOGY)
+                .specialty("001")
                 .title(TitleEnum.INTERN)
                 .build();
 
@@ -176,14 +172,14 @@ public class DoctorServiceTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.CARDIOLOGY)
+                .specialty("Cardiology")
                 .title(TitleEnum.INTERN)
                 .build();
-        Mockito.when(dataService.findByDoctorCode(any(SpecialtyEnum.class),any(TitleEnum.class))).thenReturn(List.of(responseDto));
+        Mockito.when(dataService.findByDoctorCode(any(String.class),any(TitleEnum.class))).thenReturn(List.of(responseDto));
 
-        List<DoctorResponseDto> response = service.findDoctorsByDoctorCode(SpecialtyEnum.CARDIOLOGY,TitleEnum.INTERN);
+        List<DoctorResponseDto> response = service.findDoctorsByDoctorCode("Cardiology",TitleEnum.INTERN);
         Assertions.assertFalse(response.isEmpty());
-        Assertions.assertEquals(SpecialtyEnum.CARDIOLOGY,response.getFirst().specialty());
+        Assertions.assertEquals("Cardiology",response.getFirst().specialty());
         Assertions.assertEquals(TitleEnum.INTERN,response.getFirst().title());
     }
     @Test
@@ -193,13 +189,13 @@ public class DoctorServiceTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .phone("0555324512")
-                .specialty(SpecialtyEnum.CARDIOLOGY)
+                .specialty("001")
                 .title(TitleEnum.INTERN)
                 .build();
         DoctorFilterDto filterDto = DoctorFilterDto.builder()
                 .firstName("John")
                 .lastName("Doe")
-                .specialties(List.of(SpecialtyEnum.CARDIOLOGY))
+                .specialties(List.of("001"))
                 .title(TitleEnum.INTERN)
                 .build();
         Mockito.when(dataService.findAll(filterDto)).thenReturn(List.of(responseDto));

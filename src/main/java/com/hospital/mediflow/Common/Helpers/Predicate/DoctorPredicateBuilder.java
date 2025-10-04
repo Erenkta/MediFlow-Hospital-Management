@@ -1,7 +1,6 @@
 package com.hospital.mediflow.Common.Helpers.Predicate;
 
 import com.hospital.mediflow.Doctor.Domain.Entities.QDoctor;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -35,9 +34,9 @@ public class DoctorPredicateBuilder {
         }
         return this;
     }
-    public DoctorPredicateBuilder withSpecialty(List<SpecialtyEnum> specialties){
+    public DoctorPredicateBuilder withSpecialty(List<String> specialties){
         if (specialties != null && !specialties.isEmpty()) {
-            predicates.add(qDoctor.specialty.in(specialties));
+            predicates.add(qDoctor.specialty.name.in(specialties).or(qDoctor.specialty.code.in(specialties)));
         }
         return this;
     }

@@ -4,7 +4,6 @@ import com.hospital.mediflow.Common.Exceptions.ErrorResponse;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,7 +63,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)),description = "Invalid parameters")
     })
     @GetMapping("/search")
-    public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) @Valid SpecialtyEnum specialty, @Valid @RequestParam(value = "title",required = false) TitleEnum title){
+    public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) String specialty,@Valid @RequestParam(value = "title",required = false) TitleEnum title){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(specialty,title))
                 : ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(pageable,specialty,title));

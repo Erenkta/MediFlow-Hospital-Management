@@ -6,7 +6,6 @@ import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
 import jakarta.annotation.Nullable;
@@ -49,12 +48,12 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorResponseDto> findDoctorsByDoctorCode(SpecialtyEnum specialty, TitleEnum title) {
+    public List<DoctorResponseDto> findDoctorsByDoctorCode(String specialty, TitleEnum title) {
         return dataService.findByDoctorCode(specialty,title);
     }
 
     @Override
-    public Page<DoctorResponseDto> findDoctorsByDoctorCode(Pageable pageable, SpecialtyEnum specialty, TitleEnum title) {
+    public Page<DoctorResponseDto> findDoctorsByDoctorCode(Pageable pageable, String specialty, TitleEnum title) {
         return dataService.findByDoctorCode(pageable,specialty,title);
     }
 

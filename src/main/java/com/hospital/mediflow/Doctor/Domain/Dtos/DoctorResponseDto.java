@@ -1,6 +1,5 @@
 package com.hospital.mediflow.Doctor.Domain.Dtos;
 
-import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import lombok.Builder;
 
@@ -11,7 +10,7 @@ public record DoctorResponseDto(
                                 TitleEnum title,
                                 String firstName,
                                 String lastName,
-                                SpecialtyEnum specialty,
+                                String specialty,
                                 String phone,
                                 String email)  {
 }
