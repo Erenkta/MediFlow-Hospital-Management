@@ -8,6 +8,7 @@ import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Doctor.Enums.SpecialtyEnum;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
+import com.hospital.mediflow.Mappers.DoctorMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -30,6 +33,8 @@ public class DoctorControllerIntegrationTest {
     private  DoctorRepository doctorRepository;
     @Autowired
     private  ObjectMapper mapper;
+    @Autowired
+    private DoctorMapper doctorMapper;
 
     private final String API_URI ="/api/v1/doctors";
 
@@ -40,6 +45,7 @@ public class DoctorControllerIntegrationTest {
         doctorRepository.deleteAll();
     }
 
+    //Create Doctor Endpoint tests
     @Test
     void should_save_doctor() throws Exception {
         DoctorRequestDto requestDto = DoctorRequestDto.builder()
@@ -64,7 +70,7 @@ public class DoctorControllerIntegrationTest {
     }
 
     @Test
-    void should_throw_exception_when_request_body_is_invalid() throws Exception {
+    void should_save_doctor_throw_exception_when_request_body_is_invalid() throws Exception {
         DoctorRequestDto requestDto = DoctorRequestDto.builder() // specialty is missing
                 .firstName("John")
                 .lastName("Doe")
@@ -84,9 +90,11 @@ public class DoctorControllerIntegrationTest {
                 .andExpect(jsonPath("$.fieldErrorList").exists());
 
     }
+    //
 
+    //Get Doctors Endpoint tests
     @Test
-    void should_return_doctor_list() throws Exception {
+    void should_find_doctors_return_doctor_list() throws Exception {
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -113,14 +121,14 @@ public class DoctorControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(2));
     }
     @Test
-    void should_return_doctor_list_empty() throws Exception {
+    void should_find_doctors_return_doctor_list_empty() throws Exception {
         mockMvc.perform(get(API_URI)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
     @Test
-    void should_return_doctor_list_filtered() throws Exception {
+    void should_find_doctors_return_doctor_list_filtered() throws Exception {
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -153,7 +161,7 @@ public class DoctorControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(1));
     }
     @Test
-    void should_return_doctor_list_empty_filtered() throws Exception {
+    void should_find_doctors_return_doctor_list_empty_filtered() throws Exception {
         DoctorFilterDto doctorFilterDto = DoctorFilterDto.builder()
                 .firstName("Jane")
                 .build();
@@ -164,7 +172,7 @@ public class DoctorControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(0));
     }
     @Test
-    void should_return_doctor_page() throws Exception {
+    void should_find_doctors_return_doctor_page() throws Exception {
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -196,7 +204,7 @@ public class DoctorControllerIntegrationTest {
     }
 
     @Test
-    void should_return_doctor_page_empty() throws Exception {
+    void should_find_doctors_return_doctor_page_empty() throws Exception {
         mockMvc.perform(get(API_URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("page","0")
@@ -207,7 +215,7 @@ public class DoctorControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable.pageSize").exists());
     }
     @Test
-    void should_return_doctor_page_filtered() throws Exception {
+    void should_find_doctors_return_doctor_page_filtered() throws Exception {
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -243,7 +251,7 @@ public class DoctorControllerIntegrationTest {
                 .andExpect(jsonPath("content.length()").value(1));
     }
     @Test
-    void should_return_doctor_page_empty_filtered() throws Exception {
+    void should_find_doctors_return_doctor_page_empty_filtered() throws Exception {
         DoctorFilterDto doctorFilterDto = DoctorFilterDto.builder()
                 .firstName("Jane")
                 .build();
@@ -256,8 +264,11 @@ public class DoctorControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable").exists())
                 .andExpect(jsonPath("content.length()").value(0));
     }
+    //
+
+    //Get Doctors By Doctor Code Endpoint tests
     @Test
-    void should_return_doctor_list_title_filtered() throws Exception{
+    void should_find_by_doctor_code_return_doctor_list_title_filtered() throws Exception{
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -286,7 +297,7 @@ public class DoctorControllerIntegrationTest {
     }
 
     @Test
-    void should_throw_exception_when_title_filter_is_invalid() throws Exception{
+    void should_find_by_doctor_code_throw_exception_when_title_filter_is_invalid() throws Exception{
         Doctor first_doctor = Doctor.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -315,11 +326,248 @@ public class DoctorControllerIntegrationTest {
     }
 
     @Test
-    void should_return_doctor_list_empty_title_filtered() throws Exception{
+    void should_find_by_doctor_code_return_doctor_list_empty_title_filtered() throws Exception{
         mockMvc.perform(get(API_URI+"/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .queryParam("title","ASSISTANT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("length()").value(0));
     }
+
+    @Test
+    void should_find_by_doctor_code_return_doctor_list_specialty_filtered() throws Exception{
+        Doctor first_doctor = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .title(TitleEnum.INTERN)
+                .build();
+        Doctor second_doctor = Doctor.builder()
+                .firstName("Jane")
+                .lastName("Doe")
+                .email("Jane@doe.com")
+                .phone("0559654512")
+                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .title(TitleEnum.ASSISTANT)
+                .build();
+        doctorRepository.save(first_doctor);
+        doctorRepository.save(second_doctor);
+
+        mockMvc.perform(get(API_URI+"/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("specialty","HEMATOLOGY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].firstName").value("Jane"))
+                .andExpect(jsonPath("length()").value(1));
+    }
+
+    @Test
+    void should_find_by_doctor_code_throw_exception_when_specialty_filter_is_invalid() throws Exception{
+        Doctor first_doctor = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .title(TitleEnum.INTERN)
+                .build();
+        Doctor second_doctor = Doctor.builder()
+                .firstName("Jane")
+                .lastName("Doe")
+                .email("Jane@doe.com")
+                .phone("0559654512")
+                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .title(TitleEnum.ASSISTANT)
+                .build();
+        doctorRepository.save(first_doctor);
+        doctorRepository.save(second_doctor);
+
+        mockMvc.perform(get(API_URI+"/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("specialty","Hematology"))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatusCode())))
+                .andExpect(jsonPath("$.errorCode").value("METHOD_ARGUMENT_NOT_VALID"))
+                .andExpect(jsonPath("$.message").value("Argument validation has failed. Please check the parameter value : Hematology"));
+    }
+
+    @Test
+    void should_find_by_doctor_code_return_doctor_list_empty_specialty_filtered() throws Exception{
+        mockMvc.perform(get(API_URI+"/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("specialty","HEMATOLOGY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("length()").value(0));
+    }
+    @Test
+    void should_find_by_doctor_code_return_doctor_list_doctorCode_filtered() throws Exception{
+        Doctor first_doctor = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .title(TitleEnum.INTERN)
+                .build();
+        Doctor second_doctor = Doctor.builder()
+                .firstName("Jane")
+                .lastName("Doe")
+                .email("Jane@doe.com")
+                .phone("0559654512")
+                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .title(TitleEnum.ASSISTANT)
+                .build();
+        doctorRepository.save(first_doctor);
+        doctorRepository.save(second_doctor);
+
+        mockMvc.perform(get(API_URI+"/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("title","ASSISTANT")
+                        .queryParam("specialty","HEMATOLOGY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].doctorCode").value(201003L))
+                .andExpect(jsonPath("length()").value(1));
+    }
+
+    @Test
+    void should_find_by_doctor_code_throw_exception_when_doctorCode_filter_is_invalid() throws Exception{
+        Doctor first_doctor = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .title(TitleEnum.INTERN)
+                .build();
+        Doctor second_doctor = Doctor.builder()
+                .firstName("Jane")
+                .lastName("Doe")
+                .email("Jane@doe.com")
+                .phone("0559654512")
+                .specialty(SpecialtyEnum.HEMATOLOGY)
+                .title(TitleEnum.ASSISTANT)
+                .build();
+        doctorRepository.save(first_doctor);
+        doctorRepository.save(second_doctor);
+
+        mockMvc.perform(get(API_URI+"/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("title","ASSISTANT")
+                        .queryParam("specialty","Hematology"))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatusCode())))
+                .andExpect(jsonPath("$.errorCode").value("METHOD_ARGUMENT_NOT_VALID"))
+                .andExpect(jsonPath("$.message").value("Argument validation has failed. Please check the parameter value : Hematology"));
+    }
+
+    @Test
+    void should_return_doctor_list_empty_doctorCode_filtered() throws Exception{
+        mockMvc.perform(get(API_URI+"/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("title","ASSISTANT")
+                        .queryParam("specialty","HEMATOLOGY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("length()").value(0));
+    }
+    //
+
+    //Get Doctors By ID Endpoint tests
+    @Test
+    void should_find_doctor_by_id_return_doctor() throws Exception{
+        Doctor first_doctor = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .title(TitleEnum.INTERN)
+                .build();
+        Doctor createdDoctor = doctorRepository.save(first_doctor);
+
+        mockMvc.perform(get(API_URI+"/"+createdDoctor.getId()))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.id").value(createdDoctor.getId()));
+    }
+
+    @Test
+    void should_find_by_id_throw_exception_when_doctor_not_found() throws Exception{
+        mockMvc.perform(get(API_URI+"/10000"))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
+                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
+    }
+    //
+
+    // Update Doctor Endpoint Tests
+    @Test
+    void should_update_doctor_successfully() throws Exception{
+        Doctor first_doctor = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .title(TitleEnum.INTERN)
+                .build();
+        Doctor savedDoctor = doctorRepository.save(first_doctor);
+        savedDoctor.setTitle(TitleEnum.PROFESSOR);
+
+        String content = mapper.writeValueAsString(savedDoctor);
+
+        mockMvc.perform(put(API_URI+"/"+savedDoctor.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().is(200))
+                .andExpect(jsonPath("$.title").value("Professor"));
+
+
+    }
+
+    @Test
+    void should_update_doctor_throw_exception_when_id_is_invalid() throws Exception{
+        Doctor invalid_doctor = Doctor.builder()
+                .firstName("John Updated")
+                .lastName("Doe new")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .build();
+
+        String content = mapper.writeValueAsString(invalid_doctor);
+
+        mockMvc.perform(put(API_URI+"/100244")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
+                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
+    }
+    //
+
+    // Delete Doctor Endpoint Tests
+    @Test
+    void should_delete_doctor_successfully() throws Exception{
+        Doctor first_doctor = Doctor.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john@doe.com")
+                .phone("0555324512")
+                .specialty(SpecialtyEnum.IMMUNOLOGY)
+                .title(TitleEnum.INTERN)
+                .build();
+        Doctor savedDoctor = doctorRepository.save(first_doctor);
+        savedDoctor.setTitle(TitleEnum.PROFESSOR);
+
+
+        mockMvc.perform(delete(API_URI+"/"+savedDoctor.getId()))
+                .andExpect(status().is(204));
+
+
+    }
+
+    @Test
+    void should_delete_doctor_throw_exception_when_id_is_invalid() throws Exception{
+        mockMvc.perform(delete(API_URI+"/100244"))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
+                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
+    }
+    //
+
 }

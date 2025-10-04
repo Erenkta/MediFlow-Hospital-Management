@@ -111,6 +111,11 @@ public class DoctorDataServiceImpl implements DoctorDataService {
 
     @Override
     public void deleteDoctor(Long id) {
+    repository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        String.format("Doctor with id %s couldn't be found. Please try again with different ID", id),
+                        ErrorCode.RECORD_NOT_FOUND
+                ));
         repository.deleteById(id);
     }
 }
