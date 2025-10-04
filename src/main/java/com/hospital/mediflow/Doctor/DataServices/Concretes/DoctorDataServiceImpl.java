@@ -13,7 +13,7 @@ import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
 import com.hospital.mediflow.Mappers.DoctorMapper;
-import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyDto;
+import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyResponseDto;
 import com.hospital.mediflow.Specialty.Services.Abstracts.SpecialtyService;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +37,8 @@ public class DoctorDataServiceImpl implements DoctorDataService {
     @Transactional
     public DoctorResponseDto save(DoctorRequestDto requestDto) {
         Doctor entity = mapper.toEntity(requestDto);
-        SpecialtyDto specialtyDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
-        entity.getSpecialty().setName(specialtyDto.name());
+        SpecialtyResponseDto specialtyResponseDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
+        entity.getSpecialty().setName(specialtyResponseDto.name());
         return mapper.toDto(repository.save(entity));
     }
 
@@ -51,9 +51,9 @@ public class DoctorDataServiceImpl implements DoctorDataService {
                     ));
             Doctor updatedEntity = mapper.toUpdatedEntity(entity,requestDto);
 
-            SpecialtyDto specialtyDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
-            updatedEntity.getSpecialty().setName(specialtyDto.name());
-            updatedEntity.getSpecialty().setName(specialtyDto.name());
+            SpecialtyResponseDto specialtyResponseDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
+            updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
+            updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
         return mapper.toDto(repository.save(updatedEntity));
     }
 

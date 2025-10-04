@@ -1,9 +1,7 @@
 package com.hospital.mediflow.Specialty.Services.Abstracts;
 
-import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyDto;
-
-import java.util.Optional;
+import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyResponseDto;
 
 public interface SpecialtyService {
-    SpecialtyDto findSpecialtyByCode(String code);
+    SpecialtyResponseDto findSpecialtyByCode(String code);
 }
