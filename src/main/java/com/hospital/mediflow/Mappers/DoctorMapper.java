@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface DoctorMapper {
 
     DoctorResponseDto toDto(Doctor entity);
+    DoctorRequestDto toRequestDto(Doctor entity);
 
     default Optional<DoctorResponseDto> toDtoOptional(Doctor entity) {
         return entity == null ? Optional.empty() : Optional.of(toDto(entity));
