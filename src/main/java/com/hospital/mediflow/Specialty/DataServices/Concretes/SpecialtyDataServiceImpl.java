@@ -11,6 +11,7 @@ import com.hospital.mediflow.Specialty.Repositories.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,17 +40,26 @@ public class SpecialtyDataServiceImpl implements SpecialtyDataService {
                         ErrorCode.RECORD_NOT_FOUND
                 ));
         mapper.toEntity(specialty,requestDto);
+        repository.save(specialty);
         return mapper.toDto(specialty);
     }
 
     @Override
+    @Transactional
     public SpecialtyResponseDto createSpecialty(SpecialtyRequestDto requestDto) {
         Specialty specialty = mapper.toEntity(requestDto);
+        Integer specialtyCount = repository.countSpecialties();
+        specialty.createCode(specialtyCount);
         return mapper.toDto(repository.save(specialty));
     }
 
     @Override
     public List<SpecialtyResponseDto> findAllSpecialties() {
-        return repository.findAll().stream().map(mapper::toDto).toList();
+        return repository.findAllByOrderByCodeAsc().stream().map(mapper::toDto).toList();
+    }
+
+    @Override
+    public void deleteSpecialty(String code) {
+        repository.deleteById(code);
     }
 }

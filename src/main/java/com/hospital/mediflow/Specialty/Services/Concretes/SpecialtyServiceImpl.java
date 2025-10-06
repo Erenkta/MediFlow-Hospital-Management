@@ -31,12 +31,17 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     }
 
     @Override
-    public SpecialtyResponseDto findSpecialtyByCode(String code) {
+    public SpecialtyResponseDto findSpecialtyByCode(@NotBlank String code) {
         return dataService.findSpecialtyByCode(code);
     }
 
     @Override
     public List<SpecialtyResponseDto> findAllSpecialties() {
         return dataService.findAllSpecialties();
+    }
+
+    @Override
+    public void deleteSpecialty(String code) {
+        dataService.deleteSpecialty(code);
     }
 }

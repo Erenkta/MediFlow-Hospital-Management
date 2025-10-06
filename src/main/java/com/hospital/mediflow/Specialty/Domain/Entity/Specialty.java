@@ -21,4 +21,8 @@ public class Specialty {
     @NotBlank(message = "Specialty name cannot be empty")
     private String name;
 
+    public void createCode(Integer number){
+        this.code = String.format("%03d",number+1);
+    }
+
 }

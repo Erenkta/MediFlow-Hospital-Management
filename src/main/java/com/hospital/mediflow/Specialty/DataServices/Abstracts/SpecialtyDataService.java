@@ -10,4 +10,6 @@ public interface SpecialtyDataService {
     SpecialtyResponseDto updateSpecialty(String code,SpecialtyRequestDto requestDto);
     SpecialtyResponseDto createSpecialty(SpecialtyRequestDto requestDto);
     List<SpecialtyResponseDto> findAllSpecialties();
+    void deleteSpecialty(String code);
+
 }
