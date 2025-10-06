@@ -1,8 +1,7 @@
 package com.hospital.mediflow.Specialty.Domain.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +17,12 @@ public class Specialty {
 
     @Id
     private String code;
+
+    @NotBlank(message = "Specialty name cannot be empty")
     private String name;
 
-
+    public void createCode(Integer number){
+        this.code = String.format("%03d",number+1);
+    }
 
 }

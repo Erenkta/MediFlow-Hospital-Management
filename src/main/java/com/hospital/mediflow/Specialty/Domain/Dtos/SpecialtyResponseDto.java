@@ -1,6 +1,6 @@
 package com.hospital.mediflow.Specialty.Domain.Dtos;
 
-public record SpecialtyDto(
+public record SpecialtyResponseDto(
         String code,
         String name
 ) {
