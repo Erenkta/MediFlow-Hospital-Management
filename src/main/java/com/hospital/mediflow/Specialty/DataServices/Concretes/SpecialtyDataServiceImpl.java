@@ -2,6 +2,8 @@ package com.hospital.mediflow.Specialty.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
+import com.hospital.mediflow.Common.Exceptions.SpecialtyNotFoundException;
+import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Mappers.SpecialtyMapper;
 import com.hospital.mediflow.Specialty.DataServices.Abstracts.SpecialtyDataService;
 import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyRequestDto;
@@ -51,6 +53,22 @@ public class SpecialtyDataServiceImpl implements SpecialtyDataService {
         Integer specialtyCount = repository.countSpecialties();
         specialty.createCode(specialtyCount);
         return mapper.toDto(repository.save(specialty));
+    }
+
+    @Override
+    public void createBulkSpecialty(List<String> specialtyIds, Department department) {
+        List<Specialty> specialties = repository.findAllById(specialtyIds);
+        specialties.forEach(item -> {
+            specialtyIds.remove(item.getCode());
+            item.setDepartment(department);
+        });
+        if(!specialtyIds.isEmpty()){
+            String message = String.format(
+                    "Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: %s",
+                    specialtyIds
+            );            throw new SpecialtyNotFoundException(message,ErrorCode.RECORD_NOT_FOUND);
+        }
+        repository.saveAll(specialties);
     }
 
     @Override
