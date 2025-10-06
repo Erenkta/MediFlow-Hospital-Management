@@ -15,9 +15,6 @@ import java.util.Optional;
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor,Long>, QuerydslPredicateExecutor<Doctor> {
 
-
-    Boolean existsByDoctorCode(Long doctorCode);
-
     List<Doctor> findAll(Predicate predicate);
     List<Doctor> findAll(Specification<Doctor> spec);
     Page<Doctor> findAll(Specification<Doctor> spec,Pageable pageable);

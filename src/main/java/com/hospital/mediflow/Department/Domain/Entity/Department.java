@@ -32,6 +32,6 @@ public class Department extends BaseEntity {
     @NotBlank(message = "Department description cannot be blank")
     private String description;
 
-    @OneToMany(mappedBy = "specialty")
+    @OneToMany(mappedBy = "department")
     private List<Specialty> specialties;
 }

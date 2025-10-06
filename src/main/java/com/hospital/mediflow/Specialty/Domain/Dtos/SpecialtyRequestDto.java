@@ -7,5 +7,4 @@ import org.springframework.validation.annotation.Validated;
 public record SpecialtyRequestDto(
         @NotBlank(message = "Specialty name cannot be empty")
         String name
-
 ) { }
