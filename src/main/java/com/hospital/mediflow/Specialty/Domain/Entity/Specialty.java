@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Specialty.Domain.Entity;
 
+import com.hospital.mediflow.Department.Domain.Entity.Department;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -24,5 +25,9 @@ public class Specialty {
     public void createCode(Integer number){
         this.code = String.format("%03d",number+1);
     }
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
 }
