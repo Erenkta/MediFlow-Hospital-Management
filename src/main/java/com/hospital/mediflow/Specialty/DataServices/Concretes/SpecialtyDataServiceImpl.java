@@ -56,7 +56,8 @@ public class SpecialtyDataServiceImpl implements SpecialtyDataService {
     }
 
     @Override
-    public void createBulkSpecialty(List<String> specialtyIds, Department department) {
+    @Transactional
+    public List<Specialty> assignDepartment(List<String> specialtyIds, Department department) {
         List<Specialty> specialties = repository.findAllById(specialtyIds);
         specialties.forEach(item -> {
             specialtyIds.remove(item.getCode());
@@ -69,6 +70,18 @@ public class SpecialtyDataServiceImpl implements SpecialtyDataService {
             );            throw new SpecialtyNotFoundException(message,ErrorCode.RECORD_NOT_FOUND);
         }
         repository.saveAll(specialties);
+        return specialties;
+    }
+
+    @Override
+    public List<Specialty> dismissDepartment(List<String> specialtyIds) {
+        List<Specialty> specialties = repository.findAllById(specialtyIds);
+        specialties.forEach(item -> {
+            specialtyIds.remove(item.getCode());
+            item.setDepartment(null);
+        });
+        repository.saveAll(specialties);
+        return specialties;
     }
 
     @Override
