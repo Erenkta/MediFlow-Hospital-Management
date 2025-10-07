@@ -50,4 +50,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void deleteDepartment(@NotNull Long id) {
         dataService.deleteDepartment(id);
     }
+
+    @Override
+    public DepartmentResponseDto addSpecialties(@NotNull Long id, List<String> specialties) {
+        return dataService.addSpecialties(id,specialties);
+    }
+
+    @Override
+    public DepartmentResponseDto removeSpecialties(@NotNull Long id, List<String> specialties) {
+        return dataService.removeSpecialties(id,specialties);
+    }
 }

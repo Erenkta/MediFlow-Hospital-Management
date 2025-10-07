@@ -5,7 +5,7 @@ import com.hospital.mediflow.Department.Domain.Dtos.DepartmentResponseDto;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring",nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring",nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,uses = {SpecialtyMapper.class})
 public interface DepartmentMapper {
 
     DepartmentResponseDto toDto(Department department);

@@ -11,6 +11,7 @@ import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Department.Repository.DepartmentRepository;
 import com.hospital.mediflow.Mappers.DepartmentMapper;
 import com.hospital.mediflow.Specialty.DataServices.Abstracts.SpecialtyDataService;
+import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
     private final SpecialtyDataService specialtyDataService;
     @Override
     public List<DepartmentResponseDto> findAllDepartments(DepartmentFilterDto filterDto) {
-        return repository.findAll(DepartmentSpecification.hasName(filterDto.name()).and(DepartmentSpecification.hasDescription(filterDto.description()))).stream().map(mapper::toDto).toList();
+        return repository.findAll(DepartmentSpecification.filter(filterDto)).stream().map(mapper::toDto).toList();
     }
 
     @Override
@@ -56,7 +57,8 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
     @Transactional
     public DepartmentResponseDto createDepartment(DepartmentRequestDto departmentRequestDto) {
         Department entity = repository.save(mapper.toEntity(departmentRequestDto));
-        specialtyDataService.createBulkSpecialty(departmentRequestDto.specialties(),entity);
+        List<Specialty> specialties = specialtyDataService.assignDepartment(departmentRequestDto.specialties(),entity);
+        entity.setSpecialties(specialties);
         return mapper.toDto(entity);
     }
 
@@ -73,5 +75,23 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
     public void deleteDepartment(Long id) {
         boolean isRepositoryExists = repository.existsById(id);
         if(isRepositoryExists) repository.deleteById(id );
+    }
+
+    @Override
+    public DepartmentResponseDto addSpecialties(Long id, List<String> specialties) {
+        Department entity = findDepartmentEntityById(id);
+        List<Specialty> specialtyList = specialtyDataService.assignDepartment(specialties,entity);
+        entity.getSpecialties().addAll(specialtyList);
+        repository.save(entity);
+        return mapper.toDto(entity);
+    }
+
+    @Override
+    public DepartmentResponseDto removeSpecialties(Long id, List<String> specialties) {
+        Department entity = findDepartmentEntityById(id);
+        List<Specialty> specialtyList = specialtyDataService.dismissDepartment(specialties);
+        entity.getSpecialties().removeAll(specialtyList);
+        repository.save(entity);
+        return mapper.toDto(entity);
     }
 }

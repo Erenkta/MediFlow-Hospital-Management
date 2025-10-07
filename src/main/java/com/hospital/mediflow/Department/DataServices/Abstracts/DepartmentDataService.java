@@ -15,4 +15,7 @@ public interface DepartmentDataService {
     DepartmentResponseDto createDepartment(DepartmentRequestDto departmentRequestDto);
     DepartmentResponseDto updateDepartment(Long id,DepartmentRequestDto departmentRequestDto);
     void deleteDepartment(Long id);
+    DepartmentResponseDto addSpecialties(Long id, List<String> specialties);
+    DepartmentResponseDto removeSpecialties(Long id, List<String> specialties);
+
 }

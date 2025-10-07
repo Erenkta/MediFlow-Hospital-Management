@@ -16,4 +16,7 @@ public interface DepartmentService {
     DepartmentResponseDto createDepartment(DepartmentRequestDto departmentRequestDto);
     DepartmentResponseDto updateDepartment(@NotNull Long id,DepartmentRequestDto departmentRequestDto);
     void deleteDepartment(@NotNull Long id);
+    DepartmentResponseDto addSpecialties(@NotNull Long id, List<String> specialties);
+    DepartmentResponseDto removeSpecialties(@NotNull Long id, List<String> specialties);
 }
+
