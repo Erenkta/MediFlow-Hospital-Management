@@ -2,6 +2,7 @@ package com.hospital.mediflow.Department.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
+import com.hospital.mediflow.Common.Specifications.DepartmentSpecification;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentFilterDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentRequestDto;
@@ -28,15 +29,12 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
     private final SpecialtyDataService specialtyDataService;
     @Override
     public List<DepartmentResponseDto> findAllDepartments(DepartmentFilterDto filterDto) {
-        // I will implement Specifications here.
-        return List.of();
+        return repository.findAll(DepartmentSpecification.hasName(filterDto.name()).and(DepartmentSpecification.hasDescription(filterDto.description()))).stream().map(mapper::toDto).toList();
     }
 
     @Override
     public Page<DepartmentResponseDto> findAllDepartments(Pageable pageable, DepartmentFilterDto filterDto) {
-        // I will implement Specifications here.
-
-        return null;
+       return repository.findAll(DepartmentSpecification.filter(filterDto),pageable).map(mapper::toDto);
     }
 
     @Override
