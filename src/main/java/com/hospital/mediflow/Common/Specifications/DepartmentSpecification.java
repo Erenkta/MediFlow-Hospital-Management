@@ -17,7 +17,7 @@ public class DepartmentSpecification extends BaseSpecification<Department> {
         return (root,query,criteriaBuilder) -> description == null ? null : criteriaBuilder.like(root.get("description"), "%"+description+"%");
     }
     public static Specification<Department> hasSpecialty(List<String> specialtyCodes){
-        if(specialtyCodes.isEmpty()) return null;
+        if(specialtyCodes == null|| specialtyCodes.isEmpty()) return null;
 
         return (root,query,criteriaBuilder) ->{
             Join<Department, Specialty> specialtyJoin = root.join("specialties");

@@ -5,7 +5,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
-@Validated
 public record DepartmentRequestDto (
         @NotBlank(message = "Department name cannot be blank")
         String name,
