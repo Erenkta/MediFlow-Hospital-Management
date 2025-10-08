@@ -146,7 +146,7 @@ public class DoctorServiceTest {
                 .title(TitleEnum.INTERN)
                 .build();
 
-        Mockito.when(dataService.findById(any())).thenReturn(Optional.of(responseDto));
+        Mockito.when(dataService.findById(any())).thenReturn(responseDto);
 
         DoctorResponseDto response = service.findDoctorById(1000L);
         Assertions.assertNotNull(response);

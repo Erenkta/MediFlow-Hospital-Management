@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Department.DataServices.Concretes;
 
+import com.hospital.mediflow.Common.BaseService;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Specifications.DepartmentSpecification;
@@ -12,22 +13,31 @@ import com.hospital.mediflow.Department.Repository.DepartmentRepository;
 import com.hospital.mediflow.Mappers.DepartmentMapper;
 import com.hospital.mediflow.Specialty.DataServices.Abstracts.SpecialtyDataService;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class DepartmentDataServiceImpl implements DepartmentDataService {
-    private final DepartmentRepository repository;
+public class DepartmentDataServiceImpl extends BaseService<Department, Long> implements DepartmentDataService {
     private final DepartmentMapper mapper;
     private final SpecialtyDataService specialtyDataService;
+    private final DepartmentRepository repository;
+
+    public DepartmentDataServiceImpl(DepartmentRepository repository,
+                                     DepartmentMapper mapper,
+                                     SpecialtyDataService specialtyDataService) {
+        super(repository);
+        this.repository = repository;
+        this.mapper = mapper;
+        this.specialtyDataService = specialtyDataService;
+    }
+
     @Override
     public List<DepartmentResponseDto> findAllDepartments(DepartmentFilterDto filterDto) {
         return repository.findAll(DepartmentSpecification.filter(filterDto)).stream().map(mapper::toDto).toList();
@@ -40,17 +50,7 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
 
     @Override
     public DepartmentResponseDto findDepartmentById(Long id) {
-       Department department = findDepartmentEntityById(id);
-        return mapper.toDto(department);
-    }
-
-    private Department findDepartmentEntityById(Long id){
-        // Should I implement the AOP to handle throwing same kind of exceptions from different services ?
-        return repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        String.format("Department with id %s couldn't be found. Please try again with different ID", id),
-                        ErrorCode.RECORD_NOT_FOUND
-                ));
+        return mapper.toDto(this.findByIdOrThrow(id));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
     @Override
     @Transactional
     public DepartmentResponseDto updateDepartment(Long id,DepartmentRequestDto departmentRequestDto) {
-        Department entity = findDepartmentEntityById(id);
+        Department entity = this.findByIdOrThrow(id);
         mapper.toEntity(entity,departmentRequestDto);
         repository.save(entity);
         return mapper.toDto(entity);
@@ -73,13 +73,15 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
 
     @Override
     public void deleteDepartment(Long id) {
-        boolean isRepositoryExists = repository.existsById(id);
-        if(isRepositoryExists) repository.deleteById(id );
+        Department entity = this.findByIdOrThrow(id);
+        ArrayList<String> specialtyCodes =  new ArrayList<>(entity.getSpecialties().stream().map(Specialty::getCode).toList());
+        specialtyDataService.dismissDepartment(specialtyCodes);
+        repository.deleteById(id);
     }
 
     @Override
     public DepartmentResponseDto addSpecialties(Long id, List<String> specialties) {
-        Department entity = findDepartmentEntityById(id);
+        Department entity = this.findByIdOrThrow(id);
         List<Specialty> specialtyList = specialtyDataService.assignDepartment(specialties,entity);
         entity.getSpecialties().addAll(specialtyList);
         repository.save(entity);
@@ -88,7 +90,7 @@ public class DepartmentDataServiceImpl implements DepartmentDataService {
 
     @Override
     public DepartmentResponseDto removeSpecialties(Long id, List<String> specialties) {
-        Department entity = findDepartmentEntityById(id);
+        Department entity = this.findByIdOrThrow(id);
         List<Specialty> specialtyList = specialtyDataService.dismissDepartment(specialties);
         entity.getSpecialties().removeAll(specialtyList);
         repository.save(entity);

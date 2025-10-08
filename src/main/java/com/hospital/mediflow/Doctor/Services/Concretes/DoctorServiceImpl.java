@@ -1,11 +1,13 @@
 package com.hospital.mediflow.Doctor.Services.Concretes;
 
+import com.hospital.mediflow.Common.BaseService;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
+import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
 import jakarta.annotation.Nullable;
@@ -40,11 +42,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public DoctorResponseDto findDoctorById(@NotNull Long id) {
-        return dataService.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        String.format("Doctor with id %s couldn't be found. Please try again with different ID", id),
-                        ErrorCode.RECORD_NOT_FOUND
-                ));
+        return dataService.findById(id);
     }
 
     @Override
