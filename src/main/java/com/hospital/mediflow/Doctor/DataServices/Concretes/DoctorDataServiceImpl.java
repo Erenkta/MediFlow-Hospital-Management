@@ -109,7 +109,7 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
     @Override
     @Transactional
     public void deleteDoctor(Long id) {
-        findByIdOrThrow(id);
+        this.isExistsOrThrow(id);
         repository.deleteById(id);
     }
 }

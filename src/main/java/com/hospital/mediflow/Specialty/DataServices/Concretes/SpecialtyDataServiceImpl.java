@@ -86,6 +86,7 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
 
     @Override
     public void deleteSpecialty(String code) {
+        this.isExistsOrThrow(code);
         repository.deleteById(code);
     }
 }

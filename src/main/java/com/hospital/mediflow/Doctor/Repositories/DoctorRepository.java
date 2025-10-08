@@ -19,4 +19,6 @@ public interface DoctorRepository extends BaseRepository<Doctor,Long>, QuerydslP
     List<Doctor> findAll(Predicate predicate);
     List<Doctor> findAll(Specification<Doctor> spec);
     Page<Doctor> findAll(Specification<Doctor> spec,Pageable pageable);
+    boolean existsById(Long id);
+
 }

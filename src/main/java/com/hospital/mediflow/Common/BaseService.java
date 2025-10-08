@@ -18,6 +18,16 @@ public abstract class BaseService<T,ID> {
                 ));
     }
 
+    protected void isExistsOrThrow(ID id){
+        boolean isExists = repository.existsById(id);
+        if(!isExists){
+            throw  new RecordNotFoundException(
+                    String.format("%s not found with id: %s", getEntityName(), id),
+                    ErrorCode.RECORD_NOT_FOUND
+            );
+        }
+    }
+
     /**
      * Automatically infer entity name from service class.
      */
