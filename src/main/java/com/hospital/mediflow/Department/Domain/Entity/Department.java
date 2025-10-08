@@ -2,6 +2,7 @@ package com.hospital.mediflow.Department.Domain.Entity;
 
 import com.hospital.mediflow.Common.Entities.BaseEntity;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

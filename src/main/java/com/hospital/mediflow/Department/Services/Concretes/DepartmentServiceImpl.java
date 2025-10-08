@@ -1,9 +1,11 @@
 package com.hospital.mediflow.Department.Services.Concretes;
 
+import com.hospital.mediflow.Common.BaseService;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentFilterDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentRequestDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentResponseDto;
+import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Department.Services.Abstracts.DepartmentService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 @Validated
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentDataService dataService;
+
     @Override
     public List<DepartmentResponseDto> findAllDepartments(DepartmentFilterDto filterDto) {
         return dataService.findAllDepartments(filterDto);

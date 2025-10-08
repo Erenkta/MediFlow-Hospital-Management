@@ -13,4 +13,5 @@ public interface BaseRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecific
     default List<T> findAll(Specification<T> spec){
         return findAll(spec,Sort.by(Sort.Direction.DESC,"createdAt"));
     }
+
 }

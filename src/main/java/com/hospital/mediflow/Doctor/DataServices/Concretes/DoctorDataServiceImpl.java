@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Doctor.DataServices.Concretes;
 
 
+import com.hospital.mediflow.Common.BaseService;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Helpers.Predicate.DoctorPredicateBuilder;
@@ -16,7 +17,7 @@ import com.hospital.mediflow.Mappers.DoctorMapper;
 import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyResponseDto;
 import com.hospital.mediflow.Specialty.Services.Abstracts.SpecialtyService;
 import com.querydsl.core.types.Predicate;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.Pageable;
@@ -24,14 +25,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
-@RequiredArgsConstructor
+
 @Service
-public class DoctorDataServiceImpl implements DoctorDataService {
+@Slf4j
+public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements DoctorDataService {
     private final DoctorRepository repository;
     private final DoctorMapper mapper;
     private final SpecialtyService specialtyService;
+
+    public DoctorDataServiceImpl(DoctorRepository repository, DoctorMapper mapper, SpecialtyService specialtyService) {
+        super(repository);
+        this.repository = repository;
+        this.mapper = mapper;
+        this.specialtyService = specialtyService;
+    }
 
     @Override
     @Transactional
@@ -44,13 +52,8 @@ public class DoctorDataServiceImpl implements DoctorDataService {
 
     @Override
     public DoctorResponseDto update(Long id, DoctorRequestDto requestDto) {
-            Doctor entity = repository.findById(id)
-                    .orElseThrow(() -> new RecordNotFoundException(
-                            String.format("Doctor with id %s couldn't be found. Please try again with different ID", id),
-                            ErrorCode.RECORD_NOT_FOUND
-                    ));
+            Doctor entity = this.findByIdOrThrow(id);
             Doctor updatedEntity = mapper.toUpdatedEntity(entity,requestDto);
-
             SpecialtyResponseDto specialtyResponseDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
             updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
             updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
@@ -59,12 +62,8 @@ public class DoctorDataServiceImpl implements DoctorDataService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<DoctorResponseDto> findById(Long id) {
-        Optional<Doctor> entity = repository.findById(id);
-        if (entity.isPresent()) {
-            return mapper.toDtoOptional(entity.get());
-        }
-        return Optional.empty();
+    public DoctorResponseDto findById(Long id) {
+        return  mapper.toDto(this.findByIdOrThrow(id));
     }
 
     @Override
@@ -76,12 +75,6 @@ public class DoctorDataServiceImpl implements DoctorDataService {
     @Override
     public Page<DoctorResponseDto> findByDoctorCode(Pageable pageable, String specialty, TitleEnum title) {
         return repository.findAll(DoctorSpecification.hasDoctorCode(specialty,title),pageable).map(mapper::toDto);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<DoctorResponseDto> findAll() {
-        return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
     @Override
@@ -114,12 +107,9 @@ public class DoctorDataServiceImpl implements DoctorDataService {
     }
 
     @Override
+    @Transactional
     public void deleteDoctor(Long id) {
-    repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(
-                        String.format("Doctor with id %s couldn't be found. Please try again with different ID", id),
-                        ErrorCode.RECORD_NOT_FOUND
-                ));
+        this.isExistsOrThrow(id);
         repository.deleteById(id);
     }
 }
