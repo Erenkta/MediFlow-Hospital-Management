@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DepartmentRepository extends BaseRepository<Department, Long>  {
     Page<Department> findAll(Specification<Department> spec, Pageable pageable);
+    Boolean existsByName(String name);
 }

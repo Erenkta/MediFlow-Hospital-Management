@@ -33,6 +33,6 @@ public abstract class BaseService<T,ID> {
      */
     private String getEntityName() {
         String className = this.getClass().getSimpleName();
-        return className.replace("Service", "");
+        return className.replace("DataServiceImpl", "");
     }
 }

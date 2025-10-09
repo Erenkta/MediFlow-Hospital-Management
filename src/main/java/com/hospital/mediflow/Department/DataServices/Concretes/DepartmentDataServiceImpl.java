@@ -2,6 +2,7 @@ package com.hospital.mediflow.Department.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.BaseService;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
+import com.hospital.mediflow.Common.Exceptions.RecordAlreadyExistException;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Specifications.DepartmentSpecification;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
@@ -56,6 +57,10 @@ public class DepartmentDataServiceImpl extends BaseService<Department, Long> imp
     @Override
     @Transactional
     public DepartmentResponseDto createDepartment(DepartmentRequestDto departmentRequestDto) {
+        if(repository.existsByName(departmentRequestDto.name())){
+            String message = String.format("Department with name %s already exists", departmentRequestDto.name());
+            throw new RecordAlreadyExistException(message,ErrorCode.RECORD_ALREADY_EXISTS);
+        }
         Department entity = repository.save(mapper.toEntity(departmentRequestDto));
         List<Specialty> specialties = specialtyDataService.assignDepartment(departmentRequestDto.specialties(),entity);
         entity.setSpecialties(specialties);
