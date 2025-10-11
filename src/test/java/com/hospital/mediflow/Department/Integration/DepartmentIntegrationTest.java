@@ -10,6 +10,7 @@ import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import com.hospital.mediflow.Specialty.Repositories.SpecialtyRepository;
+import com.mysema.commons.lang.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,13 +43,21 @@ public class DepartmentIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private DepartmentRepository repository;
-
     @Autowired
     private SpecialtyRepository specialtyRepository;
     @Autowired
     private ObjectMapper mapper;
 
+
     private final String API_URI ="/api/v1/departments";
+
+    @BeforeEach
+    public void insertSpecialties(){
+        Specialty specialty1 = Specialty.builder().name("Cardiology").code("001").build();
+        Specialty specialty2 = Specialty.builder().name("N/A").code("000").build();
+
+        specialtyRepository.saveAll(List.of(specialty1, specialty2));
+    }
 
     // Create Department Tests
     @Test
@@ -108,7 +118,7 @@ public class DepartmentIntegrationTest {
         DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
                 .name("Test Department")
                 .description("Mockito Test Department")
-                .specialties(List.of("zzz","007"))
+                .specialties(List.of("zzz","001"))
                 .build();
 
         String content = mapper.writeValueAsString(requestDto);
@@ -131,7 +141,7 @@ public class DepartmentIntegrationTest {
         DepartmentRequestDto duplicatedNameDto = DepartmentRequestDto.builder()
                 .name("Test Department")
                 .description("Mockito Test Department")
-                .specialties(List.of("zzz","007"))
+                .specialties(List.of("zzz","001"))
                 .build();
 
         repository.save(request);
@@ -375,7 +385,6 @@ public class DepartmentIntegrationTest {
     //
 
     // Get Department By ID Tests
-
     @Test
     void should_get_department_by_id_is_successful() throws Exception {
         Department department = Department.builder()
@@ -400,5 +409,274 @@ public class DepartmentIntegrationTest {
                 .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
     }
     //
+
+    // Update Department Tests
+    @Test
+    void should_update_department_successfully() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("001").get();
+        Specialty specialty2 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+        specialties.add(specialty2);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+
+        DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
+                .name("Updated Department")
+                .description("Mockito Update Test Department")
+                .build();
+
+
+        String content = mapper.writeValueAsString(requestDto);
+
+        mockMvc.perform(put(API_URI+"/"+department.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.name").value("Updated Department"))
+                .andExpect(jsonPath("$.specialties.length()").value(2))
+                .andExpect(jsonPath("$.description").value("Mockito Update Test Department"));
+    }
+
+    @Test
+    void should_update_department_throw_exception_when_id_is_invalid() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("001").get();
+        Specialty specialty2 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+        specialties.add(specialty2);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        repository.save(department);
+
+        DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
+                .name("Updated Department")
+                .description("Mockito Update Test Department")
+                .build();
+
+
+        String content = mapper.writeValueAsString(requestDto);
+
+        mockMvc.perform(put(API_URI+"/"+"999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
+                .andExpect(jsonPath("$.message").value("Department not found with id: 999"))
+                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
+    }
+    //
+
+    // Department Specialties Operation Tests
+    @Test
+    void should_add_specialties_add_single_specialty_successfully() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("001").get();
+        Specialty specialty2 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+        specialties.add(specialty2);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+
+        Specialty newSpecialty = Specialty.builder().name("Hematology").code("002").build();
+        specialtyRepository.save(newSpecialty);
+        String content = mapper.writeValueAsString(List.of("002"));
+
+        mockMvc.perform(patch(API_URI+"/"+department.getId()+"/add-specialties")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.specialties.length()").value(3))
+                .andExpect(jsonPath("$.specialties.[2].name").value("Hematology"));
+    }
+
+    @Test
+    void should_add_specialties_add_multiple_specialty_successfully() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+
+        Specialty newSpecialty = Specialty.builder().name("Hematology").code("002").build();
+        specialtyRepository.save(newSpecialty);
+        String content = mapper.writeValueAsString(List.of("001","002"));
+
+        mockMvc.perform(patch(API_URI+"/"+department.getId()+"/add-specialties")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.specialties.length()").value(3))
+                .andExpect(jsonPath("$.specialties.[2].name").value("Hematology"));
+    }
+
+    @Test
+    void should_add_specialties_throw_exception_when_specialty_not_found() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+
+        String content = mapper.writeValueAsString(List.of("001","002"));
+
+        mockMvc.perform(patch(API_URI+"/"+department.getId()+"/add-specialties")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
+                .andExpect(jsonPath("$.message").value("Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: [002]"))
+                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
+    }
+
+    @Test
+    void should_remove_specialties_remove_single_specialty_successfully() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("001").get();
+        Specialty specialty2 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+        specialties.add(specialty2);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+        String content = mapper.writeValueAsString(List.of("000"));
+
+        mockMvc.perform(patch(API_URI+"/"+department.getId()+"/remove-specialties")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.specialties.length()").value(1))
+                .andExpect(jsonPath("$.specialties.[0].name").value("Cardiology"));
+    }
+
+    @Test
+    void should_remove_specialties_remove_multiple_specialty_successfully() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("001").get();
+        Specialty specialty2 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+        specialties.add(specialty2);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+
+        Specialty newSpecialty = Specialty.builder().name("Hematology").code("002").build();
+        specialtyRepository.save(newSpecialty);
+        String content = mapper.writeValueAsString(List.of("001","000"));
+
+        mockMvc.perform(patch(API_URI+"/"+department.getId()+"/remove-specialties")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.specialties.length()").value(0));
+    }
+
+    @Test
+    void should_remove_specialties_throw_exception_when_specialty_not_found() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+
+        String content = mapper.writeValueAsString(List.of("002"));
+
+        mockMvc.perform(patch(API_URI+"/"+department.getId()+"/remove-specialties")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
+                .andExpect(jsonPath("$.message").value("Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: [002]"))
+                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
+    }
+    //
+
+    // Delete Department Tests
+    @Test
+    void should_delete_department_successfully() throws Exception{
+        Specialty specialty1 = specialtyRepository.findByCode("001").get();
+        Specialty specialty2 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+        specialties.add(specialty2);
+
+        List<Specialty> beforeDelete = specialtyRepository.findAll();
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        department = repository.save(department);
+
+        mockMvc.perform(delete(API_URI+"/"+department.getId()))
+                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+        List<Specialty> afterDelete = specialtyRepository.findAll();
+
+        Assert.isTrue(beforeDelete.size() == afterDelete.size(),"Specialties are not deleted.");
+    }
+
+    @Test
+    void should_delete_department_throw_exception_when_id_is_invalid() throws Exception {
+        Specialty specialty1 = specialtyRepository.findByCode("000").get();
+        List<Specialty> specialties = new ArrayList<>();
+        specialties.add(specialty1);
+
+        Department department = Department.builder()
+                .name("Test Department")
+                .description("Mockito Test Department")
+                .specialties(specialties)
+                .build();
+
+        repository.save(department);
+
+        mockMvc.perform(delete(API_URI+"/"+999L))
+                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
+                .andExpect(jsonPath("$.message").value("Department not found with id: 999"))
+                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
+    }
 
 }
