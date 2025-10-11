@@ -58,13 +58,7 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
             specialtyIds.remove(item.getCode());
             item.setDepartment(department);
         });
-        if(!specialtyIds.isEmpty()){
-            String message = String.format(
-                    "Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: %s",
-                    specialtyIds
-            );            throw new SpecialtyNotFoundException(message,ErrorCode.RECORD_NOT_FOUND);
-        }
-        repository.saveAll(specialties);
+        handleInvalidSpecialties(specialtyIds,specialties);
         return specialties;
     }
 
@@ -75,7 +69,7 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
             specialtyIds.remove(item.getCode());
             item.setDepartment(null);
         });
-        repository.saveAll(specialties);
+        handleInvalidSpecialties(specialtyIds,specialties);
         return specialties;
     }
 
@@ -88,5 +82,15 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
     public void deleteSpecialty(String code) {
         this.isExistsOrThrow(code);
         repository.deleteById(code);
+    }
+
+    private void handleInvalidSpecialties(List<String> specialtyIds,List<Specialty> specialties){
+        if(!specialtyIds.isEmpty()){
+            String message = String.format(
+                    "Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: %s",
+                    specialtyIds
+            );            throw new SpecialtyNotFoundException(message,ErrorCode.RECORD_NOT_FOUND);
+        }
+        repository.saveAll(specialties);
     }
 }
