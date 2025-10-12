@@ -1,9 +1,11 @@
 package com.hospital.mediflow.Doctor.Domain.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hospital.mediflow.Common.Annotations.ValidateEnum;
 import com.hospital.mediflow.Common.Annotations.ValidatePhone;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
+import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -11,6 +13,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Table(name = "doctors",schema = "mediflow_schema")
@@ -54,6 +59,10 @@ public class Doctor extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "specialty", referencedColumnName = "code")
     private Specialty specialty;
+
+    @OneToMany(mappedBy = "doctor")
+    @JsonManagedReference
+    private Set<DoctorDepartment> doctorDepartment = new HashSet<>();
 
     @NotBlank
     @Size(max=20)

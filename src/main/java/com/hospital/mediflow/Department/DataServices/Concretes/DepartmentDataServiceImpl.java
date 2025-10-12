@@ -55,6 +55,12 @@ public class DepartmentDataServiceImpl extends BaseService<Department, Long> imp
     }
 
     @Override
+    public Department getReferenceById(Long departmentId) {
+        // TODO first check if department is exists.
+        return this.findByIdOrThrow(departmentId);
+    }
+
+    @Override
     @Transactional
     public DepartmentResponseDto createDepartment(DepartmentRequestDto departmentRequestDto) {
         if(repository.existsByName(departmentRequestDto.name())){
