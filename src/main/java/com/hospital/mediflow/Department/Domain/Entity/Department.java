@@ -1,13 +1,16 @@
 package com.hospital.mediflow.Department.Domain.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
+import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
-import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "departments",schema = "mediflow_schema")
 @Entity
@@ -35,4 +38,10 @@ public class Department extends BaseEntity {
 
     @OneToMany(mappedBy = "department")
     private List<Specialty> specialties;
+
+    // TODO What is n+1 problem and when does it occurred ? How can I solve it ?
+    // I have added the FetchType.LAZY to avoid the n+1 problem.
+    @OneToMany(mappedBy = "department",fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<DoctorDepartment> doctorDepartments = new HashSet<>();
 }

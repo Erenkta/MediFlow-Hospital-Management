@@ -112,4 +112,10 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
         this.isExistsOrThrow(id);
         repository.deleteById(id);
     }
+
+    @Override
+    public Doctor getReferenceById(Long doctorId){
+        // TODO check if doctor exists
+        return this.findByIdOrThrow(doctorId);
+    }
 }
