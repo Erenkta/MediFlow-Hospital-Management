@@ -7,6 +7,6 @@ public record DoctorDepartmentFilterDto(
         String departmentDescription,
         List<String> specialties,
         List<Long> doctors,
-        Integer departmentSize
+        int departmentSize
 ) {
 }

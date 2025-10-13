@@ -1,5 +1,6 @@
 package com.hospital.mediflow.DoctorDepartments.Controller;
 
+import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentFilterDto;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentResponseDto;
 import com.hospital.mediflow.DoctorDepartments.Services.Abstracts.DoctorDepartmentService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,8 @@ public class DoctorDepartmentController {
     private final DoctorDepartmentService service;
 
     @GetMapping
-    public ResponseEntity<List<DoctorDepartmentResponseDto>> findAll(){
-        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
+    public ResponseEntity<List<DoctorDepartmentResponseDto>> findAll(DoctorDepartmentFilterDto filterDto){
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll(filterDto));
     }
     @PostMapping("/{department-id}")
     public ResponseEntity<DoctorDepartmentResponseDto> save(@PathVariable(name = "department-id") Long id, @RequestBody List<Long> doctorIds){
