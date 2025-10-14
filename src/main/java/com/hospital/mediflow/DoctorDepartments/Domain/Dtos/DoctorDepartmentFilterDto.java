@@ -1,5 +1,8 @@
 package com.hospital.mediflow.DoctorDepartments.Domain.Dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+
 import java.util.List;
 
 public record DoctorDepartmentFilterDto(
@@ -7,6 +10,12 @@ public record DoctorDepartmentFilterDto(
         String departmentDescription,
         List<String> specialties,
         List<Long> doctors,
-        int departmentSize
+        @JsonProperty(value = "departmentSize", defaultValue = "0")
+        Integer departmentSize
 ) {
+        public DoctorDepartmentFilterDto {
+                if (departmentSize == null) {
+                        departmentSize = 0; // default
+                }
+        }
 }

@@ -1,5 +1,6 @@
 package com.hospital.mediflow.DoctorDepartments.DataServices.Concretes;
 
+import com.hospital.mediflow.Common.Exceptions.DoctorIsNotSuitableForDepartment;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Specifications.DoctorDepartmentSpecification;
@@ -13,12 +14,16 @@ import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepa
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentFilterDto;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentId;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentResponseDto;
+import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.IncompatibleDoctorProjection;
 import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
 import com.hospital.mediflow.DoctorDepartments.Repositories.DoctorDepartmentRepository;
 import com.hospital.mediflow.Mappers.DoctorDepartmentMapper;
 import com.hospital.mediflow.Mappers.DoctorMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.hospital.mediflow.Common.Exceptions.ErrorCode.DOCTOR_IS_NOT_SUITABLE_FOR_DEPARTMENT;
 
 @Service
 @Slf4j
@@ -56,23 +63,23 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
     }
 
     @Override
+    public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable, DoctorDepartmentFilterDto filterDto) {
+        List<DoctorDepartmentResponseDto> content = this.findAll(filterDto);
+        return new PageImpl<>(content,pageable,content.size());
+    }
+
+    @Override
     public void assignDoctorsToDepartment(List<Long> doctorIds, Long departmentId) {
-        // TODO Check if a doctor already assigned to another department.If it does, then first unassign the doctor first
-        List<Long> alreadyAssignedDoctors = repository.findAllAssignedDoctors(doctorIds);
-        if(!alreadyAssignedDoctors.isEmpty()){
-            log.info("Deleting existing assignments for doctorIds: {}", alreadyAssignedDoctors);
-            repository.deleteAllByDoctorId(alreadyAssignedDoctors);
-        }
+        checkIncompatibleDoctors(doctorIds, departmentId);
+        checkAlreadyAssignedDoctors(doctorIds);
 
         Department department = departmentDataService.getReferenceById(departmentId);
         List<DoctorDepartment> relations = doctorIds.stream()
-                .map(doctorId -> {
-                    return DoctorDepartment.builder()
-                            .id(new DoctorDepartmentId(doctorId, departmentId))
-                            .doctor(doctorDataService.getReferenceById(doctorId))
-                            .department(department)
-                            .build();
-                })
+                .map(doctorId -> DoctorDepartment.builder()
+                        .id(new DoctorDepartmentId(doctorId, departmentId))
+                        .doctor(doctorDataService.getReferenceById(doctorId))
+                        .department(department)
+                        .build())
                 .toList();
         repository.saveAll(relations);
     }
@@ -96,4 +103,19 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
         return mapper.toDto(department, doctors);
     }
 
+    private void checkIncompatibleDoctors(List<Long> doctorIds,Long departmentId){
+        List<IncompatibleDoctorProjection> incompatibleDoctors = repository.isDoctorSpecialtyCompatible(doctorIds,departmentId);
+        if(!incompatibleDoctors.isEmpty()){
+            String message = String.format("Given doctor's specialties are not compatible with department's specialties (by department id %s). Please Check the doctors and try again %s",departmentId,incompatibleDoctors);
+            throw new DoctorIsNotSuitableForDepartment(message, DOCTOR_IS_NOT_SUITABLE_FOR_DEPARTMENT);
+        }
+    }
+    private void checkAlreadyAssignedDoctors(List<Long> doctorIds){
+        List<Long> alreadyAssignedDoctors = repository.findAllAssignedDoctors(doctorIds);
+        if(!alreadyAssignedDoctors.isEmpty()){
+            log.info("Deleting existing assignments for doctorIds: {}", alreadyAssignedDoctors);
+            repository.deleteAllByDoctorId(alreadyAssignedDoctors);
+        }
+
+    }
 }

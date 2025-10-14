@@ -25,9 +25,10 @@ public class DoctorDepartmentServiceImpl implements DoctorDepartmentService {
     }
 
     @Override
-    public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable) {
-        return null;
+    public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable, DoctorDepartmentFilterDto filterDto) {
+        return dataService.findAll(pageable,filterDto);
     }
+
 
     @Override
     @Transactional

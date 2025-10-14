@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DoctorDepartmentService {
     List<DoctorDepartmentResponseDto> findAll(DoctorDepartmentFilterDto filterDto);
-    Page<DoctorDepartmentResponseDto> findAll(Pageable pageable);
+    Page<DoctorDepartmentResponseDto> findAll(Pageable pageable,DoctorDepartmentFilterDto filterDto);
     DoctorDepartmentResponseDto signDoctorsToDepartment(List<Long> doctorIds, Long departmentId);
     DoctorDepartmentResponseDto removeDoctorFromDepartment(List<Long> doctorIds,  Long departmentId);
 
