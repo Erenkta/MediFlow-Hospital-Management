@@ -1,6 +1,7 @@
 package com.hospital.mediflow.DoctorDepartments.Services.Concretes;
 
 import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
+import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentFilterDto;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentResponseDto;
 import com.hospital.mediflow.DoctorDepartments.Services.Abstracts.DoctorDepartmentService;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +20,15 @@ public class DoctorDepartmentServiceImpl implements DoctorDepartmentService {
     private final DoctorDepartmentDataService dataService;
 
     @Override
-    public List<DoctorDepartmentResponseDto> findAll() {
-        return dataService.findAll();
+    public List<DoctorDepartmentResponseDto> findAll(DoctorDepartmentFilterDto filterDto) {
+        return dataService.findAll(filterDto);
     }
 
     @Override
-    public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable) {
-        return null;
+    public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable, DoctorDepartmentFilterDto filterDto) {
+        return dataService.findAll(pageable,filterDto);
     }
+
 
     @Override
     @Transactional

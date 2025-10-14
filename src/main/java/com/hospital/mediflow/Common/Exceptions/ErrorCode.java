@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
     RECORD_NOT_FOUND("404"),
+    DOCTOR_IS_NOT_SUITABLE_FOR_DEPARTMENT("400"),
     VALIDATION_ERROR("403"),
     ILLEGAL_ARGUMENT("400"),
     METHOD_ARGUMENT_NOT_VALID("400"),
