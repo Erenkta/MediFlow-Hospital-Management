@@ -1,8 +1,8 @@
 package com.hospital.mediflow.Common.Exceptions;
 
-public class SpecialtyNotFoundException extends BaseException{
-    public SpecialtyNotFoundException(String message, ErrorCode errorCode) {
-        super(message, errorCode);
+public class SpecialtyNotFoundException extends RecordNotFoundException{
+    public SpecialtyNotFoundException(String message) {
+        super(message);
     }
 
     public SpecialtyNotFoundException(String message, ErrorCode errorCode, Throwable cause) {

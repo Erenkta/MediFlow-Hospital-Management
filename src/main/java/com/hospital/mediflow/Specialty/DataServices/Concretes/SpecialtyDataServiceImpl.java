@@ -12,7 +12,6 @@ import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import com.hospital.mediflow.Specialty.Repositories.SpecialtyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,7 +41,6 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
     }
 
     @Override
-    @Transactional
     public SpecialtyResponseDto createSpecialty(SpecialtyRequestDto requestDto) {
         Specialty specialty = mapper.toEntity(requestDto);
         Integer specialtyCount = repository.countSpecialties();
@@ -51,7 +49,6 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
     }
 
     @Override
-    @Transactional
     public List<Specialty> assignDepartment(List<String> specialtyIds, Department department) {
         List<Specialty> specialties = repository.findAllById(specialtyIds);
         specialties.forEach(item -> {
@@ -89,7 +86,7 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
             String message = String.format(
                     "Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: %s",
                     specialtyIds
-            );            throw new SpecialtyNotFoundException(message,ErrorCode.RECORD_NOT_FOUND);
+            );            throw new SpecialtyNotFoundException(message);
         }
         repository.saveAll(specialties);
     }
