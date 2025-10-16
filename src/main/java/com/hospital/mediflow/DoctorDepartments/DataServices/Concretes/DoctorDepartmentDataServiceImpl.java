@@ -28,8 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.hospital.mediflow.Common.Exceptions.ErrorCode.DOCTOR_IS_NOT_SUITABLE_FOR_DEPARTMENT;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
 
     @Override
     public List<DoctorDepartmentResponseDto> findAll(DoctorDepartmentFilterDto filterDto) {
-        Set<Department> departments = new HashSet<Department>();
+        Set<Department> departments = new HashSet<>();
         repository.findAll(DoctorDepartmentSpecification.hasFilter(filterDto))
                 .forEach(doctorDepartment -> {
                     Department department = doctorDepartment.getDepartment();

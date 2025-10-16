@@ -20,11 +20,13 @@ public class DoctorDepartmentServiceImpl implements DoctorDepartmentService {
     private final DoctorDepartmentDataService dataService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DoctorDepartmentResponseDto> findAll(DoctorDepartmentFilterDto filterDto) {
         return dataService.findAll(filterDto);
     }
 
     @Override
+    @Transactional
     public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable, DoctorDepartmentFilterDto filterDto) {
         return dataService.findAll(pageable,filterDto);
     }
@@ -39,6 +41,7 @@ public class DoctorDepartmentServiceImpl implements DoctorDepartmentService {
     }
 
     @Override
+    @Transactional
     public DoctorDepartmentResponseDto removeDoctorFromDepartment(List<Long> doctorIds, Long departmentId) {
         for(Long doctorId :doctorIds){
             dataService.removeDoctorFromDepartment(doctorId,departmentId);
