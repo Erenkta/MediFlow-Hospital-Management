@@ -65,7 +65,6 @@ public class DepartmentIntegrationTest {
         DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
                 .name("Test Department")
                 .description("Mockito Test Department")
-                .specialties(List.of("000","001"))
                 .build();
 
         String content = mapper.writeValueAsString(requestDto);
@@ -82,7 +81,6 @@ public class DepartmentIntegrationTest {
         DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
                 .name("Test Department")
                 .description("Mockito Test Department")
-                .specialties(List.of())
                 .build();
 
         String content = mapper.writeValueAsString(requestDto);
@@ -94,42 +92,7 @@ public class DepartmentIntegrationTest {
                 .andExpect(jsonPath("$.name").value("Test Department"))
                 .andExpect(jsonPath("$.description").value("Mockito Test Department"));
     }
-    @Test
-    void should_create_department_throw_exception_when_specialty_value_size_is_invalid() throws Exception {
-        DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
-                .name("Test Department")
-                .description("Mockito Test Department")
-                .specialties(List.of("99933322"))
-                .build();
 
-        String content = mapper.writeValueAsString(requestDto);
-
-        mockMvc.perform(post(API_URI)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().is(Integer.parseInt(ErrorCode.METHOD_ARGUMENT_NOT_VALID.getStatusCode())))
-                .andExpect(jsonPath("$.message").value("Argument validation has failed."))
-                .andExpect(jsonPath("$.fieldErrorList.length()").value(1))
-                .andExpect(jsonPath("$.fieldErrorList.[0].rejectedValue").value("99933322"))
-                .andExpect(jsonPath("$.errorCode").value("METHOD_ARGUMENT_NOT_VALID"));
-    }
-    @Test
-    void should_create_department_throw_exception_when_specialties_are_invalid() throws Exception {
-        DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
-                .name("Test Department")
-                .description("Mockito Test Department")
-                .specialties(List.of("zzz","001"))
-                .build();
-
-        String content = mapper.writeValueAsString(requestDto);
-
-        mockMvc.perform(post(API_URI)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().is(Integer.parseInt(ErrorCode.RECORD_NOT_FOUND.getStatusCode())))
-                .andExpect(jsonPath("$.message").value("Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: [zzz]"))
-                .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
-    }
     @Test
     void should_create_department_throw_exception_when_department_name_duplicated() throws Exception {
         Department request = Department.builder()
@@ -141,7 +104,6 @@ public class DepartmentIntegrationTest {
         DepartmentRequestDto duplicatedNameDto = DepartmentRequestDto.builder()
                 .name("Test Department")
                 .description("Mockito Test Department")
-                .specialties(List.of("zzz","001"))
                 .build();
 
         repository.save(request);

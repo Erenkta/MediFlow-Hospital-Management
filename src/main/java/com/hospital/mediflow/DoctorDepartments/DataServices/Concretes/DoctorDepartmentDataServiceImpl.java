@@ -1,15 +1,12 @@
 package com.hospital.mediflow.DoctorDepartments.DataServices.Concretes;
 
-import com.hospital.mediflow.Common.Exceptions.DoctorIsNotSuitableForDepartment;
-import com.hospital.mediflow.Common.Exceptions.ErrorCode;
+import com.hospital.mediflow.Common.Exceptions.DoctorIsNotSuitableForDepartmentException;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Specifications.DoctorDepartmentSpecification;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
-import com.hospital.mediflow.Department.Repository.DepartmentRepository;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
-import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
 import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentFilterDto;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentId;
@@ -29,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.hospital.mediflow.Common.Exceptions.ErrorCode.DOCTOR_IS_NOT_SUITABLE_FOR_DEPARTMENT;
@@ -89,8 +85,7 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
     public void removeDoctorFromDepartment(Long doctorId, Long departmentId) {
         DoctorDepartment doctorDepartment = repository.findById(new DoctorDepartmentId(doctorId, departmentId))
                 .orElseThrow(() -> new RecordNotFoundException(
-                        String.format("No relation has found with doctor id: %s and department id :%s", doctorId, departmentId),
-                        ErrorCode.RECORD_NOT_FOUND
+                        String.format("No relation has found with doctor id: %s and department id :%s", doctorId, departmentId)
                 ));
         repository.delete(doctorDepartment);
     }
@@ -107,7 +102,7 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
         List<IncompatibleDoctorProjection> incompatibleDoctors = repository.isDoctorSpecialtyCompatible(doctorIds,departmentId);
         if(!incompatibleDoctors.isEmpty()){
             String message = String.format("Given doctor's specialties are not compatible with department's specialties (by department id %s). Please Check the doctors and try again %s",departmentId,incompatibleDoctors);
-            throw new DoctorIsNotSuitableForDepartment(message, DOCTOR_IS_NOT_SUITABLE_FOR_DEPARTMENT);
+            throw new DoctorIsNotSuitableForDepartmentException(message);
         }
     }
     private void checkAlreadyAssignedDoctors(List<Long> doctorIds){

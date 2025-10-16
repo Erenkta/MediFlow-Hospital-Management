@@ -124,7 +124,7 @@ public class DoctorServiceTest {
         Mockito.when(dataService.update(
                 any(),
                 Mockito.any(DoctorRequestDto.class)
-        )).thenThrow(new RecordNotFoundException("Doctor couldn't be found. Please try again with different ID", ErrorCode.RECORD_NOT_FOUND));
+        )).thenThrow(new RecordNotFoundException("Doctor couldn't be found. Please try again with different ID"));
 
 
         RecordNotFoundException exception = Assertions.assertThrows(
@@ -155,7 +155,7 @@ public class DoctorServiceTest {
 
     @Test
     void test_findById_is_failure_when_doctor_with_given_id_not_found(){
-        Mockito.when(dataService.findById(any())).thenThrow(new RecordNotFoundException("Doctor couldn't be found. Please try again with different ID", ErrorCode.RECORD_NOT_FOUND));
+        Mockito.when(dataService.findById(any())).thenThrow(new RecordNotFoundException("Doctor couldn't be found. Please try again with different ID"));
 
         RecordNotFoundException exception = Assertions.assertThrows(
                 RecordNotFoundException.class,

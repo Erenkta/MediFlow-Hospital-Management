@@ -86,7 +86,7 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
             String message = String.format(
                     "Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: %s",
                     specialtyIds
-            );            throw new SpecialtyNotFoundException(message,ErrorCode.RECORD_NOT_FOUND);
+            );            throw new SpecialtyNotFoundException(message);
         }
         repository.saveAll(specialties);
     }
