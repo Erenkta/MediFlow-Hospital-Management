@@ -1,7 +1,6 @@
 package com.hospital.mediflow.Doctor.Domain.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.hospital.mediflow.Common.Annotations.ValidateEnum;
 import com.hospital.mediflow.Common.Annotations.ValidatePhone;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;

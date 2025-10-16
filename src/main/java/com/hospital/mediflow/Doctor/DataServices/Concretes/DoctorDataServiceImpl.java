@@ -2,8 +2,6 @@ package com.hospital.mediflow.Doctor.DataServices.Concretes;
 
 
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Exceptions.ErrorCode;
-import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Helpers.Predicate.DoctorPredicateBuilder;
 import com.hospital.mediflow.Common.Specifications.DoctorSpecification;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
@@ -22,7 +20,6 @@ import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,7 +39,6 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
     }
 
     @Override
-    @Transactional
     public DoctorResponseDto save(DoctorRequestDto requestDto) {
         Doctor entity = mapper.toEntity(requestDto);
         SpecialtyResponseDto specialtyResponseDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
@@ -56,18 +52,15 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
             Doctor updatedEntity = mapper.toUpdatedEntity(entity,requestDto);
             SpecialtyResponseDto specialtyResponseDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
             updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
-            updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
         return mapper.toDto(repository.save(updatedEntity));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public DoctorResponseDto findById(Long id) {
         return  mapper.toDto(this.findByIdOrThrow(id));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<DoctorResponseDto> findByDoctorCode(String specialty, TitleEnum title) {
         return repository.findAll(DoctorSpecification.hasDoctorCode(specialty,title)).stream().map(mapper::toDto).toList();
     }
@@ -78,7 +71,6 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<DoctorResponseDto> findAll(Pageable pageable, DoctorFilterDto filter) {
         DoctorPredicateBuilder filterBuilder = new DoctorPredicateBuilder();
         Predicate predicate = filterBuilder
@@ -93,7 +85,6 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<DoctorResponseDto> findAll(DoctorFilterDto filter) {
         DoctorPredicateBuilder filterBuilder = new DoctorPredicateBuilder();
         Predicate predicate = filterBuilder
@@ -107,7 +98,6 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
     }
 
     @Override
-    @Transactional
     public void deleteDoctor(Long id) {
         this.isExistsOrThrow(id);
         repository.deleteById(id);
@@ -115,7 +105,6 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
 
     @Override
     public Doctor getReferenceById(Long doctorId){
-        // TODO check if doctor exists
         return this.findByIdOrThrow(doctorId);
     }
 }
