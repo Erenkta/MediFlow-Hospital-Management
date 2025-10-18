@@ -6,8 +6,6 @@ import com.hospital.mediflow.Department.Domain.Dtos.DepartmentFilterDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentRequestDto;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Department.Repository.DepartmentRepository;
-import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
-import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import com.hospital.mediflow.Specialty.Repositories.SpecialtyRepository;
 import com.mysema.commons.lang.Assert;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -59,7 +56,7 @@ public class DepartmentIntegrationTest {
         specialtyRepository.saveAll(List.of(specialty1, specialty2));
     }
 
-    // Create Department Tests
+    //<editor-fold desc="Create Department Tests">
     @Test
     void should_save_department() throws Exception {
         DepartmentRequestDto requestDto = DepartmentRequestDto.builder()
@@ -117,9 +114,9 @@ public class DepartmentIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Department with name Test Department already exists"))
                 .andExpect(jsonPath("$.errorCode").value("RECORD_ALREADY_EXISTS"));
     }
-    //
+    //</editor-fold>
 
-    // Get Department Tests ( List and Page )
+    //  <editor-fold desc="Get Department Tests ( List and Page )">
     @Test
     void should_get_departments_return_all_departments_list() throws Exception {
         Department requestNo1 = Department.builder()
@@ -344,9 +341,9 @@ public class DepartmentIntegrationTest {
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(jsonPath("$.content.length()").value(0));
     }
-    //
+    // </editor-fold>
 
-    // Get Department By ID Tests
+    //  <editor-fold desc="Get Department By ID Tests">
     @Test
     void should_get_department_by_id_is_successful() throws Exception {
         Department department = Department.builder()
@@ -370,9 +367,9 @@ public class DepartmentIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Department not found with id: 999"))
                 .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
     }
-    //
+    //  </editor-fold>
 
-    // Update Department Tests
+    //  <editor-fold desc="Get Department By ID Tests">
     @Test
     void should_update_department_successfully() throws Exception {
         Specialty specialty1 = specialtyRepository.findByCode("001").get();
@@ -437,9 +434,9 @@ public class DepartmentIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Department not found with id: 999"))
                 .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
     }
-    //
+    //</editor-fold>
 
-    // Department Specialties Operation Tests
+    // <editor-fold desc="Department Specialties Operation Tests">
     @Test
     void should_add_specialties_add_single_specialty_successfully() throws Exception {
         Specialty specialty1 = specialtyRepository.findByCode("001").get();
@@ -593,9 +590,9 @@ public class DepartmentIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Some of the given specialties could not be found. Please check the specialty codes and try again. Check List: [002]"))
                 .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
     }
-    //
+    //</editor-fold>
 
-    // Delete Department Tests
+    //<editor-fold desc="Delete Department Tests">
     @Test
     void should_delete_department_successfully() throws Exception{
         Specialty specialty1 = specialtyRepository.findByCode("001").get();
@@ -640,5 +637,6 @@ public class DepartmentIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Department not found with id: 999"))
                 .andExpect(jsonPath("$.errorCode").value("RECORD_NOT_FOUND"));
     }
+    //</editor-fold>
 
 }

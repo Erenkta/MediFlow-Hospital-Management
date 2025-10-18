@@ -8,14 +8,18 @@ import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Repositories.DoctorRepository;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
+import com.hospital.mediflow.Specialty.Repositories.SpecialtyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,15 +30,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@ActiveProfiles("test")
 public class DoctorControllerIntegrationTest {
     @Autowired
     private  MockMvc mockMvc;
     @Autowired
     private  DoctorRepository doctorRepository;
     @Autowired
+    private SpecialtyRepository specialtyRepository;
+    @Autowired
     private  ObjectMapper mapper;
 
     private final String API_URI ="/api/v1/doctors";
+
+    @BeforeEach
+    public void insertSpecialties(){
+        Specialty specialty1 = Specialty.builder().name("Hematology").code("003").build();
+        Specialty specialty2 = Specialty.builder().name("Immunology").code("005").build();
+
+        specialtyRepository.saveAll(List.of(specialty1, specialty2));
+    }
 
     //Create Doctor Endpoint tests
     @Test
@@ -95,6 +110,7 @@ public class DoctorControllerIntegrationTest {
                 .specialty(specialty)
                 .title(TitleEnum.INTERN)
                 .build();
+
         Doctor second_doctor = Doctor.builder()
                 .firstName("Jane")
                 .lastName("Doe")
