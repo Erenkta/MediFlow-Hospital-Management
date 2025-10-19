@@ -36,7 +36,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
-    public ResponseEntity<?> getDepartments(
+    public ResponseEntity<? extends Iterable<DepartmentResponseDto>> getDepartments(
             @Parameter(description = "Pageable info for pagination", required = true)
             @NotNull Pageable pageable,
             @Parameter(description = "Filter criteria for departments")

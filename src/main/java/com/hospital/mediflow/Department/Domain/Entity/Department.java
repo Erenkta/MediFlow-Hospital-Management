@@ -38,8 +38,7 @@ public class Department extends BaseEntity {
 
     @OneToMany(mappedBy = "department")
     private List<Specialty> specialties;
-
-    // TODO What is n+1 problem and when does it occurred ? How can I solve it ?
+    
     // I have added the FetchType.LAZY to avoid the n+1 problem.
     @OneToMany(mappedBy = "department",fetch = FetchType.LAZY)
     @JsonManagedReference

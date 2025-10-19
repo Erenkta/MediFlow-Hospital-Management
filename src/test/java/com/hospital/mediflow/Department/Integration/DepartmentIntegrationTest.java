@@ -49,7 +49,7 @@ public class DepartmentIntegrationTest {
     private final String API_URI ="/api/v1/departments";
 
     @BeforeEach
-    public void insertSpecialties(){
+    void insertSpecialties(){
         Specialty specialty1 = Specialty.builder().name("Cardiology").code("001").build();
         Specialty specialty2 = Specialty.builder().name("N/A").code("000").build();
 
