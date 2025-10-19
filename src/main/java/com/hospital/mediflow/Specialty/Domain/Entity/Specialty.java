@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "specialties",schema = "mediflow_schema")
 @Getter
@@ -12,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class Specialty {
+public class Specialty implements Serializable {
 
     @Id
     private String code;
