@@ -1,12 +1,14 @@
 package com.hospital.mediflow.Patient.Domain.Dtos;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.List;
 
 public record PatientFilterDto(
         String firstName,
         String lastName,
-        Date birthDate,
-        String bloodGroup,
+        LocalDate birthBefore,
+        LocalDate birthAfter,
+        List<String> bloodGroup,
         String gender
 ) {
 }

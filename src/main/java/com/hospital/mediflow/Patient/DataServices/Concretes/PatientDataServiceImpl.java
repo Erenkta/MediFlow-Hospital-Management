@@ -1,16 +1,17 @@
 package com.hospital.mediflow.Patient.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.BaseService;
+import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Mappers.PatientMapper;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
+import com.hospital.mediflow.Patient.Repository.PatientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,14 +20,14 @@ import java.util.List;
 @Service
 public class PatientDataServiceImpl extends BaseService<Patient,Long> implements PatientDataService {
     private final PatientMapper mapper;
-    public PatientDataServiceImpl(JpaRepository<Patient, Long> repository, PatientMapper mapper) {
+    public PatientDataServiceImpl(PatientRepository repository, PatientMapper mapper) {
         super(repository);
         this.mapper = mapper;
     }
 
     @Override
     public List<PatientResponseDto> findAll(PatientFilterDto filterDto) {
-        return repository.findAll().stream().map(mapper::toDto).toList();
+        return ((PatientRepository)repository).findAll(PatientSpecification.hasFilter(filterDto)).stream().map(mapper::toDto).toList();
     }
 
     @Override

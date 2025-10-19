@@ -34,7 +34,7 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(patientService.save(requestDto));
     }
     @PutMapping("/{patient-id}")
-    public ResponseEntity<PatientResponseDto> update(@PathVariable(name = "patient-id") Long id,@RequestBody @Valid PatientRequestDto requestDto){
+    public ResponseEntity<PatientResponseDto> update(@PathVariable(name = "patient-id") Long id,@RequestBody PatientRequestDto requestDto){
         return ResponseEntity.status(HttpStatus.OK).body(patientService.update(id, requestDto));
     }
     @DeleteMapping("/{patient-id}")

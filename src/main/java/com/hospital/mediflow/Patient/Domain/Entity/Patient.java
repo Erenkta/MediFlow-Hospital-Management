@@ -48,9 +48,8 @@ public class Patient extends BaseEntity {
     @NotBlank
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    @ValidateEnum(enumClass = BloodGroupEnum.class,message = "Invalid blood group.")
-    private BloodGroupEnum bloodGroup;
+    @NotBlank
+    private String bloodGroup;
 
     @Enumerated(EnumType.STRING)
     @ValidateEnum(enumClass = GenderEnum.class,message = "Invalid gender value.")

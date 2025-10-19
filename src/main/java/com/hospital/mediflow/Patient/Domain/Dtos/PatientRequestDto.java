@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public record PatientRequestDto(
     @Size(min=2, max=50, message = "Firstname size must be between 2 and 50.")
@@ -23,7 +23,7 @@ public record PatientRequestDto(
 
     @Column(name = "date_of_birth")
     @ValidateBirthDate
-     Date birthDate,
+    LocalDate birthDate,
 
     @ValidatePhone(message = "Phone format is not valid.")
     @NotBlank(message = "Phone must not be empty.")
