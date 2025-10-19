@@ -1,12 +1,12 @@
 package com.hospital.mediflow.Patient.Domain.Dtos;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public record PatientResponseDto(
      Long id,
      String firstName,
      String lastName,
-     Date birthDate,
+     LocalDate birthDate,
      String phone,
      String email,
      String bloodGroup,

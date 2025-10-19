@@ -27,7 +27,7 @@ public enum BloodGroupEnum {
    @JsonCreator
     public static BloodGroupEnum fromValue(String value){
        for(BloodGroupEnum e : BloodGroupEnum.values()){
-           if(e.value.equals(value)){
+           if(e.getValue().equals(value)){
                return e;
            }
        }
