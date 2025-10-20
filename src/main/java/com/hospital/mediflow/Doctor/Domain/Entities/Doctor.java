@@ -78,6 +78,11 @@ public class Doctor extends BaseEntity {
         return Long.parseLong(this.title.getValue()+this.specialty.getCode());
     }
 
+    @Transient
+    public String getFullName(){
+        return firstName + " " + lastName;
+    }
+
     @PrePersist
     public void prePersist(){
         this.doctorCode =generateDoctorCode();

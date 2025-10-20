@@ -4,7 +4,6 @@ import com.hospital.mediflow.Common.Annotations.ValidateBirthDate;
 import com.hospital.mediflow.Common.Annotations.ValidateEnum;
 import com.hospital.mediflow.Common.Annotations.ValidatePhone;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
-import com.hospital.mediflow.Patient.Enums.BloodGroupEnum;
 import com.hospital.mediflow.Patient.Enums.GenderEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -54,5 +53,10 @@ public class Patient extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @ValidateEnum(enumClass = GenderEnum.class,message = "Invalid gender value.")
     private GenderEnum gender;
+
+    @Transient
+    public String getFullName(){
+        return firstName + " " + lastName;
+    }
 
 }
