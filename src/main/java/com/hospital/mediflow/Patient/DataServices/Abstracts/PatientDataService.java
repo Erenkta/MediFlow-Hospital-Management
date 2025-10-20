@@ -15,5 +15,4 @@ public interface PatientDataService {
     PatientResponseDto save(PatientRequestDto patientResponseDto);
     PatientResponseDto update(Long id,PatientRequestDto patientResponseDto);
     void deleteById(Long id);
-
 }
