@@ -1,6 +1,10 @@
 package com.hospital.mediflow.Appointment.Domain.Entity;
 
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
+import com.hospital.mediflow.Appointment.Enums.States.AppointmentState;
+import com.hospital.mediflow.Appointment.Enums.States.ApprovedState;
+import com.hospital.mediflow.Appointment.Enums.States.NoActionState;
+import com.hospital.mediflow.Appointment.Enums.States.PendingState;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
@@ -56,5 +60,13 @@ public class Appointment extends BaseEntity {
         String formattedDate = appointmentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         String appointmentRequestMessage = String.format("Appointment request has been created. Requested by : %s , Requested Date : %s, Requested Doctor : %s",patient.getFullName(),formattedDate,doctor.getFullName());
         log.info(appointmentRequestMessage);
+    }
+    @Transient
+    public AppointmentState getState() {
+        return switch (status) {
+            case PENDING -> new PendingState();
+            case APPROVED -> new ApprovedState();
+            case REJECTED, DONE -> new NoActionState();
+        };
     }
 }
