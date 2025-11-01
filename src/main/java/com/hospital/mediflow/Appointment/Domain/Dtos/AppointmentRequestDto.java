@@ -17,6 +17,9 @@ public record AppointmentRequestDto (
 
         LocalDateTime appointmentDate,
 
-        String reason
+        String reason,
+
+        @ValidateEnum(enumClass = AppointmentStatusEnum.class,message = "Invalid Status Enum")
+        AppointmentStatusEnum status
 ){
 }
