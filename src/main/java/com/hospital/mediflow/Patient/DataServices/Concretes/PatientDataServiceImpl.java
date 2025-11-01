@@ -41,6 +41,11 @@ public class PatientDataServiceImpl extends BaseService<Patient,Long> implements
     }
 
     @Override
+    public Patient getReferenceById(Long id) {
+        return this.findByIdOrThrow(id);
+    }
+
+    @Override
     public PatientResponseDto save(PatientRequestDto requestDto) {
         return mapper.toDto(repository.save(mapper.toEntity(requestDto)));
     }
