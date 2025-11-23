@@ -7,7 +7,9 @@ import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface AppointmentService {
@@ -18,5 +20,6 @@ public interface AppointmentService {
     AppointmentResponseDto update(Long id,AppointmentRequestDto appointmentRequestDto);
     AppointmentResponseDto updateStatus(Long id, AppointmentStatusEnum newStatus);
     AppointmentResponseDto rescheduleAppointment(Long id, LocalDateTime newDate);
+    List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDate appointmentDate);
     void deleteById(Long id);
 }

@@ -9,6 +9,7 @@ import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Enums.States.AppointmentState;
 import com.hospital.mediflow.Appointment.Repository.AppointmentRepository;
 import com.hospital.mediflow.Common.BaseService;
+import com.hospital.mediflow.Common.Configuration.AppointmentProperties;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
 import com.hospital.mediflow.Common.Specifications.AppointmentSpecification;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
@@ -17,13 +18,19 @@ import com.hospital.mediflow.Mappers.AppointmentMapper;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.stream.Streams;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -33,7 +40,10 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
     private final PatientDataService patientDataService;
     private final DoctorDataService doctorDataService;
 
-    AppointmentDataServiceImpl(AppointmentRepository repository,AppointmentMapper mapper,PatientDataService patientDataService,DoctorDataService doctorDataService) {
+    AppointmentDataServiceImpl(AppointmentRepository repository,
+                               AppointmentMapper mapper,
+                               PatientDataService patientDataService,
+                               DoctorDataService doctorDataService) {
         super(repository);
         this.extendedRepository = repository;
         this.patientDataService = patientDataService;
@@ -92,5 +102,22 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
         Appointment appointment = this.findByIdOrThrow(id);
         appointment.setStatus(AppointmentStatusEnum.REJECTED);
         repository.save(appointment);
+    }
+
+    @Override
+    public List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDateTime startDateTime,LocalDateTime endDateTime){
+        List<LocalTime> appointmentDates = new ArrayList<>();
+        LocalDateTime cursor = startDateTime;
+
+        while (!cursor.isAfter(endDateTime)) {
+            appointmentDates.add(cursor.toLocalTime());
+            cursor = cursor.plusMinutes(30);
+        }
+        Set<LocalTime> occupiedDates = new HashSet<>(extendedRepository.findDoctorAppointmentDates(startDateTime, endDateTime, doctorId)
+                .stream()
+                .map(Timestamp::toLocalDateTime)
+                .map(item -> LocalTime.of(item.getHour(),item.getMinute(),item.getSecond()))
+                .toList());
+       return appointmentDates.stream().filter(item -> !occupiedDates.contains(item)).sorted(Comparator.naturalOrder()).toList();
     }
 }
