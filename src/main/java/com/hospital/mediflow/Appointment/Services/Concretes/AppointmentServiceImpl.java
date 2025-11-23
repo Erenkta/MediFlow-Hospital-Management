@@ -9,6 +9,8 @@ import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
 import com.hospital.mediflow.Common.Configuration.AppointmentProperties;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
+import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
+import com.hospital.mediflow.DoctorDepartments.Services.Abstracts.DoctorDepartmentService;
 import com.hospital.mediflow.Mappers.AppointmentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentDataService appointmentDataService;
     private final AppointmentMapper mapper;
     private final AppointmentProperties appointmentProperties;
+    private final DoctorService doctorService;
 
     @Override
     public List<AppointmentResponseDto> findAll(AppointmentFilterDto filterDto) {
@@ -49,13 +52,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional
     public AppointmentResponseDto save(AppointmentRequestDto appointmentRequestDto) {
-        if(appointmentDataService.isAppointmentAvailable(
+        // Check if we can request an appointment to given department
+        boolean isDepartmentAvailable = appointmentDataService.isDepartmentAvailable(appointmentRequestDto.patientId(),appointmentRequestDto.departmentId());
+        // Check if requested appointment date is free.
+        boolean isAppointmentAvailable = appointmentDataService.isAppointmentAvailable(
                 appointmentRequestDto.doctorId(),
                 appointmentRequestDto.appointmentDate()
-        )){
+        );
+        if( isAppointmentAvailable && isDepartmentAvailable){
             return appointmentDataService.save(appointmentRequestDto);
         }
-        throw new AppointmentNotAvailableException("Selected appointment date is not available to select. Appointments must have at least 30 minutes between them.");
+        throw new AppointmentNotAvailableException("Selected appointment date is not available to select. Please check the appointment date and availability.");
     }
 
 

@@ -6,11 +6,8 @@ import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentRequestDto;
 import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
-import com.hospital.mediflow.Appointment.Enums.States.AppointmentState;
 import com.hospital.mediflow.Appointment.Repository.AppointmentRepository;
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Configuration.AppointmentProperties;
-import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
 import com.hospital.mediflow.Common.Specifications.AppointmentSpecification;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
@@ -18,19 +15,14 @@ import com.hospital.mediflow.Mappers.AppointmentMapper;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.stream.Streams;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -85,6 +77,11 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
                         appointmentDate.plusMinutes(30),
                         appointmentDate.minusMinutes(30)
                 )).isEmpty();
+    }
+
+    @Override
+    public boolean isDepartmentAvailable(Long patientId,Long departmentId){
+        return  extendedRepository.getDepartmentStatus(patientId,departmentId).getAppointmentAvailable();
     }
 
     @Override
