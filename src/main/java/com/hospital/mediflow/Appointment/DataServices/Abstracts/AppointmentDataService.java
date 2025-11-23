@@ -20,6 +20,7 @@ public interface AppointmentDataService {
     AppointmentResponseDto save(AppointmentRequestDto patientResponseDto);
     boolean isAppointmentAvailable(Long doctorId, LocalDateTime appointmentDate);
     List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDateTime startDateTime,LocalDateTime endDateTime);
+    boolean isDepartmentAvailable(Long patientId,Long departmentId);
     AppointmentResponseDto update(Long id, Appointment appointment);
     void deleteById(Long id);
 }

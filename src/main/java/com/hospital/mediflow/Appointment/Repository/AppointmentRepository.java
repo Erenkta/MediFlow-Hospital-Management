@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Appointment.Repository;
 
+import com.hospital.mediflow.Appointment.Domain.Dtos.AvailableAppointments;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,24 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Timestamp> findDoctorAppointmentDates(@Param("app_date_start") LocalDateTime appointmentStart,
                                                @Param("app_date_end") LocalDateTime appointmentEnd,
                                                @Param("doctor_id") Long doctorId);
+
+
+    @Query(value = """
+      SELECT
+        d.id AS department_id,
+        d.name AS department_name,
+        COUNT(dd.doctor_id) = 0 AS appointment_available
+      FROM mediflow_schema.patients p
+      CROSS JOIN mediflow_schema.departments d
+      LEFT JOIN mediflow_schema.appointments as a
+          ON a.patient_id = p.id
+      LEFT JOIN mediflow_schema.doctor_department dd
+          ON a.doctor_id = dd.doctor_id AND dd.department_id = d.id
+      WHERE p.id = :patient_id and d.id = :department_id
+      GROUP BY p.id, p.first_name, d.id, d.name
+""",nativeQuery = true)
+    AvailableAppointments getDepartmentStatus(@Param("patient_id") Long patientId,@Param("department_id") Long departmentId);
+
 
     List<Appointment> findAll(Specification<Appointment> specification);
     Page<Appointment> findAll(Specification<Appointment> specification,Pageable pageable);

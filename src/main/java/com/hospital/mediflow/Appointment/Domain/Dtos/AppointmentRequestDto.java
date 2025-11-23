@@ -15,6 +15,9 @@ public record AppointmentRequestDto (
         @NotNull
         Long doctorId,
 
+        @NotNull
+        Long departmentId,
+
         LocalDateTime appointmentDate,
 
         String reason
