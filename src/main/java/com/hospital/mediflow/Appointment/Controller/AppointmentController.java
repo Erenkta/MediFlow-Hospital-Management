@@ -12,7 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/appointments")
@@ -32,6 +35,10 @@ public class AppointmentController {
     @GetMapping("/{appointment-id}")
     public ResponseEntity<AppointmentResponseDto> findById(@PathVariable("appointment-id") Long id){
         return ResponseEntity.status(HttpStatus.OK).body(appointmentService.findById(id));
+    }
+    @GetMapping("/{doctor-id}/available-appointments")
+    public ResponseEntity<List<LocalTime>> findAvailableAppointments(@PathVariable("doctor-id") Long doctorId,@RequestParam("appointment-date") LocalDate appointmentDate){
+        return ResponseEntity.status(HttpStatus.OK).body(appointmentService.getAvailableAppointmentDates(doctorId,appointmentDate));
     }
     @PostMapping
     public ResponseEntity<AppointmentResponseDto> save(@RequestBody @Valid AppointmentRequestDto requestDto){

@@ -7,6 +7,7 @@ import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
+import com.hospital.mediflow.Common.Configuration.AppointmentProperties;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
 import com.hospital.mediflow.Mappers.AppointmentMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,6 +29,7 @@ import java.util.Objects;
 public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentDataService appointmentDataService;
     private final AppointmentMapper mapper;
+    private final AppointmentProperties appointmentProperties;
 
     @Override
     public List<AppointmentResponseDto> findAll(AppointmentFilterDto filterDto) {
@@ -87,6 +91,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         throw new AppointmentNotAvailableException("Selected appointment date is not available to reschedule. Appointments must have at least 30 minutes between them.");
 
+    }
+    @Transactional(readOnly = true)
+    public List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDate appointmentDate){
+        LocalDateTime startDateTime = LocalDateTime.of(appointmentDate, appointmentProperties.getStartTime());
+        LocalDateTime endDateTime = LocalDateTime.of(appointmentDate, appointmentProperties.getEndTime());
+
+        return appointmentDataService.getAvailableAppointmentDates(doctorId,startDateTime,endDateTime);
     }
 
     private boolean isAppointmentUpdatable(Appointment appointment){
