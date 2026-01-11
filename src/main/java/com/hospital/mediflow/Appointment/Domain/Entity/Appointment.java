@@ -66,7 +66,7 @@ public class Appointment extends BaseEntity {
         return switch (status) {
             case PENDING -> new PendingState();
             case APPROVED -> new ApprovedState();
-            case REJECTED, DONE -> new NoActionState();
+            default -> new NoActionState();
         };
     }
 }
