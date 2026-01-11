@@ -58,5 +58,4 @@ public class Patient extends BaseEntity {
     public String getFullName(){
         return firstName + " " + lastName;
     }
-
 }
