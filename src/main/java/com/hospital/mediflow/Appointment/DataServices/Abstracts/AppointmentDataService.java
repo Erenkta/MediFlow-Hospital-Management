@@ -18,6 +18,7 @@ public interface AppointmentDataService {
     AppointmentResponseDto findById(Long id);
     Appointment getReferenceById(Long id);
     AppointmentResponseDto save(AppointmentRequestDto patientResponseDto);
+    AppointmentResponseDto saveAndFlush(AppointmentRequestDto patientResponseDto);
     boolean isAppointmentAvailable(Long doctorId, LocalDateTime appointmentDate);
     List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDateTime startDateTime,LocalDateTime endDateTime);
     boolean isDepartmentAvailable(Long patientId,Long departmentId);

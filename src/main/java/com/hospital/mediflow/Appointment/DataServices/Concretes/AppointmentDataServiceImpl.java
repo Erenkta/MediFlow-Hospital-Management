@@ -70,6 +70,17 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
         return mapper.toDto(repository.save(appointment));
     }
     @Override
+    public AppointmentResponseDto saveAndFlush(AppointmentRequestDto appointmentRequestDto) {
+        Appointment appointment = mapper.toEntity(appointmentRequestDto);
+        Patient patient = patientDataService.getReferenceById(appointmentRequestDto.patientId());
+        Doctor doctor = doctorDataService.getReferenceById(appointmentRequestDto.doctorId());
+
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+
+        return mapper.toDto(repository.saveAndFlush(appointment));
+    }
+    @Override
     public boolean isAppointmentAvailable(Long doctorId,LocalDateTime appointmentDate){
         return extendedRepository.findAll(
                 AppointmentSpecification.filterAvailableAppointments(

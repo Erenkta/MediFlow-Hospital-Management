@@ -14,6 +14,7 @@ import com.hospital.mediflow.DoctorDepartments.Services.Abstracts.DoctorDepartme
 import com.hospital.mediflow.Mappers.AppointmentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -60,11 +61,15 @@ public class AppointmentServiceImpl implements AppointmentService {
                 appointmentRequestDto.appointmentDate()
         );
         if( isAppointmentAvailable && isDepartmentAvailable){
-            return appointmentDataService.save(appointmentRequestDto);
+            try{
+                return appointmentDataService.saveAndFlush(appointmentRequestDto);
+            }catch (DataIntegrityViolationException ex){
+                log.error("Appointment has already been occupied.");
+                throw new AppointmentNotAvailableException("Appointment has already been occupied. Please try with another appointment time.");
+            }
         }
         throw new AppointmentNotAvailableException("Selected appointment date is not available to select. Please check the appointment date and availability.");
     }
-
 
     @Override
     public AppointmentResponseDto updateStatus(Long id,AppointmentStatusEnum newStatus){
