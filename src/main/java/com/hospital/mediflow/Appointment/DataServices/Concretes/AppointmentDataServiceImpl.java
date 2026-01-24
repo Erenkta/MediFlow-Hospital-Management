@@ -8,6 +8,7 @@ import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Repository.AppointmentRepository;
 import com.hospital.mediflow.Common.BaseService;
+import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Specifications.AppointmentSpecification;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
@@ -70,6 +71,17 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
         return mapper.toDto(repository.save(appointment));
     }
     @Override
+    public AppointmentResponseDto saveAndFlush(AppointmentRequestDto appointmentRequestDto) {
+        Appointment appointment = mapper.toEntity(appointmentRequestDto);
+        Patient patient = patientDataService.getReferenceById(appointmentRequestDto.patientId());
+        Doctor doctor = doctorDataService.getReferenceById(appointmentRequestDto.doctorId());
+
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+
+        return mapper.toDto(repository.saveAndFlush(appointment));
+    }
+    @Override
     public boolean isAppointmentAvailable(Long doctorId,LocalDateTime appointmentDate){
         return extendedRepository.findAll(
                 AppointmentSpecification.filterAvailableAppointments(
@@ -92,6 +104,15 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
     @Override
     public Appointment getReferenceById(Long id){
         return this.findByIdOrThrow(id);
+    }
+    @Override
+    public Appointment findByIdLocked(Long id) {
+        return
+                extendedRepository.findByIdLocked(id)
+                        .orElseThrow(() -> new RecordNotFoundException(
+                                String.format("Appointment not found with id: %s",id)
+                        ));
+
     }
 
     @Override

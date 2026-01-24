@@ -1,10 +1,7 @@
 package com.hospital.mediflow.Appointment.Domain.Entity;
 
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
-import com.hospital.mediflow.Appointment.Enums.States.AppointmentState;
-import com.hospital.mediflow.Appointment.Enums.States.ApprovedState;
-import com.hospital.mediflow.Appointment.Enums.States.NoActionState;
-import com.hospital.mediflow.Appointment.Enums.States.PendingState;
+import com.hospital.mediflow.Appointment.Enums.States.*;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
@@ -66,6 +63,7 @@ public class Appointment extends BaseEntity {
         return switch (status) {
             case PENDING -> new PendingState();
             case APPROVED -> new ApprovedState();
+            case CANCELLED -> new CancelledState();
             default -> new NoActionState();
         };
     }

@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX  uq_appointment_doctor
+ON mediflow_schema.appointments(doctor_id,appointment_date)

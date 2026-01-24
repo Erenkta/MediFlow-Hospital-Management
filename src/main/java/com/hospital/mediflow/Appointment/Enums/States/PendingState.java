@@ -13,11 +13,16 @@ public class PendingState extends AppointmentState{
     public void rescheduled(Appointment appointment){
         appointment.setStatus(AppointmentStatusEnum.PENDING);
     }
+    @Override
+    public void cancel(Appointment appointment) {
+        appointment.setStatus(AppointmentStatusEnum.CANCELLED);
+    }
     public void handleTransition(Appointment appointment,AppointmentStatusEnum newStatus){
         switch (newStatus) {
             case APPROVED -> approve(appointment);
             case REJECTED -> reject(appointment);
-            default -> throw new InvalidStatusTransitionException("Pending only can go to APPROVED or REJECTED");
+            case CANCELLED -> cancel(appointment);
+            default -> throw new InvalidStatusTransitionException("Pending only can go to APPROVED,CANCELLED or REJECTED");
         }
     }
 }
