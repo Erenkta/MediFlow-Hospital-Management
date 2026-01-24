@@ -8,6 +8,7 @@ import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Repository.AppointmentRepository;
 import com.hospital.mediflow.Common.BaseService;
+import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Specifications.AppointmentSpecification;
 import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
@@ -103,6 +104,15 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
     @Override
     public Appointment getReferenceById(Long id){
         return this.findByIdOrThrow(id);
+    }
+    @Override
+    public Appointment findByIdLocked(Long id) {
+        return
+                extendedRepository.findByIdLocked(id)
+                        .orElseThrow(() -> new RecordNotFoundException(
+                                String.format("Appointment not found with id: %s",id)
+                        ));
+
     }
 
     @Override

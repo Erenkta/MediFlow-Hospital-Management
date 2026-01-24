@@ -9,8 +9,6 @@ import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
 import com.hospital.mediflow.Common.Configuration.AppointmentProperties;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
-import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
-import com.hospital.mediflow.DoctorDepartments.Services.Abstracts.DoctorDepartmentService;
 import com.hospital.mediflow.Mappers.AppointmentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Slf4j
@@ -33,7 +30,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentDataService appointmentDataService;
     private final AppointmentMapper mapper;
     private final AppointmentProperties appointmentProperties;
-    private final DoctorService doctorService;
 
     @Override
     public List<AppointmentResponseDto> findAll(AppointmentFilterDto filterDto) {
@@ -72,11 +68,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional
     public AppointmentResponseDto updateStatus(Long id,AppointmentStatusEnum newStatus){
-        Appointment appointment = appointmentDataService.getReferenceById(id);
-        if(Objects.nonNull(newStatus)){
-            appointment.getState().handleTransition(appointment, newStatus);
-        }
+        Appointment appointment = appointmentDataService.findByIdLocked(id);
+        appointment.getState().handleTransition(appointment, newStatus);
         return appointmentDataService.update(id, appointment);
     }
     @Override

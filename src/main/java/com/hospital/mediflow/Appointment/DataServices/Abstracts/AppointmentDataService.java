@@ -16,6 +16,7 @@ public interface AppointmentDataService {
     List<AppointmentResponseDto> findAll(AppointmentFilterDto filterDto);
     Page<AppointmentResponseDto> findAll(Pageable pageable, AppointmentFilterDto filterDto);
     AppointmentResponseDto findById(Long id);
+    Appointment findByIdLocked(Long id);
     Appointment getReferenceById(Long id);
     AppointmentResponseDto save(AppointmentRequestDto patientResponseDto);
     AppointmentResponseDto saveAndFlush(AppointmentRequestDto patientResponseDto);

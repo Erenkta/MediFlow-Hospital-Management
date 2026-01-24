@@ -14,12 +14,16 @@ public class ApprovedState extends AppointmentState{
     public void rescheduled(Appointment appointment){
         appointment.setStatus(AppointmentStatusEnum.PENDING);
     }
+    @Override
+    public void ongoing(Appointment appointment) {
+        appointment.setStatus(AppointmentStatusEnum.APPROVED);
+    }
 
     public void handleTransition(Appointment appointment,AppointmentStatusEnum newStatus){
         switch (newStatus) {
-            case DONE -> approve(appointment);
             case REJECTED -> reject(appointment);
-            default -> throw new InvalidStatusTransitionException("Approved only can go to DONE or REJECTED");
+            case ON_GOING -> ongoing(appointment);
+            default -> throw new InvalidStatusTransitionException("Approved only can go to ON GOING or REJECTED");
         }
     }
 }

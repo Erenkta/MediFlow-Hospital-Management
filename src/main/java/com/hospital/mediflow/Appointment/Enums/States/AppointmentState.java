@@ -11,6 +11,12 @@ public abstract class AppointmentState {
      public void reject(Appointment appointment ) {
         appointment.setStatus(AppointmentStatusEnum.REJECTED);
     }
+    public void cancel(Appointment appointment){
+         throw new InvalidStatusTransitionException("Cannot cancel from " + appointment.getStatus());
+    }
+    public void ongoing(Appointment appointment) {
+         throw new InvalidStatusTransitionException("Cannot ongoing from " + appointment.getStatus());
+    }
 
     public void rescheduled(Appointment appointment ) {
         throw new InvalidStatusTransitionException("Cannot reschedule from " + appointment.getStatus());
