@@ -11,7 +11,10 @@ public enum ErrorCode {
     VALIDATION_ERROR("403"),
     ILLEGAL_ARGUMENT("400"),
     METHOD_ARGUMENT_NOT_VALID("400"),
-    RECORD_ALREADY_EXISTS("400");
+    RECORD_ALREADY_EXISTS("400"),
+    AUTHENTICATION_EXCEPTION("400")
+
+    ;
 
     private final String statusCode;
 
