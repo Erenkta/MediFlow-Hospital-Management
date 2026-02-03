@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     private final JWTService jwtService;
 
     @Override
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAuthority('manager:create')")
     public UserRegisterResponse register(UserRegister register) {
         User user = userRepository.findByUsername(register.username());
         if(user != null){

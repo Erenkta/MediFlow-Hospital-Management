@@ -8,6 +8,7 @@ import com.hospital.mediflow.Security.Services.Abstracts.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class UserController {
     private final UserService service;
 
     @PostMapping("/register")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<UserRegisterResponse> register(@RequestBody @Valid UserRegister register){
         return ResponseEntity.ok(service.register(register));
     }
