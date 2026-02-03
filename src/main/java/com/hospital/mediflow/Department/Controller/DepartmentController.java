@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<? extends Iterable<DepartmentResponseDto>> getDepartments(
             @Parameter(description = "Pageable info for pagination", required = true)
             @NotNull Pageable pageable,
@@ -55,6 +57,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<DepartmentResponseDto> getDepartmentById(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id) {
@@ -69,6 +72,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DepartmentResponseDto> createDepartment(
             @Parameter(description = "Department data to create", required = true)
             @Valid @RequestBody DepartmentRequestDto requestDto) {
@@ -83,6 +87,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DepartmentResponseDto> updateDepartment(
             @Parameter(description = "ID of the department to update", required = true)
             @PathVariable Long id,
@@ -99,6 +104,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PatchMapping("/{id}/add-specialties")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DepartmentResponseDto> addSpecialties(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id,
@@ -115,6 +121,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PatchMapping("/{id}/remove-specialties")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DepartmentResponseDto> removeSpecialties(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id,
@@ -130,6 +137,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> deleteDepartment(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id) {

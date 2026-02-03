@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,24 +21,28 @@ public class MedicalRecordController {
     private final MedicalRecordService medicalRecordService;
 
     @GetMapping()
-    public ResponseEntity<?> getDoctors(@NotNull Pageable pageable, MedicalRecordFilterDto filter){
+    @PreAuthorize("hasAnyRole('PATIENT','DOCTOR')")
+    public ResponseEntity<?> getMedicalRecords(@NotNull Pageable pageable, MedicalRecordFilterDto filter){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(medicalRecordService.findAllMedicalRecords(filter))
                 : ResponseEntity.status(HttpStatus.OK).body(medicalRecordService.findAllMedicalRecords(pageable,filter));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PATIENT','DOCTOR')")
     public ResponseEntity<MedicalRecordResponseDto> getMedicalRecordById(@PathVariable Long id) {
         MedicalRecordResponseDto record = medicalRecordService.findMedicalRecordById(id);
         return ResponseEntity.ok(record);
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<MedicalRecordResponseDto> createMedicalRecord( @RequestBody @Valid MedicalRecordRequestDto requestDto) {
         MedicalRecordResponseDto created = medicalRecordService.createMedicalRecord(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<MedicalRecordResponseDto> updateMedicalRecord(
             @PathVariable Long id,
             @RequestBody @Valid MedicalRecordRequestDto requestDto) {
@@ -47,6 +52,7 @@ public class MedicalRecordController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('MANAGER')")
     public void deleteMedicalRecord(@PathVariable Long id) {
         medicalRecordService.deleteMedicalRecord(id);
     }

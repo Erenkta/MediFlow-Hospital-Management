@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,22 +33,26 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentProperties appointmentProperties;
 
     @Override
+    @PreAuthorize("hasAnyAuthority('doctor:read','patient:read')")
     public List<AppointmentResponseDto> findAll(AppointmentFilterDto filterDto) {
         return appointmentDataService.findAll(filterDto);
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('doctor:read','patient:read')")
     public Page<AppointmentResponseDto> findAll(Pageable pageable, AppointmentFilterDto filterDto) {
         return appointmentDataService.findAll(pageable, filterDto);
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('doctor:read','patient:read')")
     public AppointmentResponseDto findById(Long id) {
         return appointmentDataService.findById(id);
     }
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyAuthority('doctor:create','patient:create')")
     public AppointmentResponseDto save(AppointmentRequestDto appointmentRequestDto) {
         // Check if we can request an appointment to given department
         boolean isDepartmentAvailable = appointmentDataService.isDepartmentAvailable(appointmentRequestDto.patientId(),appointmentRequestDto.departmentId());
@@ -69,6 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyAuthority('doctor:update','patient:update')")
     public AppointmentResponseDto updateStatus(Long id,AppointmentStatusEnum newStatus){
         Appointment appointment = appointmentDataService.findByIdLocked(id);
         appointment.getState().handleTransition(appointment, newStatus);
@@ -76,6 +82,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
     @Override
     @Transactional
+    @PreAuthorize("hasAnyAuthority('doctor:update','patient:update')")
     public AppointmentResponseDto update(Long id, AppointmentRequestDto appointmentRequestDto) {
         Appointment appointment = appointmentDataService.getReferenceById(id);
         if(isAppointmentUpdatable(appointment)){
@@ -86,6 +93,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     }
     @Override
+    @PreAuthorize("hasAnyAuthority('doctor:update','patient:update')")
     public AppointmentResponseDto rescheduleAppointment(Long id, LocalDateTime newDate) {
         Appointment appointment = appointmentDataService.getReferenceById(id);
         appointment.getState().rescheduled(appointment);
@@ -100,6 +108,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     }
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('patient:read')")
     public List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDate appointmentDate){
         LocalDateTime startDateTime = LocalDateTime.of(appointmentDate, appointmentProperties.getStartTime());
         LocalDateTime endDateTime = LocalDateTime.of(appointmentDate, appointmentProperties.getEndTime());
@@ -114,6 +123,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('patient:delete')")
     public void deleteById(Long id) {
         appointmentDataService.deleteById(id);
     }

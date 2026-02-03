@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Doctor Controller",description = "APIs for managing doctors")
@@ -36,6 +37,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Invalid request data")
     })
     @PostMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DoctorResponseDto> createDoctor(@Valid @RequestBody DoctorRequestDto request){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.saveDoctor(request));
     }
@@ -46,6 +48,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Invalid pagination or filter parameters")
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<?> getDoctors(@NotNull Pageable pageable, DoctorFilterDto filter){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(filter))
@@ -63,6 +66,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)),description = "Invalid parameters")
     })
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('MANAGER','DOCTOR')")
     public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) String specialty,@Valid @RequestParam(value = "title",required = false) TitleEnum title){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(specialty,title))
@@ -76,6 +80,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "404",content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Doctor not found")
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<?> getDoctorById(@PathVariable("id") Long id){
         return ResponseEntity.ok(service.findDoctorById(id));
     }
@@ -88,6 +93,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Invalid input data")
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER','DOCTOR')")
     public ResponseEntity<DoctorResponseDto> updateDoctor(@PathVariable("id") Long id,@RequestBody DoctorRequestDto request){
        return ResponseEntity.status(HttpStatus.OK).body(service.updateDoctor(id,request));
     }
@@ -98,6 +104,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Doctor not found")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long id){
         service.deleteDoctor(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

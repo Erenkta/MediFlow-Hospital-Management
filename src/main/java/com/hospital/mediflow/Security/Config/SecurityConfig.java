@@ -42,12 +42,19 @@ public class SecurityConfig {
                         //UserController
                         .requestMatchers("/api/v1/users/login")
                         .permitAll()
-                        //
-                        .requestMatchers("/api/v1/billings/**")
-                        .hasAnyRole(Role.MANAGER.name(),Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/v1/doctors").hasAnyAuthority(Permission.ADMIN_READ.name())
-                        //
+//                        //BillingController
+//                        .requestMatchers("/api/v1/billings/**")
+//                        .permitAll()
+//                        //DoctorController
+//                        .requestMatchers("/api/v1/doctors/**")
+//                        .permitAll()
+//                        //
+//                        //DepartmentController
+//                        .requestMatchers("/api/v1/departments/**")
+//                        .permitAll()
+//                        //
+//                        //AppointmentController
+//                        .requestMatchers("/api/v1/appointments/**")
                         .anyRequest().authenticated()
                 ) // Any request should be authenticated.
                 .httpBasic(Customizer.withDefaults()) //

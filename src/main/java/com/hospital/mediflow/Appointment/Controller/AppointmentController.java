@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<? extends Iterable<AppointmentResponseDto>> findAll(Pageable pageable, AppointmentFilterDto filterDto){
         return ResponseEntity.status(HttpStatus.OK).body(
                 pageable.isUnpaged()
@@ -33,30 +35,37 @@ public class AppointmentController {
         );
     }
     @GetMapping("/{appointment-id}")
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<AppointmentResponseDto> findById(@PathVariable("appointment-id") Long id){
         return ResponseEntity.status(HttpStatus.OK).body(appointmentService.findById(id));
     }
     @GetMapping("/{doctor-id}/available-appointments")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<List<LocalTime>> findAvailableAppointments(@PathVariable("doctor-id") Long doctorId,@RequestParam("appointment-date") LocalDate appointmentDate){
         return ResponseEntity.status(HttpStatus.OK).body(appointmentService.getAvailableAppointmentDates(doctorId,appointmentDate));
     }
     @PostMapping
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<AppointmentResponseDto> save(@RequestBody @Valid AppointmentRequestDto requestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.save(requestDto));
     }
     @PutMapping("/{appointment-id}")
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<AppointmentResponseDto> update(@PathVariable(name = "appointment-id") Long id,@RequestBody AppointmentRequestDto requestDto){
         return ResponseEntity.status(HttpStatus.OK).body(appointmentService.update(id, requestDto));
     }
     @PatchMapping("/{appointment-id}/status")
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<AppointmentResponseDto> updateStatus(@PathVariable(name = "appointment-id") Long id,@Valid @RequestBody AppointmentStatusEnum newStatus){
         return ResponseEntity.status(HttpStatus.OK).body(appointmentService.updateStatus(id, newStatus));
     }
     @PatchMapping("/{appointment-id}/reschedule")
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<AppointmentResponseDto> updateStatus(@PathVariable(name = "appointment-id") Long id,@Valid @RequestBody LocalDateTime newDate){
         return ResponseEntity.status(HttpStatus.OK).body(appointmentService.rescheduleAppointment(id, newDate));
     }
     @DeleteMapping("/{appointment-id}")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<Void> delete(@PathVariable(name = "appointment-id") Long id){
         appointmentService.deleteById(id);
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();

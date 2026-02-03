@@ -22,32 +22,34 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/billings")
-@PreAuthorize("hasRole('ADMIN')")
 public class BillingController {
 
     private final BillingService billingService;
 
     @GetMapping()
-    @PreAuthorize("hasAuthority('admin:read')")
-    public ResponseEntity<?> getDoctors(@NotNull Pageable pageable, BillingFilterDto filter){
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<?> getBillings(@NotNull Pageable pageable, BillingFilterDto filter){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(billingService.findAllBillings(filter))
                 : ResponseEntity.status(HttpStatus.OK).body(billingService.findAllBillings(pageable,filter));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BillingResponseDto> getMedicalRecordById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('MANAGER','PATIENT')")
+    public ResponseEntity<BillingResponseDto> getBillingById(@PathVariable Long id) {
         BillingResponseDto record = billingService.findBillingById(id);
         return ResponseEntity.ok(record);
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BillingResponseDto> createMedicalRecord( @RequestBody @Valid BillingRequestDto requestDto) {
+    @PreAuthorize("hasAnyRole('MANAGER')")
+    public ResponseEntity<BillingResponseDto> createBilling( @RequestBody @Valid BillingRequestDto requestDto) {
         BillingResponseDto created = billingService.createBilling(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<BillingResponseDto> updateMedicalRecord(
+    @PreAuthorize("hasAnyRole('MANAGER')")
+    public ResponseEntity<BillingResponseDto> updateBilling(
             @PathVariable Long id,
             @RequestBody @Valid BillingRequestDto requestDto) {
         BillingResponseDto updated = billingService.updateBilling(id, requestDto);
@@ -56,7 +58,8 @@ public class BillingController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMedicalRecord(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('MANAGER')")
+    public void deleteBilling(@PathVariable Long id) {
         billingService.deleteBilling(id);
     }
 
