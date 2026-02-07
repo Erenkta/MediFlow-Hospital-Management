@@ -15,6 +15,9 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRole().getAuthorities();
     }
+    public Long getResourceId() {
+        return user.getResourceId();
+    }
 
     @Override
     public String getPassword() {

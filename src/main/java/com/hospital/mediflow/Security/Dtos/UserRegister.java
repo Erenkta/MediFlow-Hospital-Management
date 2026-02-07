@@ -12,6 +12,8 @@ public record UserRegister(
         String password,
         @NotNull
         @ValidateEnum(enumClass = Role.class,message = "Invalid role value")
-        Role role
+        Role role,
+        @NotNull
+        Long resourceId
 ) {
 }

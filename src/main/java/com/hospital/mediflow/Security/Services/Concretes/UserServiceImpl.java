@@ -54,9 +54,11 @@ public class UserServiceImpl implements UserService {
              UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
              User currentUser = principal.getUser();
              if(auth.isAuthenticated()){
-                 String accessToken = jwtService.generateToken(login.username());
+                 String accessToken = jwtService.generateToken(login.username(),currentUser);
                  return new UserLoginResponse(currentUser.getUsername(),
-                         accessToken,currentUser.getRole(),
+                         accessToken,
+                         currentUser.getResourceId(),
+                         currentUser.getRole(),
                          currentUser.getRole().getAuthorities().stream().map(SimpleGrantedAuthority::getAuthority).filter(item -> !item.contains("ROLE_")).collect(Collectors.toSet()));
              }
              throw new BadCredentialsException("Invalid username or password. Please try again with different credentials.");

@@ -1,11 +1,12 @@
 package com.hospital.mediflow.Security.Services.Concretes;
 
+import com.hospital.mediflow.Security.Dtos.Entity.User;
 import com.hospital.mediflow.Security.Services.Abstracts.JWTService;
+import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,9 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public String generateToken(String username) {
+    public String generateToken(String username,User currentUser) {
         Map<String,Object> claims = new HashMap<>();
+        claims.put("resource_id",currentUser.getResourceId());
         return Jwts.builder()
                 .claims()
                 .add(claims)

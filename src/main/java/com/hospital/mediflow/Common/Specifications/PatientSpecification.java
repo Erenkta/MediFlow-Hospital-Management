@@ -1,8 +1,11 @@
 package com.hospital.mediflow.Common.Specifications;
 
+import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
+import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
+import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -47,6 +50,45 @@ public class PatientSpecification extends BaseSpecification<Patient> {
                 gender == null ? null : criteriaBuilder.like(root.get("gender"),gender);
     }
 
+    public static Specification<Patient> withDoctorId(Long doctorId){
+        return (root,query,cb) ->{
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<Appointment> appt = subquery.from(Appointment.class);
+
+            subquery
+                    .select(appt.get("patient").get("id"))
+                    .where(cb.equal(
+                            appt.get("doctor").get("id"),
+                            doctorId
+                    ));
+
+            return root.get("id").in(subquery);
+        };
+    }
+    public static Specification<Patient> withDepartmentId(Long departmentId){
+        return (root,query,cb) ->{
+
+            Subquery<Long> doctorSubquery = query.subquery(Long.class);
+            Root<DoctorDepartment> dd = doctorSubquery.from(DoctorDepartment.class);
+
+            doctorSubquery
+                    .select(dd.get("doctor").get("id"))
+                    .where(cb.equal(
+                            dd.get("department").get("id"),
+                            departmentId
+                    ));
+
+
+            Subquery<Long> patientSubquery = query.subquery(Long.class);
+            Root<Appointment> appt = patientSubquery.from(Appointment.class);
+
+            patientSubquery
+                    .select(appt.get("patient").get("id"))
+                    .where(appt.get("doctor").get("id").in(doctorSubquery));
+
+            return root.get("id").in(patientSubquery);
+        };
+    }
     public static Specification<Patient> hasFilter(PatientFilterDto filter){
         return Specification.allOf(
                 hasFirstName(filter.firstName()),

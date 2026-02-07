@@ -12,6 +12,7 @@ import com.hospital.mediflow.Patient.Repository.PatientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,12 +33,31 @@ public class PatientDataServiceImpl extends BaseService<Patient,Long> implements
 
     @Override
     public Page<PatientResponseDto> findAll(Pageable pageable, PatientFilterDto filterDto) {
-        return repository.findAll(pageable).map(mapper::toDto);
+        return ((PatientRepository)repository).findAll(PatientSpecification.hasFilter(filterDto),pageable).map(mapper::toDto);
+    }
+
+    @Override
+    public List<PatientResponseDto> findAll(Specification<Patient> filterDto) {
+        return ((PatientRepository)repository).findAll(filterDto).stream().map(mapper::toDto).toList();
+    }
+
+    @Override
+    public Page<PatientResponseDto> findAll(Pageable pageable, Specification<Patient> filterDto) {
+        return ((PatientRepository)repository).findAll(filterDto,pageable).map(mapper::toDto);
     }
 
     @Override
     public PatientResponseDto findById(Long id) {
         return mapper.toDto(this.findByIdOrThrow(id));
+    }
+
+    @Override
+    public boolean isDoctorPatientRelationExists(Long doctorId, Long patientId) {
+        return ((PatientRepository)repository).isDoctorPatientRelationExists(doctorId,patientId);
+    }
+    @Override
+    public boolean isDepartmentPatientRelationExists(Long departmentId, Long patientId) {
+        return ((PatientRepository)repository).isDepartmentPatientRelationExists(departmentId,patientId);
     }
 
     @Override
