@@ -1,10 +1,8 @@
 package com.hospital.mediflow.MedicalRecords.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.Mappers.MedicalRecordMapper;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
-import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Entity.MedicalRecord;
@@ -17,45 +15,49 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
 public class MedicalRecordDataServiceImpl extends BaseService<MedicalRecord,Long> implements MedicalRecordDataService {
     private final MedicalRecordRepository repository;
     private final MedicalRecordMapper mapper;
-    private final MedicalRecordPredicateBuilder filterBuilder;
 
-    public MedicalRecordDataServiceImpl(MedicalRecordRepository repository,MedicalRecordMapper mapper,MedicalRecordPredicateBuilder filterBuilder) {
+    public MedicalRecordDataServiceImpl(MedicalRecordRepository repository,MedicalRecordMapper mapper) {
         super(repository);
         this.repository = repository;
         this.mapper = mapper;
-        this.filterBuilder = filterBuilder;
+
     }
 
     @Override
-    public List<MedicalRecordResponseDto> findAllMedicalRecords(MedicalRecordFilterDto medicalRecordFilter) {
-        Predicate filter = filterBuilder
-                .withDoctorId(medicalRecordFilter.doctorId())
-                .withDoctorName(medicalRecordFilter.doctorName())
-                .withPatientId(medicalRecordFilter.patientId())
-                .withPatientName(medicalRecordFilter.patientName())
-                .withDepartmentName(medicalRecordFilter.departmentName())
-                .withRecordDate(medicalRecordFilter.recordDateStart(),medicalRecordFilter.recordDateEnd())
-                .build();
-        return repository.findAll(filter).stream().map(mapper::toDto).toList();
+    public List<MedicalRecordResponseDto> findAllMedicalRecords(Predicate medicalRecordFilter) {
+
+        return repository.findAll(medicalRecordFilter).stream().map(mapper::toDto).toList();
     }
 
     @Override
-    public Page<MedicalRecordResponseDto> findAllMedicalRecords(Pageable pageable, MedicalRecordFilterDto medicalRecordFilter) {
-        Predicate filter = filterBuilder
-                .withDoctorId(medicalRecordFilter.doctorId())
-                .withDoctorName(medicalRecordFilter.doctorName())
-                .withPatientId(medicalRecordFilter.patientId())
-                .withPatientName(medicalRecordFilter.patientName())
-                .withDepartmentName(medicalRecordFilter.departmentName())
-                .withRecordDate(medicalRecordFilter.recordDateStart(),medicalRecordFilter.recordDateEnd())
-                .build();
-        return repository.findAll(filter,pageable).map(mapper::toDto);
+    public Page<MedicalRecordResponseDto> findAllMedicalRecords(Pageable pageable, Predicate medicalRecordFilter) {
+        return repository.findAll(medicalRecordFilter,pageable).map(mapper::toDto);
+    }
+
+    @Override
+    public Optional<Long> findDoctorIdByRecordId(Long recordId) {
+        return Optional.of(repository.findDoctorIdByRecordId(recordId));
+    }
+
+    @Override
+    public boolean isPatientRecordRelationExists(Long recordId, Long patientId) {
+        return repository.isPatientRecordRelationExists(recordId,patientId);
+    }
+
+    @Override
+    public boolean isDoctorRecordRelationExists(Long recordId, Long doctorId) {
+        return repository.isDoctorRecordRelationExists(recordId,doctorId);
+    }
+    @Override
+    public boolean isManagerRecordRelationExists(Long recordId, Long departmentId) {
+        return repository.isManagerRecordRelationExists(recordId,departmentId);
     }
 
     @Override

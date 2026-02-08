@@ -53,6 +53,15 @@ public class PatientQueryFacade {
             case ADMIN   -> patientService.findById(patientId);
         };
     }
+
+    public PatientResponseDto save(PatientRequestDto requestDto) {
+        Role role = MediflowUserDetailsService.currentUserRole();
+        return switch (role) {
+            case ADMIN   -> patientService.save(requestDto);
+            default -> throw new AccessDeniedException("Unsupported role for the method");
+
+        };
+    }
     public PatientResponseDto updatePatient(Long patientId,PatientRequestDto requestDto){
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
@@ -71,4 +80,5 @@ public class PatientQueryFacade {
              default -> throw new AccessDeniedException("Unsupported role for the method");
         }
     }
+
 }

@@ -5,12 +5,12 @@ import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
 import com.hospital.mediflow.Patient.Services.Abstracts.PatientService;
 import com.hospital.mediflow.Patient.Services.PatientQueryFacade;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,13 +36,13 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.OK).body(facade.findPatientById(patientId));
     }
     @PostMapping
-    @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<PatientResponseDto> save(@RequestBody @Valid PatientRequestDto requestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(patientService.save(requestDto));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PatientResponseDto> save(@RequestBody @Validated(PatientRequestDto.OnUpdate.class) PatientRequestDto requestDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(facade.save(requestDto));
     }
     @PutMapping("/{patient-id}")
     @PreAuthorize("hasRole('PATIENT')")
-    public ResponseEntity<PatientResponseDto> update(@PathVariable(name = "patient-id") Long id,@RequestBody PatientRequestDto requestDto){
+    public ResponseEntity<PatientResponseDto> update(@PathVariable(name = "patient-id") Long id,@Validated(PatientRequestDto.OnUpdate.class) @RequestBody PatientRequestDto requestDto){
         return ResponseEntity.status(HttpStatus.OK).body(facade.updatePatient(id, requestDto));
     }
     @DeleteMapping("/{patient-id}")

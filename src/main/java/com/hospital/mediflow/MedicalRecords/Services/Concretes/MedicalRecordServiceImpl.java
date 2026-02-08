@@ -1,10 +1,12 @@
 package com.hospital.mediflow.MedicalRecords.Services.Concretes;
 
+import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;
 import com.hospital.mediflow.MedicalRecords.Services.Abstracts.MedicalRecordService;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,15 +22,16 @@ import java.util.List;
 public class MedicalRecordServiceImpl implements MedicalRecordService {
     private final MedicalRecordDataService dataService;
 
+
     @Override
     @PreAuthorize("hasAnyAuthority('patient:read','doctor:read')")
-    public List<MedicalRecordResponseDto> findAllMedicalRecords(MedicalRecordFilterDto medicalRecordFilter) {
+    public List<MedicalRecordResponseDto> findAllMedicalRecords(Predicate medicalRecordFilter) {
         return dataService.findAllMedicalRecords(medicalRecordFilter);
     }
 
     @Override
     @PreAuthorize("hasAnyAuthority('patient:read','doctor:read')")
-    public Page<MedicalRecordResponseDto> findAllMedicalRecords(Pageable pageable, MedicalRecordFilterDto medicalRecordFilter) {
+    public Page<MedicalRecordResponseDto> findAllMedicalRecords(Pageable pageable, Predicate medicalRecordFilter) {
         return dataService.findAllMedicalRecords(pageable,medicalRecordFilter);
     }
 

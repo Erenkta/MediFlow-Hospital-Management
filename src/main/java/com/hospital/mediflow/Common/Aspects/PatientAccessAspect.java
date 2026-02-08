@@ -17,27 +17,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class DoctorAccessAspect {
-    private final PatientDataService patientDataService;
+public class PatientAccessAspect {
     private final MedicalRecordDataService medicalRecordDataService;
 
-    @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorPatientAccess) && args(patientId,..)")
-    public void checkAccess(Long patientId){
-        Long doctorId = MediflowUserDetailsService.currentUser().getResourceId();
-        boolean isAccessible = patientDataService.isDoctorPatientRelationExists(doctorId,patientId);
-        if(!isAccessible){
-            throw new AccessDeniedException("Access denied");
-        }
-    }
-    @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorRecordAccess) && args(recordId,..)")
-    public void checkRecordAccess(Long recordId){
-        Long doctorId = MediflowUserDetailsService.currentUser().getResourceId();
-        boolean isAccessible = medicalRecordDataService.isDoctorRecordRelationExists(recordId,doctorId);
-        if(!isAccessible){
-            throw new AccessDeniedException("Access denied");
-        }
-    }
-    @Around("@annotation(com.hospital.mediflow.Common.Annotations.Access.Doctor.AutoFillDoctorId)")
+    @Around("@annotation(com.hospital.mediflow.Common.Annotations.Access.Patient.AutoFillPatientId)")
     public Object autoFillPatientFilter(ProceedingJoinPoint pjp) throws Throwable{
         Object[] args = pjp.getArgs();
         Object[] newArgs = args.clone();
@@ -45,8 +28,8 @@ public class DoctorAccessAspect {
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof MedicalRecordFilterDto filter) {
                 newArgs[i] = new MedicalRecordFilterDto(
+                        filter.doctorId(),
                         resourceId,
-                        filter.patientId(),
                         filter.doctorName(),
                         filter.patientName(),
                         filter.departmentName(),
@@ -56,5 +39,13 @@ public class DoctorAccessAspect {
             }
         }
         return pjp.proceed(newArgs);
+    }
+    @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Patient.PatientRecordAccess) && args(recordId,..)")
+    public void checkRecordAccess(Long recordId){
+        Long patientId = MediflowUserDetailsService.currentUser().getResourceId();
+        boolean isAccessible = medicalRecordDataService.isPatientRecordRelationExists(recordId,patientId);
+        if(!isAccessible){
+            throw new AccessDeniedException("Access denied");
+        }
     }
 }

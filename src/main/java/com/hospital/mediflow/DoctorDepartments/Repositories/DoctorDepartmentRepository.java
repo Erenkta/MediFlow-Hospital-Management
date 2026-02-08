@@ -73,4 +73,9 @@ public interface DoctorDepartmentRepository extends JpaRepository<DoctorDepartme
     @EntityGraph(attributePaths = {"department","doctor"}) // this is for n+1 problem. We get the DoctorDepartment,Doctor and Department with 1 fetch.
     List<DoctorDepartment> findAll(Specification<DoctorDepartment> spec);
 
+    @Query("""
+            Select count(dr) > 0 from DoctorDepartment dr 
+            where dr.doctor.id = :doctor_id and dr.department.id = :department_id
+            """)
+    boolean isManagerDoctorRelationsExists(@Param("doctor_id") Long doctorId,@Param("department_id") Long departmentId);
 }

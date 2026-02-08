@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Annotations;
+package com.hospital.mediflow.Common.Annotations.Access.Doctor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DoctorPatientAccess {
+public @interface DoctorRecordAccess {
 }
