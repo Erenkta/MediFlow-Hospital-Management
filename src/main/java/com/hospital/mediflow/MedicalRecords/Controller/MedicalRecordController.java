@@ -3,7 +3,6 @@ package com.hospital.mediflow.MedicalRecords.Controller;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;
-import com.hospital.mediflow.MedicalRecords.Services.Abstracts.MedicalRecordService;
 import com.hospital.mediflow.MedicalRecords.Services.MedicalRecordQueryFacade;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

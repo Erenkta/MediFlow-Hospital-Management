@@ -40,6 +40,17 @@ public class ManagerAccessAspect {
             throw new AccessDeniedException("Access Denied");
         }
     }
+    @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerDocDepAccess) && args(departmentId,..)")
+    public void checkDocDepAccess(Long departmentId){
+        Long managerDepartmentId =
+                MediflowUserDetailsService.currentUser().getResourceId();
+
+        boolean hasAccess = managerDepartmentId.equals(departmentId);
+
+        if (!hasAccess) {
+            throw new AccessDeniedException("Access Denied");
+        }
+    }
     @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerRecordAccess)")
     public void checkAccess(JoinPoint joinPoint) {
         Long doctorId = doctorIdResolver.resolve(joinPoint);

@@ -3,7 +3,7 @@ package com.hospital.mediflow.DoctorDepartments.Controller;
 import com.hospital.mediflow.Common.Exceptions.ErrorResponse;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentFilterDto;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentResponseDto;
-import com.hospital.mediflow.DoctorDepartments.Services.Abstracts.DoctorDepartmentService;
+import com.hospital.mediflow.DoctorDepartments.Services.DoctorDepartmentQueryFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -27,7 +26,7 @@ import java.util.Set;
 @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class DoctorDepartmentController {
 
-    private final DoctorDepartmentService service;
+    private final DoctorDepartmentQueryFacade facade;
 
     @Operation(summary = "Get doctor-department assignments", description = "Returns all doctor-department assignments, pageable or unpaged")
     @ApiResponses(value = {
@@ -37,6 +36,7 @@ public class DoctorDepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<?> findAll(
             @Parameter(description = "Pageable info for pagination", required = true)
             @NotNull Pageable pageable,
@@ -44,8 +44,8 @@ public class DoctorDepartmentController {
             DoctorDepartmentFilterDto filterDto) {
 
         return pageable.isUnpaged()
-                ? ResponseEntity.status(HttpStatus.OK).body(service.findAll(filterDto))
-                : ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable, filterDto));
+                ? ResponseEntity.status(HttpStatus.OK).body(facade.findAll(filterDto))
+                : ResponseEntity.status(HttpStatus.OK).body(facade.findAll(pageable, filterDto));
     }
 
     @Operation(summary = "Assign doctors to a department", description = "Adds doctors to the specified department")
@@ -56,12 +56,13 @@ public class DoctorDepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/{department-id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DoctorDepartmentResponseDto> save(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable(name = "department-id") Long id,
             @Parameter(description = "Set of doctor IDs to assign", required = true)
             @RequestBody Set<Long> doctorIds) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.signDoctorsToDepartment(doctorIds.stream().toList(), id));
+        return ResponseEntity.status(HttpStatus.OK).body(facade.signDoctorsToDepartment(id,doctorIds));
     }
 
     @Operation(summary = "Remove doctors from a department", description = "Removes doctors from the specified department")
@@ -72,11 +73,12 @@ public class DoctorDepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{department-id}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DoctorDepartmentResponseDto> delete(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable(name = "department-id") Long id,
             @Parameter(description = "List of doctor IDs to remove", required = true)
-            @RequestBody List<Long> doctorIds) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.removeDoctorFromDepartment(doctorIds, id));
+            @RequestBody Set<Long> doctorIds) {
+        return ResponseEntity.status(HttpStatus.OK).body(facade.removeDoctorFromDepartment(id,doctorIds));
     }
 }

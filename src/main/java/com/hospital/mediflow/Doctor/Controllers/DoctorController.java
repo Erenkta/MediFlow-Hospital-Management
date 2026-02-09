@@ -66,7 +66,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)),description = "Invalid parameters")
     })
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('MANAGER','DOCTOR')")
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) String specialty,@Valid @RequestParam(value = "title",required = false) TitleEnum title){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(specialty,title))

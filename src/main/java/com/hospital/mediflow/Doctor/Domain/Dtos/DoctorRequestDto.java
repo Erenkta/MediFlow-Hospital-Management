@@ -42,4 +42,8 @@ public record DoctorRequestDto(
         @Email(message = "Email must be valid")
         @Size(max = 100)
         String email
-) {}
+) {
+        public DoctorRequestDto DoctorRequestDto(String firstName, String lastName, String phone, String email){
+                return new DoctorRequestDto(null,firstName,null,lastName,null,phone,email);
+        }
+}
