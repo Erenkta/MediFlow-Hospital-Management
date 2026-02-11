@@ -62,8 +62,8 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
         return new PageImpl<>(content,pageable,content.size());
     }
     @Override
-    public boolean isManagerDoctorRelationsExists(Long doctorId, Long departmentId) {
-        return repository.isManagerDoctorRelationsExists(doctorId,departmentId);
+    public boolean isDepartmentDoctorRelationsExists(Long doctorId, Long departmentId) {
+        return repository.isDepartmentDoctorRelationsExists(doctorId,departmentId);
     }
 
     @Override

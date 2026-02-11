@@ -1,5 +1,7 @@
 package com.hospital.mediflow.Doctor.Services;
 
+import com.hospital.mediflow.Common.Queries.Doctor.DoctorQuery;
+import com.hospital.mediflow.Common.Queries.Manager.ManagerDoctorQuery;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
@@ -24,10 +26,16 @@ import java.util.List;
 @Slf4j
 public class DoctorQueryFacade {
     private final DoctorService service;
+    private final ManagerDoctorQuery managerQuery;
+    private final DoctorQuery doctorQuery;
 
     public DoctorResponseDto createDoctor(@Valid @RequestBody DoctorRequestDto request){
-        // TODO Check if the requested specialty is owned by the current manager's department
-        return service.saveDoctor(request);
+        Role role = MediflowUserDetailsService.currentUserRole();
+        return switch (role) {
+            case ADMIN -> service.saveDoctor(request);
+            case MANAGER -> managerQuery.saveDoctor(request);
+            default -> throw new AccessDeniedException("Unsupported role for the method");
+        };
     }
 
     public Page<DoctorResponseDto> getDoctors(@NotNull Pageable pageable, DoctorFilterDto filter){
@@ -60,29 +68,29 @@ public class DoctorQueryFacade {
         };
     }
 
-    public DoctorResponseDto getDoctorById(Long id){
+    public DoctorResponseDto getDoctorById(Long doctorId){
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
-            case ADMIN,MANAGER -> service.findDoctorById(id);
+            case ADMIN,MANAGER -> service.findDoctorById(doctorId);
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
 
-    public DoctorResponseDto updateDoctor(Long id,DoctorRequestDto request){
+    public DoctorResponseDto updateDoctor(Long doctorId,DoctorRequestDto request){
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
-            case ADMIN -> service.updateDoctor(id,request); // TODO update every information
-            case MANAGER -> service.updateDoctor(id,request); // TODO update the specialty and title information. But the manager's department must own the specialty.
-            case DOCTOR ->service.updateDoctor(id,request); // TODO update their own information only
+            case ADMIN -> service.updateDoctor(doctorId,request);
+            case MANAGER -> managerQuery.updateDoctor(doctorId,request);
+            case DOCTOR ->doctorQuery.updateDoctor(doctorId,request);
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
 
-    public void deleteDoctor(Long id){
+    public void deleteDoctor(Long doctorId){
         Role role = MediflowUserDetailsService.currentUserRole();
          switch (role) {
-            case ADMIN -> service.deleteDoctor(id);
-            case MANAGER -> service.deleteDoctor(id); // TODO can delete the doctor who works on the current manager's department.
+            case ADMIN -> service.deleteDoctor(doctorId);
+            case MANAGER -> managerQuery.deleteDoctor(doctorId);
             default -> throw new AccessDeniedException("Unsupported role for the method");
         }
     }

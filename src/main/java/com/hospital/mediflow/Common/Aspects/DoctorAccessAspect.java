@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class DoctorAccessAspect {
+public class DoctorAccessAspect extends BaseAspect {
     private final PatientDataService patientDataService;
     private final MedicalRecordDataService medicalRecordDataService;
 

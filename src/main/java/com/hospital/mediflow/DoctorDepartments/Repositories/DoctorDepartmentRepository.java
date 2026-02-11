@@ -77,5 +77,5 @@ public interface DoctorDepartmentRepository extends JpaRepository<DoctorDepartme
             Select count(dr) > 0 from DoctorDepartment dr 
             where dr.doctor.id = :doctor_id and dr.department.id = :department_id
             """)
-    boolean isManagerDoctorRelationsExists(@Param("doctor_id") Long doctorId,@Param("department_id") Long departmentId);
+    boolean isDepartmentDoctorRelationsExists(@Param("doctor_id") Long doctorId, @Param("department_id") Long departmentId);
 }

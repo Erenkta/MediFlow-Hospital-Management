@@ -43,7 +43,10 @@ public record DoctorRequestDto(
         @Size(max = 100)
         String email
 ) {
-        public DoctorRequestDto DoctorRequestDto(String firstName, String lastName, String phone, String email){
-                return new DoctorRequestDto(null,firstName,null,lastName,null,phone,email);
+        public DoctorRequestDto DoctorRequest(){
+                return new DoctorRequestDto(null,this.firstName,null,this.lastName,null,this.phone,this.email);
+        }
+        public DoctorRequestDto ManagerRequest(){
+                return new DoctorRequestDto(this.title,null,null,null,this.specialty,null,null);
         }
 }

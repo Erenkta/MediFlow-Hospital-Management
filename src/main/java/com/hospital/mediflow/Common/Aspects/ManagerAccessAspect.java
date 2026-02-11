@@ -1,14 +1,12 @@
 package com.hospital.mediflow.Common.Aspects;
 
+import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerDoctorAccess;
+import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.Common.Resolvers.Doctor.DoctorIdResolver;
-import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
+import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
-import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
-import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
-import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
-import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
-import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
+import com.hospital.mediflow.Specialty.DataServices.Abstracts.SpecialtyDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -21,15 +19,17 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class ManagerAccessAspect {
+public class ManagerAccessAspect extends BaseAspect {
     private final PatientDataService patientDataService;
-    private final DoctorDepartmentDataService DocDepDataService;
+    private final DoctorDepartmentDataService docDepDataService;
     private final DoctorIdResolver doctorIdResolver;
+    private final SpecialtyDataService specialtyDataService;
+    private final CurrentUserProvider userProvider;
 
     @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerPatientAccess) && args(patientId,..)")
     public void checkPatientAccess(Long patientId){
         Long departmentId =
-                MediflowUserDetailsService.currentUser().getResourceId();
+                userProvider.get().getResourceId();
 
         boolean hasAccess =
                 patientDataService.isDepartmentPatientRelationExists(
@@ -43,7 +43,7 @@ public class ManagerAccessAspect {
     @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerDocDepAccess) && args(departmentId,..)")
     public void checkDocDepAccess(Long departmentId){
         Long managerDepartmentId =
-                MediflowUserDetailsService.currentUser().getResourceId();
+                userProvider.get().getResourceId();
 
         boolean hasAccess = managerDepartmentId.equals(departmentId);
 
@@ -55,15 +55,36 @@ public class ManagerAccessAspect {
     public void checkAccess(JoinPoint joinPoint) {
         Long doctorId = doctorIdResolver.resolve(joinPoint);
         Long departmentId =
-                MediflowUserDetailsService.currentUser().getResourceId();
+                userProvider.get().getResourceId();
 
         boolean hasAccess =
-                DocDepDataService.isManagerDoctorRelationsExists(
+                docDepDataService.isDepartmentDoctorRelationsExists(
                         doctorId, departmentId
                 );
 
         if (!hasAccess) {
             throw new AccessDeniedException("Access Denied");
+        }
+    }
+    @Before("@annotation(access)")
+    public void checkDoctorAccess(JoinPoint jp, ManagerDoctorAccess access) {
+        Long departmentId = userProvider.get().getResourceId();
+
+        switch (access.type()) {
+
+            case CREATE -> {
+                DoctorRequestDto dto = extract(jp, DoctorRequestDto.class);
+                if (!specialtyDataService.isSpecialtyDepartmentRelationExists(dto.specialty(), departmentId)) {
+                    throw new AccessDeniedException("Invalid specialty");
+                }
+            }
+
+            case UPDATE, DELETE -> {
+                Long doctorId = extract(jp, Long.class);
+                if (!docDepDataService.isDepartmentDoctorRelationsExists(doctorId, departmentId)) {
+                    throw new AccessDeniedException("Invalid doctor");
+                }
+            }
         }
     }
 }

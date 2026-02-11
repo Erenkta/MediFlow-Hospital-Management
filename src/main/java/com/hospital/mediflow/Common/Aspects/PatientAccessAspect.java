@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class PatientAccessAspect {
+public class PatientAccessAspect extends BaseAspect {
     private final MedicalRecordDataService medicalRecordDataService;
 
     @Around("@annotation(com.hospital.mediflow.Common.Annotations.Access.Patient.AutoFillPatientId)")

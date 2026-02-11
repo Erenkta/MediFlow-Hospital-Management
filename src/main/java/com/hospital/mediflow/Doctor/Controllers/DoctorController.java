@@ -6,6 +6,7 @@ import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
+import com.hospital.mediflow.Doctor.Services.DoctorQueryFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,8 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/doctors")
 public class DoctorController {
-
-    private final DoctorService service;
+    private final DoctorQueryFacade facade;
 
     @Operation(summary = "Create a doctor", description = "Creates a new doctor with the provided information.")
     @ApiResponses({
@@ -39,7 +39,7 @@ public class DoctorController {
     @PostMapping
     @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<DoctorResponseDto> createDoctor(@Valid @RequestBody DoctorRequestDto request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveDoctor(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(facade.createDoctor(request));
     }
 
     @Operation(summary = "Get doctors", description = "Returns a list of doctors with optional filtering and pagination.")
@@ -51,8 +51,8 @@ public class DoctorController {
     @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<?> getDoctors(@NotNull Pageable pageable, DoctorFilterDto filter){
         return pageable.isUnpaged()
-                ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(filter))
-                : ResponseEntity.status(HttpStatus.OK).body(service.findDoctors(pageable,filter));
+                ? ResponseEntity.status(HttpStatus.OK).body(facade.getDoctors(filter))
+                : ResponseEntity.status(HttpStatus.OK).body(facade.getDoctors(pageable,filter));
     }
 
     @Operation(summary = "Search doctors by code",
@@ -69,8 +69,8 @@ public class DoctorController {
     @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
     public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) String specialty,@Valid @RequestParam(value = "title",required = false) TitleEnum title){
         return pageable.isUnpaged()
-                ? ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(specialty,title))
-                : ResponseEntity.status(HttpStatus.OK).body(service.findDoctorsByDoctorCode(pageable,specialty,title));
+                ? ResponseEntity.status(HttpStatus.OK).body(facade.getDoctorsByDoctorCode(specialty,title))
+                : ResponseEntity.status(HttpStatus.OK).body(facade.getDoctorsByDoctorCode(pageable,specialty,title));
     }
 
     @Operation(summary = "Get doctor by ID", description = "Fetches a doctor by its unique ID.")
@@ -82,7 +82,7 @@ public class DoctorController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<?> getDoctorById(@PathVariable("id") Long id){
-        return ResponseEntity.ok(service.findDoctorById(id));
+        return ResponseEntity.ok(facade.getDoctorById(id));
     }
 
     @Operation(summary = "Update a doctor", description = "Updates doctor details by ID.")
@@ -95,7 +95,7 @@ public class DoctorController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('MANAGER','DOCTOR')")
     public ResponseEntity<DoctorResponseDto> updateDoctor(@PathVariable("id") Long id,@RequestBody DoctorRequestDto request){
-       return ResponseEntity.status(HttpStatus.OK).body(service.updateDoctor(id,request));
+       return ResponseEntity.status(HttpStatus.OK).body(facade.updateDoctor(id,request));
     }
 
     @Operation(summary = "Delete a doctor", description = "Deletes a doctor record by its ID.")
@@ -106,7 +106,7 @@ public class DoctorController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long id){
-        service.deleteDoctor(id);
+        facade.deleteDoctor(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
