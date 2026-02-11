@@ -32,7 +32,6 @@ public class MedicalRecordDataServiceImpl extends BaseService<MedicalRecord,Long
 
     @Override
     public List<MedicalRecordResponseDto> findAllMedicalRecords(Predicate medicalRecordFilter) {
-
         return repository.findAll(medicalRecordFilter).stream().map(mapper::toDto).toList();
     }
 

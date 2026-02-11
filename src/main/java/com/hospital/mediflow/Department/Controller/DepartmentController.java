@@ -5,6 +5,7 @@ import com.hospital.mediflow.Department.Domain.Dtos.DepartmentFilterDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentRequestDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentResponseDto;
 import com.hospital.mediflow.Department.Services.Abstracts.DepartmentService;
+import com.hospital.mediflow.Department.Services.DepartmentQueryFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DepartmentController {
 
-    private final DepartmentService service;
+    private final DepartmentQueryFacade facade;
 
     @Operation(summary = "Get departments", description = "Returns all departments, pageable or unpaged")
     @ApiResponses(value = {
@@ -45,8 +46,8 @@ public class DepartmentController {
             DepartmentFilterDto filterDto) {
 
         return pageable.isUnpaged()
-                ? ResponseEntity.status(HttpStatus.OK).body(service.findAllDepartments(filterDto))
-                : ResponseEntity.status(HttpStatus.OK).body(service.findAllDepartments(pageable, filterDto));
+                ? ResponseEntity.status(HttpStatus.OK).body(facade.getDepartments(filterDto))
+                : ResponseEntity.status(HttpStatus.OK).body(facade.getDepartments(pageable, filterDto));
     }
 
     @Operation(summary = "Get department by ID", description = "Retrieve a single department by its ID")
@@ -61,7 +62,7 @@ public class DepartmentController {
     public ResponseEntity<DepartmentResponseDto> getDepartmentById(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(service.findDepartmentById(id));
+        return ResponseEntity.status(HttpStatus.FOUND).body(facade.getDepartmentById(id));
     }
 
     @Operation(summary = "Create a department", description = "Creates a new department")
@@ -72,11 +73,11 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDto> createDepartment(
             @Parameter(description = "Department data to create", required = true)
             @Valid @RequestBody DepartmentRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createDepartment(requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(facade.createDepartment(requestDto));
     }
 
     @Operation(summary = "Update a department", description = "Updates an existing department by ID")
@@ -87,13 +88,13 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDto> updateDepartment(
             @Parameter(description = "ID of the department to update", required = true)
             @PathVariable Long id,
             @Parameter(description = "Updated department data", required = true)
             @RequestBody DepartmentRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateDepartment(id, requestDto));
+        return ResponseEntity.status(HttpStatus.OK).body(facade.updateDepartment(id, requestDto));
     }
 
     @Operation(summary = "Add specialties to a department", description = "Adds one or more specialties to a department")
@@ -104,13 +105,13 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PatchMapping("/{id}/add-specialties")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDto> addSpecialties(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id,
             @Parameter(description = "List of specialty codes to add", required = true)
             @RequestBody List<String> specialties) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.addSpecialties(id, specialties));
+        return ResponseEntity.status(HttpStatus.OK).body(facade.addSpecialties(id, specialties));
     }
 
     @Operation(summary = "Remove specialties from a department", description = "Removes one or more specialties from a department")
@@ -121,13 +122,13 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PatchMapping("/{id}/remove-specialties")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDto> removeSpecialties(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id,
             @Parameter(description = "List of specialty codes to remove", required = true)
             @RequestBody List<String> specialties) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.removeSpecialties(id, specialties));
+        return ResponseEntity.status(HttpStatus.OK).body(facade.removeSpecialties(id, specialties));
     }
 
     @Operation(summary = "Delete a department", description = "Deletes a department by ID")
@@ -137,11 +138,11 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteDepartment(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id) {
-        service.deleteDepartment(id);
+        facade.deleteDepartment(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

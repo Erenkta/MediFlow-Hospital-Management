@@ -3,6 +3,7 @@ package com.hospital.mediflow.Patient.Services;
 import com.hospital.mediflow.Common.Queries.Doctor.DoctorPatientQuery;
 import com.hospital.mediflow.Common.Queries.Manager.ManagerPatientQuery;
 import com.hospital.mediflow.Common.Queries.Patient.PatientQuery;
+import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
@@ -31,7 +32,7 @@ public class PatientQueryFacade {
         return switch (role) {
             case DOCTOR  -> doctorQuery.findPatient(filter);
             case MANAGER -> managerQuery.findPatient(filter);
-            case ADMIN   -> patientService.findAll(filter);
+            case ADMIN   -> patientService.findAll(PatientSpecification.hasFilter(filter));
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
@@ -40,7 +41,7 @@ public class PatientQueryFacade {
         return switch (role) {
             case DOCTOR  -> doctorQuery.findPatient(pageable,filter);
             case MANAGER -> managerQuery.findPatient(pageable,filter);
-            case ADMIN   -> patientService.findAll(pageable,filter);
+            case ADMIN   -> patientService.findAll(pageable,PatientSpecification.hasFilter(filter));
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }

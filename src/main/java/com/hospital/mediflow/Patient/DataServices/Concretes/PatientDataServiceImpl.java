@@ -1,10 +1,8 @@
 package com.hospital.mediflow.Patient.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Mappers.PatientMapper;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
-import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
@@ -24,16 +22,6 @@ public class PatientDataServiceImpl extends BaseService<Patient,Long> implements
     public PatientDataServiceImpl(PatientRepository repository, PatientMapper mapper) {
         super(repository);
         this.mapper = mapper;
-    }
-
-    @Override
-    public List<PatientResponseDto> findAll(PatientFilterDto filterDto) {
-        return ((PatientRepository)repository).findAll(PatientSpecification.hasFilter(filterDto)).stream().map(mapper::toDto).toList();
-    }
-
-    @Override
-    public Page<PatientResponseDto> findAll(Pageable pageable, PatientFilterDto filterDto) {
-        return ((PatientRepository)repository).findAll(PatientSpecification.hasFilter(filterDto),pageable).map(mapper::toDto);
     }
 
     @Override

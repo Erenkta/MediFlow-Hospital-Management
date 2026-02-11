@@ -1,15 +1,18 @@
 package com.hospital.mediflow.Patient.Services.Concretes;
 
+import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
+import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import com.hospital.mediflow.Patient.Services.Abstracts.PatientService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -25,13 +28,13 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @PreAuthorize("hasAuthority('doctor:read')")
-    public List<PatientResponseDto> findAll(PatientFilterDto filterDto) {
+    public List<PatientResponseDto> findAll(Specification<Patient> filterDto) {
         return dataService.findAll(filterDto);
     }
 
     @Override
     @PreAuthorize("hasAuthority('doctor:read')")
-    public Page<PatientResponseDto> findAll(Pageable pageable, PatientFilterDto filterDto) {
+    public Page<PatientResponseDto> findAll(Pageable pageable, Specification<Patient> filterDto) {
         return dataService.findAll(pageable,filterDto);
     }
 

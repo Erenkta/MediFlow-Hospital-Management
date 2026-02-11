@@ -47,35 +47,35 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAuthority('manager:create')")
+    @PreAuthorize("hasAuthority('admin:create')")
     public DepartmentResponseDto createDepartment(DepartmentRequestDto departmentRequestDto) {
         return dataService.createDepartment(departmentRequestDto);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAuthority('manager:update')")
+    @PreAuthorize("hasAuthority('admin:update')")
     public DepartmentResponseDto updateDepartment(@NotNull Long id, DepartmentRequestDto departmentRequestDto) {
         return dataService.updateDepartment(id,departmentRequestDto);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAuthority('manager:delete')")
+    @PreAuthorize("hasAuthority('admin:delete')")
     public void deleteDepartment(@NotNull Long id) {
         dataService.deleteDepartment(id);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAuthority('manager:patch')")
+    @PreAuthorize("hasAuthority('admin:patch')")
     public DepartmentResponseDto addSpecialties(@NotNull Long id, List<String> specialties) {
         return dataService.addSpecialties(id,specialties);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAuthority('manager:patch')")
+    @PreAuthorize("hasAuthority('admin:patch')")
     public DepartmentResponseDto removeSpecialties(@NotNull Long id, List<String> specialties) {
         return dataService.removeSpecialties(id,specialties);
     }
