@@ -67,6 +67,11 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
     }
 
     @Override
+    public boolean isDepartmentAppointmentRelationsExists(Long departmentId, Long appointmentId) {
+        return repository.isDepartmentAppointmentRelationsExists(departmentId, appointmentId);
+    }
+
+    @Override
     public void assignDoctorsToDepartment(List<Long> doctorIds, Long departmentId) {
         checkIncompatibleDoctors(doctorIds, departmentId);
         checkAlreadyAssignedDoctors(doctorIds);

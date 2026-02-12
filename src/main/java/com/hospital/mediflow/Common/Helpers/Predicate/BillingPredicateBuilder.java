@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Common.Helpers.Predicate;
 
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Entity.QBilling;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
 import com.hospital.mediflow.Patient.Domain.Entity.QPatient;
@@ -52,6 +53,29 @@ public class BillingPredicateBuilder {
             predicates.add(qBilling.billingDate.before(billingDateEnd));
         }
         return this;
+    }
+    public BillingPredicateBuilder withDepartmentId(Long departmentId){
+        if(departmentId != null){
+            predicates.add(qBilling.department.id.eq(departmentId));
+        }
+        return this;
+    }
+    public BillingPredicateBuilder withAppointmentId(Long appointmentId){
+        if(appointmentId != null){
+            predicates.add(qBilling.appointment.id.eq(appointmentId));
+        }
+        return this;
+    }
+
+    public Predicate build(BillingFilterDto filter){
+       return this
+                .withAmount(filter.amountLessThan(),filter.amountGreaterThan())
+                .withBillingDate(filter.billingDateStart(),filter.billingDateEnd())
+                .withPatientName(filter.patientName())
+                .withStatus(filter.status())
+                .withDepartmentId(filter.departmentId())
+               .withAppointmentId(filter.appointmentId())
+                .build();
     }
 
     public Predicate build(){

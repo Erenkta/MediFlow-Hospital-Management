@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 public record BillingRequestDto(
         Long patientId,
+        Long departmentId,
+        Long appointmentId,
         BigDecimal amount,
         BillingStatus status,
         LocalDateTime billingDate

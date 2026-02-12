@@ -4,6 +4,7 @@ import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
+import com.hospital.mediflow.Common.Queries.Manager.ManagerBillingQuery;
 import com.hospital.mediflow.Security.Roles.Role;
 import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,13 @@ import java.util.List;
 @Slf4j
 public class BillingQueryFacade {
     private final BillingService billingService;
+    private final ManagerBillingQuery managerQuery;
 
-    // TODO add departmentId to billing ( and maybe also doctorId )
     public List<BillingResponseDto> getBillings(BillingFilterDto filter){
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
             case ADMIN   -> billingService.findAllBillings(filter);
-            case MANAGER -> billingService.findAllBillings(filter);        // TODO Managers can get the billings of their department
+            case MANAGER -> managerQuery.findAllBillings(filter);
             case PATIENT -> billingService.findAllBillings(filter);        // TODO Patients can get their billings
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
@@ -36,7 +37,7 @@ public class BillingQueryFacade {
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
             case ADMIN   -> billingService.findAllBillings(pageable,filter);
-            case MANAGER -> billingService.findAllBillings(pageable,filter);        // TODO Managers can get the billings of their department
+            case MANAGER -> managerQuery.findAllBillings(pageable,filter);        // TODO Managers can get the billings of their department
             case PATIENT -> billingService.findAllBillings(pageable,filter);        // TODO Patients can get their billings
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
@@ -46,7 +47,7 @@ public class BillingQueryFacade {
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
             case ADMIN   -> billingService.findBillingById(id);
-            case MANAGER -> billingService.findBillingById(id);  // TODO Managers can get the billing of their department
+            case MANAGER -> managerQuery.findBillingById(id);
             case PATIENT -> billingService.findBillingById(id);  // TODO Patient can get their billings
 
             default -> throw new AccessDeniedException("Unsupported role for the method");
@@ -57,7 +58,7 @@ public class BillingQueryFacade {
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
             case ADMIN   -> billingService.createBilling(requestDto);
-            case MANAGER -> billingService.createBilling(requestDto); // TODO Managers can create the billings if the patient is registered to their department
+            case MANAGER -> managerQuery.createBilling(requestDto);
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
@@ -66,7 +67,7 @@ public class BillingQueryFacade {
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
             case ADMIN   -> billingService.updateBilling(id, requestDto);
-            case MANAGER -> billingService.updateBilling(id, requestDto); // TODO Managers can update the billings if the patient and the billings are registered to their department
+            case MANAGER -> managerQuery.updateBilling(id, requestDto);
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
@@ -75,9 +76,8 @@ public class BillingQueryFacade {
         Role role = MediflowUserDetailsService.currentUserRole();
          switch (role) {
             case ADMIN   -> billingService.deleteBilling(id);
-            case MANAGER -> billingService.deleteBilling(id); // TODO Managers can delete the billings if the billings are registered to their department
+            case MANAGER -> managerQuery.deleteBilling(id);
             default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
-
+        }
     }
 }
