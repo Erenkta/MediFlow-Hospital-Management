@@ -1,13 +1,11 @@
 package com.hospital.mediflow.Billing.DataServices.Concretes;
 
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
-import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Billing.Repositories.BillingRepository;
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Helpers.Predicate.BillingPredicateBuilder;
 import com.hospital.mediflow.Mappers.BillingMapper;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
@@ -22,34 +20,20 @@ import java.util.List;
 public class BillingDataServiceImpl extends BaseService<Billing,Long> implements BillingDataService {
     private final BillingMapper mapper;
     private final BillingRepository repository;
-    private final BillingPredicateBuilder filterBuilder;
-    public BillingDataServiceImpl(BillingRepository repository,BillingMapper mapper,BillingPredicateBuilder filterBuilder) {
+    public BillingDataServiceImpl(BillingRepository repository,BillingMapper mapper) {
         super(repository);
         this.repository = repository;
         this.mapper = mapper;
-        this.filterBuilder = filterBuilder;
     }
 
     @Override
-    public List<BillingResponseDto> findAllBillings(BillingFilterDto medicalRecordFilter) {
-        Predicate filter = filterBuilder
-                .withAmount(medicalRecordFilter.amountLessThan(),medicalRecordFilter.amountGreaterThan())
-                .withBillingDate(medicalRecordFilter.billingDateStart(),medicalRecordFilter.billingDateEnd())
-                .withPatientName(medicalRecordFilter.patientName())
-                .withStatus(medicalRecordFilter.status())
-                .build();
-        return repository.findAll(filter).stream().map(mapper::toDto).toList();
+    public List<BillingResponseDto> findAllBillings(Predicate medicalRecordFilter) {
+        return repository.findAll(medicalRecordFilter).stream().map(mapper::toDto).toList();
     }
 
     @Override
-    public Page<BillingResponseDto> findAllBillings(Pageable pageable, BillingFilterDto medicalRecordFilter) {
-        Predicate filter = filterBuilder
-                .withAmount(medicalRecordFilter.amountLessThan(),medicalRecordFilter.amountGreaterThan())
-                .withBillingDate(medicalRecordFilter.billingDateStart(),medicalRecordFilter.billingDateEnd())
-                .withPatientName(medicalRecordFilter.patientName())
-                .withStatus(medicalRecordFilter.status())
-                .build();
-        return repository.findAll(filter, pageable).map(mapper::toDto);
+    public Page<BillingResponseDto> findAllBillings(Pageable pageable, Predicate medicalRecordFilter) {
+        return repository.findAll(medicalRecordFilter, pageable).map(mapper::toDto);
     }
 
     @Override
@@ -68,6 +52,16 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
         Billing entity = this.findByIdOrThrow(id);
         mapper.toEntity(entity, medicalRecord);
         return mapper.toDto(repository.save(entity));
+    }
+
+    @Override
+    public boolean isBillingDepartmentRelationExists(Long billingId, Long departmentId) {
+        return repository.isBillingDepartmentRelationExists(billingId, departmentId);
+    }
+
+    @Override
+    public boolean isBillingPatientRelationExists(Long billingId, Long patientId) {
+        return repository.isBillingPatientRelationExists(billingId, patientId);
     }
 
     @Override

@@ -42,4 +42,11 @@ public record DoctorRequestDto(
         @Email(message = "Email must be valid")
         @Size(max = 100)
         String email
-) {}
+) {
+        public DoctorRequestDto DoctorRequest(){
+                return new DoctorRequestDto(null,this.firstName,null,this.lastName,null,this.phone,this.email);
+        }
+        public DoctorRequestDto ManagerRequest(){
+                return new DoctorRequestDto(this.title,null,null,null,this.specialty,null,null);
+        }
+}

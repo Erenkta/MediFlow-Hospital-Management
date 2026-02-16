@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Common.Helpers.Predicate;
 
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Entity.QBilling;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
 import com.hospital.mediflow.Patient.Domain.Entity.QPatient;
@@ -20,14 +21,6 @@ public class BillingPredicateBuilder {
     private final QBilling qBilling = QBilling.billing;
     private List<BooleanExpression> predicates = new ArrayList<>();
 
-    public BillingPredicateBuilder withPatientName(String patientName) {
-        if(patientName != null && !patientName.isEmpty()){
-            QPatient patient =  qBilling.patient;
-            StringExpression fullName = patient.firstName.concat(" ").concat(patient.lastName);
-            predicates.add(fullName.like(patientName));
-        }
-        return this;
-    }
     public BillingPredicateBuilder withAmount(BigDecimal amountLessThan,BigDecimal amountGreaterThan) {
         if(amountGreaterThan != null){
             predicates.add(qBilling.amount.goe(amountGreaterThan));
@@ -52,6 +45,28 @@ public class BillingPredicateBuilder {
             predicates.add(qBilling.billingDate.before(billingDateEnd));
         }
         return this;
+    }
+    public BillingPredicateBuilder withDepartmentId(Long departmentId){
+        if(departmentId != null){
+            predicates.add(qBilling.department.id.eq(departmentId));
+        }
+        return this;
+    }
+    public BillingPredicateBuilder withAppointmentId(Long appointmentId){
+        if(appointmentId != null){
+            predicates.add(qBilling.appointment.id.eq(appointmentId));
+        }
+        return this;
+    }
+
+    public Predicate build(BillingFilterDto filter){
+       return this
+                .withAmount(filter.amountLessThan(),filter.amountGreaterThan())
+                .withBillingDate(filter.billingDateStart(),filter.billingDateEnd())
+                .withStatus(filter.status())
+                .withDepartmentId(filter.departmentId())
+               .withAppointmentId(filter.appointmentId())
+                .build();
     }
 
     public Predicate build(){

@@ -13,32 +13,34 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record PatientRequestDto(
-    @Size(min=2, max=50, message = "Firstname size must be between 2 and 50.")
-    @NotBlank(message = "Firstname must not be empty.")
-     String firstName,
+        @Size(min=2, max=50, message = "Firstname size must be between 2 and 50.", groups = OnUpdate.class)
+        @NotBlank(message = "Firstname must not be empty.", groups = OnUpdate.class)
+        String firstName,
 
-    @Size(min=2,max=50,message = "Lastname size must be between 2 and 50.")
-    @NotBlank(message = "Lastname must not be empty.")
-     String lastName,
+        @Size(min=2, max=50, message = "Lastname size must be between 2 and 50.", groups = OnUpdate.class)
+        @NotBlank(message = "Lastname must not be empty.", groups = OnUpdate.class)
+        String lastName,
 
-    @Column(name = "date_of_birth")
-    @ValidateBirthDate
-    LocalDate birthDate,
+        @ValidateBirthDate(groups = OnUpdate.class)
+        LocalDate birthDate,
 
-    @ValidatePhone(message = "Phone format is not valid.")
-    @NotBlank(message = "Phone must not be empty.")
-     String phone,
+        @ValidatePhone(message = "Phone format is not valid.", groups = {OnUpdate.class, OnManagerUpdate.class})
+        @NotBlank(message = "Phone must not be empty.", groups = {OnUpdate.class, OnManagerUpdate.class})
+        String phone,
 
-    @Email(message = "{jakarta.validation.constraints.Email.message}")
-    @NotBlank
-     String email,
+        @Email(groups = {OnUpdate.class, OnManagerUpdate.class})
+        @NotBlank(groups = {OnUpdate.class, OnManagerUpdate.class})
+        String email,
 
-    @Enumerated(EnumType.STRING)
-    @ValidateEnum(enumClass = BloodGroupEnum.class,message = "Invalid blood group.")
-     BloodGroupEnum bloodGroup,
+        @ValidateEnum(enumClass = BloodGroupEnum.class, message = "Invalid blood group.", groups = OnManagerUpdate.class)
+        BloodGroupEnum bloodGroup,
 
-    @Enumerated(EnumType.STRING)
-    @ValidateEnum(enumClass = GenderEnum.class,message = "Invalid gender value.")
-     GenderEnum gender
+        @ValidateEnum(enumClass = GenderEnum.class, message = "Invalid gender value.", groups = OnManagerUpdate.class)
+        GenderEnum gender
 ) {
+    public PatientRequestDto(String phone, String email) {
+        this(null, null, null, phone, email, null, null);
+    }
+    public interface OnUpdate {}
+    public interface OnManagerUpdate {}
 }

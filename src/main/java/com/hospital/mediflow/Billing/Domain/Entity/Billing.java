@@ -1,7 +1,9 @@
 package com.hospital.mediflow.Billing.Domain.Entity;
 
+import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
+import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -38,6 +40,20 @@ public class Billing extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_BILLING_PATIENT")
     )
     private Patient patient;
+
+    @ManyToOne(
+            optional = false,
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(
+            name = "department_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_BILLING_DEPARTMENT")
+    )
+    private Department department;
+
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
+    private Appointment appointment;
 
     @NotNull
     @Column(name = "amount", precision = 10, scale = 2)

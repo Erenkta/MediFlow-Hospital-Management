@@ -71,6 +71,11 @@ public class SpecialtyDataServiceImpl extends BaseService<Specialty,String>  imp
     }
 
     @Override
+    public boolean isSpecialtyDepartmentRelationExists(String specialtyCode, Long departmentId) {
+        return repository.isSpecialtyDepartmentRelationExists(specialtyCode, departmentId);
+    }
+
+    @Override
     public List<SpecialtyResponseDto> findAllSpecialties() {
         return repository.findAllByOrderByCodeAsc().stream().map(mapper::toDto).toList();
     }

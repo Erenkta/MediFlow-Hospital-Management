@@ -10,6 +10,8 @@ import java.util.List;
 public interface DoctorDepartmentDataService {
     List<DoctorDepartmentResponseDto> findAll(DoctorDepartmentFilterDto filterDto);
     Page<DoctorDepartmentResponseDto> findAll(Pageable pageable, DoctorDepartmentFilterDto filterDto);
+    boolean isDepartmentDoctorRelationsExists(Long doctorId, Long departmentId);
+    boolean isDepartmentAppointmentRelationsExists(Long departmentId,Long appointmentId );
     void assignDoctorsToDepartment(List<Long> doctorIds, Long departmentId);
     void removeDoctorFromDepartment(Long doctorId, Long departmentId);
     DoctorDepartmentResponseDto findByDepartmentId(Long departmentId);

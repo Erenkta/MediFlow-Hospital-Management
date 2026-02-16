@@ -61,6 +61,15 @@ public class DoctorDepartmentDataServiceImpl implements DoctorDepartmentDataServ
         List<DoctorDepartmentResponseDto> content = this.findAll(filterDto);
         return new PageImpl<>(content,pageable,content.size());
     }
+    @Override
+    public boolean isDepartmentDoctorRelationsExists(Long doctorId, Long departmentId) {
+        return repository.isDepartmentDoctorRelationsExists(doctorId,departmentId);
+    }
+
+    @Override
+    public boolean isDepartmentAppointmentRelationsExists(Long departmentId, Long appointmentId) {
+        return repository.isDepartmentAppointmentRelationsExists(departmentId, appointmentId);
+    }
 
     @Override
     public void assignDoctorsToDepartment(List<Long> doctorIds, Long departmentId) {

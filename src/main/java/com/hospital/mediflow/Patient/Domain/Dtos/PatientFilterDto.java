@@ -11,4 +11,9 @@ public record PatientFilterDto(
         List<String> bloodGroup,
         String gender
 ) {
+    public PatientFilterDto {
+        if (bloodGroup != null && bloodGroup.isEmpty()) {
+            bloodGroup = null;
+        }
+    }
 }

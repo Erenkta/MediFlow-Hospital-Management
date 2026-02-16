@@ -13,6 +13,7 @@ public interface SpecialtyDataService {
     SpecialtyResponseDto createSpecialty(SpecialtyRequestDto requestDto);
     List<Specialty> assignDepartment(List<String> specialtyIds, Department department);
     List<Specialty> dismissDepartment(List<String> specialtyIds);
+    boolean isSpecialtyDepartmentRelationExists(String specialtyCode,Long departmentId);
     List<SpecialtyResponseDto> findAllSpecialties();
     void deleteSpecialty(String code);
 
