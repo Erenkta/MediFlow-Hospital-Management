@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record BillingFilterDto(
-        String patientName,
+        Long patientId,
         Long appointmentId,
         Long departmentId,
         BigDecimal amountLessThan,
@@ -17,6 +17,9 @@ public record BillingFilterDto(
         LocalDateTime billingDateEnd
 ) {
     public BillingFilterDto ManagerFilter(Long departmentId,Long appointmentId){
-        return new BillingFilterDto(this.patientName,appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);
+        return new BillingFilterDto(this.patientId,appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);
+    }
+    public BillingFilterDto PatientFilter(Long patientId){
+        return new BillingFilterDto(patientId,appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);
     }
 }

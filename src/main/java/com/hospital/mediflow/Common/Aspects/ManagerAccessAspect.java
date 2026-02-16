@@ -113,6 +113,9 @@ public class ManagerAccessAspect extends BaseAspect {
                 if(filter.appointmentId() != null && !docDepDataService.isDepartmentAppointmentRelationsExists(departmentId,filter.appointmentId())){
                     throw new AccessDeniedException("Invalid appointment id");
                 }
+                if(!patientDataService.isDepartmentPatientRelationExists(departmentId,filter.patientId())){
+                    throw new AccessDeniedException("Invalid patient id");
+                }
             }
             case READ_BY_ID,DELETE->{
                 Long billingId = extract(jp, Long.class);

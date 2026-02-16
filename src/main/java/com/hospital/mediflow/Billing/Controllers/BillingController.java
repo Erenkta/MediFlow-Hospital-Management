@@ -1,15 +1,9 @@
 package com.hospital.mediflow.Billing.Controllers;
 
-import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
-import com.hospital.mediflow.Billing.Domain.Entity.Billing;
-import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
-import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
-import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
-import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;
-import com.hospital.mediflow.MedicalRecords.Services.Abstracts.MedicalRecordService;
+import com.hospital.mediflow.Billing.Services.BillingQueryFacade;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -23,28 +17,27 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/billings")
 public class BillingController {
-
-    private final BillingService billingService;
+    private final BillingQueryFacade facade;
 
     @GetMapping()
     @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<?> getBillings(@NotNull Pageable pageable, BillingFilterDto filter){
         return pageable.isUnpaged()
-                ? ResponseEntity.status(HttpStatus.OK).body(billingService.findAllBillings(filter))
-                : ResponseEntity.status(HttpStatus.OK).body(billingService.findAllBillings(pageable,filter));
+                ? ResponseEntity.status(HttpStatus.OK).body(facade.getBillings(filter))
+                : ResponseEntity.status(HttpStatus.OK).body(facade.getBillings(pageable,filter));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('MANAGER','PATIENT')")
     public ResponseEntity<BillingResponseDto> getBillingById(@PathVariable Long id) {
-        BillingResponseDto record = billingService.findBillingById(id);
+        BillingResponseDto record = facade.getBillingById(id);
         return ResponseEntity.ok(record);
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('MANAGER')")
     public ResponseEntity<BillingResponseDto> createBilling( @RequestBody @Valid BillingRequestDto requestDto) {
-        BillingResponseDto created = billingService.createBilling(requestDto);
+        BillingResponseDto created = facade.createBilling(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     @PutMapping("/{id}")
@@ -52,7 +45,7 @@ public class BillingController {
     public ResponseEntity<BillingResponseDto> updateBilling(
             @PathVariable Long id,
             @RequestBody @Valid BillingRequestDto requestDto) {
-        BillingResponseDto updated = billingService.updateBilling(id, requestDto);
+        BillingResponseDto updated = facade.updateBilling(id, requestDto);
         return ResponseEntity.ok(updated);
     }
 
@@ -60,7 +53,7 @@ public class BillingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyRole('MANAGER')")
     public void deleteBilling(@PathVariable Long id) {
-        billingService.deleteBilling(id);
+        facade.deleteBilling(id);
     }
 
 }

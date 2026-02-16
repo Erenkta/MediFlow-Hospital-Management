@@ -21,14 +21,6 @@ public class BillingPredicateBuilder {
     private final QBilling qBilling = QBilling.billing;
     private List<BooleanExpression> predicates = new ArrayList<>();
 
-    public BillingPredicateBuilder withPatientName(String patientName) {
-        if(patientName != null && !patientName.isEmpty()){
-            QPatient patient =  qBilling.patient;
-            StringExpression fullName = patient.firstName.concat(" ").concat(patient.lastName);
-            predicates.add(fullName.like(patientName));
-        }
-        return this;
-    }
     public BillingPredicateBuilder withAmount(BigDecimal amountLessThan,BigDecimal amountGreaterThan) {
         if(amountGreaterThan != null){
             predicates.add(qBilling.amount.goe(amountGreaterThan));
@@ -71,7 +63,6 @@ public class BillingPredicateBuilder {
        return this
                 .withAmount(filter.amountLessThan(),filter.amountGreaterThan())
                 .withBillingDate(filter.billingDateStart(),filter.billingDateEnd())
-                .withPatientName(filter.patientName())
                 .withStatus(filter.status())
                 .withDepartmentId(filter.departmentId())
                .withAppointmentId(filter.appointmentId())

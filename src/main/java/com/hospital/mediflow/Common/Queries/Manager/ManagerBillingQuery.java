@@ -23,43 +23,34 @@ import java.util.List;
 public class ManagerBillingQuery {
     private final BillingService service;
     private final BillingPredicateBuilder filterBuilder;
-    private final CurrentUserProvider userProvider;
 
     @ManagerBillingAccess(type = AccessType.READ_BY_FILTER)
-    public List<BillingResponseDto> findAllBillings(BillingFilterDto filter) { // TODO Managers can get the billings of their department
-        Long managerDepartmentId = userProvider.get().getResourceId();
-        Predicate managerFilter = filterBuilder.build(filter.ManagerFilter(managerDepartmentId,filter.appointmentId()));
-
+    public List<BillingResponseDto> findAllBillings(BillingFilterDto filterDto) {
+        Predicate filter = filterBuilder.build(filterDto);
         return service.findAllBillings(filter);
     }
     @ManagerBillingAccess(type = AccessType.READ_BY_FILTER)
-    public Page<BillingResponseDto> findAllBillings(Pageable pageable, BillingFilterDto filter) { // TODO Managers can get the billings of their department
-        Long managerDepartmentId = userProvider.get().getResourceId();
-        Predicate managerFilter = filterBuilder.build(filter.ManagerFilter(managerDepartmentId,filter.appointmentId()));
-
+    public Page<BillingResponseDto> findAllBillings(Pageable pageable, BillingFilterDto filterDto) {
+        Predicate filter = filterBuilder.build(filterDto);
         return service.findAllBillings(pageable,filter);
     }
-    @ManagerBillingAccess(type = AccessType.READ_BY_ID)
+
     public BillingResponseDto findBillingById(Long id) {
-        // TODO Managers can get the billing of their department
         return service.findBillingById(id);
     }
 
     @ManagerBillingAccess(type = AccessType.CREATE)
     public BillingResponseDto createBilling(BillingRequestDto requestDto) {
-        // TODO Managers can create the billings if the patient is registered to their department
         return service.createBilling(requestDto);
     }
 
     @ManagerBillingAccess(type = AccessType.UPDATE)
     public BillingResponseDto updateBilling(Long id, BillingRequestDto requestDto) {
-        // TODO Managers can update the billings if the patient and the billings are registered to their department
         return service.updateBilling(id, requestDto);
     }
 
     @ManagerBillingAccess(type = AccessType.DELETE)
     public void deleteBilling(Long id) {
-        // TODO Managers can delete the billings if the billings are registered to their department
         service.deleteBilling(id);
     }
 }

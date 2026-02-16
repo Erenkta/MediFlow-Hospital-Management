@@ -5,6 +5,7 @@ import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,13 +24,13 @@ public class BillingServiceImpl implements BillingService {
 
     @Override
     @PreAuthorize("hasAuthority('patient:read')")
-    public List<BillingResponseDto> findAllBillings(BillingFilterDto billingFilterDto) {
+    public List<BillingResponseDto> findAllBillings(Predicate billingFilterDto) {
         return dataService.findAllBillings(billingFilterDto);
     }
 
     @Override
     @PreAuthorize("hasAuthority('patient:read')")
-    public Page<BillingResponseDto> findAllBillings(Pageable pageable, BillingFilterDto billingFilterDto) {
+    public Page<BillingResponseDto> findAllBillings(Pageable pageable, Predicate billingFilterDto) {
         return dataService.findAllBillings(pageable, billingFilterDto);
     }
 
