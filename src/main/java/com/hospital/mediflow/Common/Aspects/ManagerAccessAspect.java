@@ -1,8 +1,11 @@
 package com.hospital.mediflow.Common.Aspects;
 
+import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
+import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorAppointmentAccess;
+import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerAppointmentAccess;
 import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerBillingAccess;
 import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerDoctorAccess;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
@@ -13,6 +16,7 @@ import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Specialty.DataServices.Abstracts.SpecialtyDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.Manager;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -32,6 +36,7 @@ public class ManagerAccessAspect extends BaseAspect {
     private final SpecialtyDataService specialtyDataService;
     private final CurrentUserProvider userProvider;
     private final BillingDataService billingDataService;
+    private final AppointmentDataService appointmentDataService;
 
     @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerPatientAccess) && args(patientId,..)")
     public void checkPatientAccess(Long patientId){
@@ -134,6 +139,20 @@ public class ManagerAccessAspect extends BaseAspect {
                 }
                 if(!billingDataService.isBillingDepartmentRelationExists(billingId,departmentId)){
                     throw new AccessDeniedException("Invalid billing id");
+                }
+            }
+        }
+    }
+
+    @Before("@annotation(access)")
+    public void checkAppointmentAccess(JoinPoint jp, ManagerAppointmentAccess access){
+        Long departmentId = userProvider.get().getResourceId();
+
+        switch(access.type()){
+            case DELETE ,PATCH->{
+                Long appointmentId = extract(jp,Long.class);
+                if(!appointmentDataService.isAppointmentManagerRelationExists(appointmentId,departmentId)){
+                    throw new AccessDeniedException("Invalid appointment id");
                 }
             }
         }

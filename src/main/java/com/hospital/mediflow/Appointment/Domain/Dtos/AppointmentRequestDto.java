@@ -22,4 +22,5 @@ public record AppointmentRequestDto (
 
         String reason
 ){
+
 }

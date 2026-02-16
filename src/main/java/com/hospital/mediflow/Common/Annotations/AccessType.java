@@ -6,6 +6,7 @@ public enum AccessType {
     READ_BY_ID,
     READ_BY_FILTER,
     UPDATE,
+    PATCH,
     DELETE
 }
 

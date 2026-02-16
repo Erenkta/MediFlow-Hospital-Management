@@ -60,4 +60,21 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findAll(Specification<Appointment> specification);
     Page<Appointment> findAll(Specification<Appointment> specification,Pageable pageable);
+
+    @Query("""
+    select count(a) > 0 from Appointment a where a.id = :appointment_id and a.patient.id = :patient_id
+""")
+    boolean isAppointmentPatientRelationExists(@Param("appointment_id") Long appointmentId, @Param("patient_id") Long patientId);
+
+    @Query("""
+    select count(a) > 0 from Appointment a where a.id = :appointment_id and a.doctor.id = :doctor_id
+""")
+    boolean isAppointmentDoctorRelationExists(@Param("appointment_id") Long appointmentId, @Param("doctor_id") Long doctorId);
+
+    @Query("""
+    select count(a) > 0 from Appointment a 
+     left join DoctorDepartment dd on a.doctor.id = dd.doctor.id
+     where a.id = :appointment_id and dd.department.id = :department_id
+""")
+    boolean isAppointmentManagerRelationExists(@Param("appointment_id") Long appointmentId,@Param("department_id") Long departmentId);
 }

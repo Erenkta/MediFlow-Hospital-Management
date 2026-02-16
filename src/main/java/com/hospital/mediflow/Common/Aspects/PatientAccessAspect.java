@@ -1,7 +1,11 @@
 package com.hospital.mediflow.Common.Aspects;
 
+import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
+import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorAppointmentAccess;
+import com.hospital.mediflow.Common.Annotations.Access.Patient.PatientAppointmentAccess;
 import com.hospital.mediflow.Common.Annotations.Access.Patient.PatientBillingAccess;
+import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
@@ -23,6 +27,8 @@ import org.springframework.stereotype.Component;
 public class PatientAccessAspect extends BaseAspect {
     private final MedicalRecordDataService medicalRecordDataService;
     private final BillingDataService billingDataService;
+    private final CurrentUserProvider userProvider;
+    private final AppointmentDataService appointmentDataService;
 
     @Around("@annotation(com.hospital.mediflow.Common.Annotations.Access.Patient.AutoFillPatientId)")
     public Object autoFillPatientFilter(ProceedingJoinPoint pjp) throws Throwable{
@@ -61,6 +67,19 @@ public class PatientAccessAspect extends BaseAspect {
                 Long billingId = extract(jp,Long.class);
                 if(!billingDataService.isBillingPatientRelationExists(billingId,patientId)){
                     throw new AccessDeniedException("Access denied");
+                }
+            }
+        }
+    }
+
+    @Before("@annotation(access)")
+    public void checkAppointmentAccess(JoinPoint jp, PatientAppointmentAccess access){
+        Long patientId = userProvider.get().getResourceId();
+        switch(access.type()){
+            case DELETE ,PATCH->{
+                Long appointmentId = extract(jp,Long.class);
+                if(!appointmentDataService.isAppointmentPatientRelationExists(appointmentId,patientId)){
+                    throw new AccessDeniedException("Invalid appointment id");
                 }
             }
         }

@@ -1,7 +1,6 @@
 package com.hospital.mediflow.Common.Specifications;
 
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
-import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
