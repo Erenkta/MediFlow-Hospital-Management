@@ -34,7 +34,7 @@ public class ManagerBillingQuery {
         Predicate filter = filterBuilder.build(filterDto);
         return service.findAllBillings(pageable,filter);
     }
-
+    @ManagerBillingAccess(type = AccessType.READ_BY_ID)
     public BillingResponseDto findBillingById(Long id) {
         return service.findBillingById(id);
     }

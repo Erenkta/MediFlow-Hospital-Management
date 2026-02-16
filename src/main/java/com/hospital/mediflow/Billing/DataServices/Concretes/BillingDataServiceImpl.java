@@ -60,6 +60,11 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     }
 
     @Override
+    public boolean isBillingPatientRelationExists(Long billingId, Long patientId) {
+        return repository.isBillingPatientRelationExists(billingId, patientId);
+    }
+
+    @Override
     public void deleteBilling(Long id) {
         this.isExistsOrThrow(id);
         repository.deleteById(id);

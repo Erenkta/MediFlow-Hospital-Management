@@ -16,5 +16,6 @@ public interface BillingDataService {
     BillingResponseDto createBilling(BillingRequestDto medicalRecord);
     BillingResponseDto updateBilling(Long id,BillingRequestDto medicalRecord);
     boolean isBillingDepartmentRelationExists(Long billingId,Long departmentId);
+    boolean isBillingPatientRelationExists(Long billingId,Long patientId);
     void deleteBilling(Long id);
 }

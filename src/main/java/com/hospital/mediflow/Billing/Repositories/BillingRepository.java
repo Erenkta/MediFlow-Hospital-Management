@@ -22,4 +22,9 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
             Select count(b) > 0 from Billing b where b.id = :billing_id and b.department.id = :department_id
             """)
     boolean isBillingDepartmentRelationExists(@Param("billing_id") Long billingId, @Param("department_id") Long departmentId);
+
+    @Query("""
+            Select count(b) > 0 from Billing b where b.id = :billing_id and b.patient.id = :patient_id
+            """)
+    boolean isBillingPatientRelationExists(@Param("billing_id") Long billingId, @Param("patient_id") Long patientId);
 }

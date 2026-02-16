@@ -7,6 +7,7 @@ import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
 import com.hospital.mediflow.Common.Helpers.Predicate.BillingPredicateBuilder;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.Common.Queries.Manager.ManagerBillingQuery;
+import com.hospital.mediflow.Common.Queries.Patient.PatientBillingQuery;
 import com.hospital.mediflow.Security.Roles.Role;
 import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import com.querydsl.core.types.Predicate;
@@ -27,6 +28,7 @@ public class BillingQueryFacade {
     private final ManagerBillingQuery managerQuery;
     private final BillingPredicateBuilder filterBuilder;
     private final CurrentUserProvider userProvider;
+    private final PatientBillingQuery patientQuery;
 
 
     public List<BillingResponseDto> getBillings(BillingFilterDto filterDto){
@@ -70,12 +72,10 @@ public class BillingQueryFacade {
 
     public BillingResponseDto getBillingById(Long id) {
         Role role = MediflowUserDetailsService.currentUserRole();
-        Long resourceId = userProvider.get().getResourceId();
         return switch (role) {
             case ADMIN   -> billingService.findBillingById(id);
-            case MANAGER -> managerQuery.findBillingById(resourceId);
-            case PATIENT -> billingService.findBillingById(resourceId);  // TODO Patient can get their billings
-
+            case MANAGER -> managerQuery.findBillingById(id);
+            case PATIENT -> patientQuery.findBillingById(id);
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
