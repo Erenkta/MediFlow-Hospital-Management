@@ -30,14 +30,10 @@ import java.util.Objects;
 @Slf4j
 public class ManagerAccessAspect extends BaseAspect {
     private final ManagerPolicy accessPolicy;
-    private final PatientDataService patientDataService;
-    private final DoctorDepartmentDataService docDepDataService;
     private final DoctorIdResolver doctorIdResolver;
     private final DoctorAccessDataResolver doctorAccessDataResolver;
     private final BillingAccessDataResolver billingAccessDataResolver;
     private final CurrentUserProvider userProvider;
-    private final BillingDataService billingDataService;
-    private final AppointmentDataService appointmentDataService;
 
     @Before("@annotation(access) && args(patientId,..)")
     public void checkPatientAccess(ManagerPatientAccess access,Long patientId){

@@ -1,7 +1,7 @@
 package com.hospital.mediflow.Common.Queries.Manager;
 
 import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerRecordAccess;
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;

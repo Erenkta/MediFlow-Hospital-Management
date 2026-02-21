@@ -3,9 +3,9 @@ package com.hospital.mediflow.Common.Authorization.Policy.Patient;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
-import com.hospital.mediflow.Common.Authorization.Policy.AuthorizationPolicy;
+import com.hospital.mediflow.Common.Authorization.Policy.AuthorizationPolicyDeprecated;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.Security.Dtos.Entity.User;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PatientPolicy extends AuthorizationPolicy {
+public class PatientPolicy extends AuthorizationPolicyDeprecated {
     private final MedicalRecordDataService medicalRecordDataService;
     private final AppointmentDataService appointmentDataService;
     private final BillingDataService billingDataService;

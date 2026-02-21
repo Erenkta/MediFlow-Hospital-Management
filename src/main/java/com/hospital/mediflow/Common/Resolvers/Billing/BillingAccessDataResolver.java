@@ -2,7 +2,7 @@ package com.hospital.mediflow.Common.Resolvers.Billing;
 
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Aspects.BaseAspect;
 import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
 import org.aspectj.lang.JoinPoint;

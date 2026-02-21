@@ -1,5 +1,8 @@
 package com.hospital.mediflow.Patient.Services;
 
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Queries.Doctor.DoctorPatientQuery;
 import com.hospital.mediflow.Common.Queries.Manager.ManagerPatientQuery;
 import com.hospital.mediflow.Common.Queries.Patient.PatientQuery;
@@ -54,14 +57,13 @@ public class PatientQueryFacade {
             case ADMIN   -> patientService.findById(patientId);
         };
     }
-
+    @ResourceAccess(
+            action = AccessType.CREATE,
+            resource = ResourceType.PATIENT,
+            payloadParam = "requestDto"
+    )
     public PatientResponseDto save(PatientRequestDto requestDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> patientService.save(requestDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-
-        };
+        return patientService.save(requestDto);
     }
     public PatientResponseDto updatePatient(Long patientId,PatientRequestDto requestDto){
         Role role = MediflowUserDetailsService.currentUserRole();

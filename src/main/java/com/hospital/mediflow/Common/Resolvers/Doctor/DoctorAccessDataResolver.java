@@ -1,6 +1,6 @@
 package com.hospital.mediflow.Common.Resolvers.Doctor;
 
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Aspects.BaseAspect;
 import com.hospital.mediflow.Common.Authorization.Model.DoctorAccessData;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;

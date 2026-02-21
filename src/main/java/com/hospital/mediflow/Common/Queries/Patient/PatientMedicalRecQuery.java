@@ -2,7 +2,7 @@ package com.hospital.mediflow.Common.Queries.Patient;
 
 import com.hospital.mediflow.Common.Annotations.Access.Patient.AutoFillPatientId;
 import com.hospital.mediflow.Common.Annotations.Access.Patient.PatientRecordAccess;
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;

@@ -1,7 +1,9 @@
 package com.hospital.mediflow.Common.Queries.Manager;
 
 import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerDoctorAccess;
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
 import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
@@ -26,7 +28,8 @@ public class ManagerDoctorQuery {
         return doctorService.updateDoctor(doctorId,updateBody);
     }
 
-    @ManagerDoctorAccess(type=AccessType.DELETE)
+    //@ManagerDoctorAccess(type=AccessType.DELETE)
+    @ResourceAccess(action=AccessType.DELETE,resource = ResourceType.DOCTOR)
     public void deleteDoctor(Long doctorId) {
         doctorService.deleteDoctor(doctorId);
     }

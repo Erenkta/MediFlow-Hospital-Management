@@ -3,12 +3,10 @@ package com.hospital.mediflow.Common.Authorization.Policy.Manager;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
-import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
-import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
 import com.hospital.mediflow.Common.Authorization.Model.DoctorAccessData;
-import com.hospital.mediflow.Common.Authorization.Policy.AuthorizationPolicy;
+import com.hospital.mediflow.Common.Authorization.Policy.AuthorizationPolicyDeprecated;
 import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Security.Dtos.Entity.User;
@@ -23,7 +21,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ManagerPolicy extends AuthorizationPolicy {
+public class ManagerPolicy extends AuthorizationPolicyDeprecated {
     private final PatientDataService patientDataService;
     private final DoctorDepartmentDataService docDepDataService;
     private final SpecialtyDataService specialtyDataService;

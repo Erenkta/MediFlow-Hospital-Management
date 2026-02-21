@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Annotations;
+package com.hospital.mediflow.Common.Annotations.Access;
 
 public enum AccessType {
     CREATE,

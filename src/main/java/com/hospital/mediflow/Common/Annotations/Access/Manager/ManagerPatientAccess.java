@@ -1,6 +1,6 @@
 package com.hospital.mediflow.Common.Annotations.Access.Manager;
 
-import com.hospital.mediflow.Common.Annotations.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

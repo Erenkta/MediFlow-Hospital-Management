@@ -104,7 +104,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Doctor not found")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long id){
         facade.deleteDoctor(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

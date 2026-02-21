@@ -4,7 +4,7 @@ import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataS
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorAppointmentAccess;
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorPatientAccess;
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorRecordAccess;
-import com.hospital.mediflow.Common.Authorization.Policy.Doctor.DoctorPolicy;
+import com.hospital.mediflow.Common.Authorization.Policy.Doctor.DoctorPolicyDeprecated;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
@@ -23,10 +23,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class DoctorAccessAspect extends BaseAspect {
-    private final DoctorPolicy accessPolicy;
-    private final MedicalRecordDataService medicalRecordDataService;
+    private final DoctorPolicyDeprecated accessPolicy;
     private final CurrentUserProvider userProvider;
-    private final AppointmentDataService appointmentDataService;
 
     @Before("@annotation(access) && args(patientId,..)")
     public void checkAccess(Long patientId, DoctorPatientAccess access){
@@ -37,6 +35,7 @@ public class DoctorAccessAspect extends BaseAspect {
     public void checkRecordAccess(DoctorRecordAccess access, Long recordId){
         accessPolicy.assertCanAccessMedicalRecord(userProvider.get(),recordId,access.type());
     }
+
     @Around("@annotation(com.hospital.mediflow.Common.Annotations.Access.Doctor.AutoFillDoctorId)")
     public Object autoFillPatientFilter(ProceedingJoinPoint pjp) throws Throwable{
         Object[] args = pjp.getArgs();
