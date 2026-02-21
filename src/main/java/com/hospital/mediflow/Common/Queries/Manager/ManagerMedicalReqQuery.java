@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Common.Queries.Manager;
 
 import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerRecordAccess;
+import com.hospital.mediflow.Common.Annotations.AccessType;
 import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
@@ -41,22 +42,22 @@ public class ManagerMedicalReqQuery {
         return service.findAllMedicalRecords(withDepartmentFiltered);
     }
 
-    @ManagerRecordAccess
+    @ManagerRecordAccess(type = AccessType.READ_BY_ID)
     public MedicalRecordResponseDto findMedicalRecordById(Long recordId){
         return service.findMedicalRecordById(recordId);
     }
 
-    @ManagerRecordAccess
+    @ManagerRecordAccess(type = AccessType.CREATE)
     public MedicalRecordResponseDto createMedicalRecord(MedicalRecordRequestDto requestDto) {
         return service.createMedicalRecord(requestDto);
     }
 
-    @ManagerRecordAccess
+    @ManagerRecordAccess(type = AccessType.UPDATE)
     public MedicalRecordResponseDto updateMedicalRecord(Long recordId, MedicalRecordRequestDto requestDto) {
         return service.updateMedicalRecord(recordId,requestDto);
     }
 
-    @ManagerRecordAccess
+    @ManagerRecordAccess(type = AccessType.DELETE)
     public void deleteMedicalRecord(Long recordId) {
         service.deleteMedicalRecord(recordId);
     }

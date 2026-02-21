@@ -2,10 +2,12 @@ package com.hospital.mediflow.Common.Aspects;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorAppointmentAccess;
+import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorPatientAccess;
+import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorRecordAccess;
+import com.hospital.mediflow.Common.Authorization.Policy.Doctor.DoctorPolicy;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
-import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -22,26 +23,19 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class DoctorAccessAspect extends BaseAspect {
-    private final PatientDataService patientDataService;
+    private final DoctorPolicy accessPolicy;
     private final MedicalRecordDataService medicalRecordDataService;
     private final CurrentUserProvider userProvider;
     private final AppointmentDataService appointmentDataService;
 
-    @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorPatientAccess) && args(patientId,..)")
-    public void checkAccess(Long patientId){
-        Long doctorId = MediflowUserDetailsService.currentUser().getResourceId();
-        boolean isAccessible = patientDataService.isDoctorPatientRelationExists(doctorId,patientId);
-        if(!isAccessible){
-            throw new AccessDeniedException("Access denied");
-        }
+    @Before("@annotation(access) && args(patientId,..)")
+    public void checkAccess(Long patientId, DoctorPatientAccess access){
+         accessPolicy.assertCanAccessPatient(userProvider.get(),patientId,access.type());
     }
-    @Before("@annotation(com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorRecordAccess) && args(recordId,..)")
-    public void checkRecordAccess(Long recordId){
-        Long doctorId = MediflowUserDetailsService.currentUser().getResourceId();
-        boolean isAccessible = medicalRecordDataService.isDoctorRecordRelationExists(recordId,doctorId);
-        if(!isAccessible){
-            throw new AccessDeniedException("Access denied");
-        }
+
+    @Before("@annotation(access) && args(recordId,..)")
+    public void checkRecordAccess(DoctorRecordAccess access, Long recordId){
+        accessPolicy.assertCanAccessMedicalRecord(userProvider.get(),recordId,access.type());
     }
     @Around("@annotation(com.hospital.mediflow.Common.Annotations.Access.Doctor.AutoFillDoctorId)")
     public Object autoFillPatientFilter(ProceedingJoinPoint pjp) throws Throwable{
@@ -66,14 +60,7 @@ public class DoctorAccessAspect extends BaseAspect {
 
     @Before("@annotation(access)")
     public void checkAppointmentAccess(JoinPoint jp, DoctorAppointmentAccess access){
-        Long doctorId = userProvider.get().getResourceId();
-        switch(access.type()){
-            case DELETE ,PATCH->{
-                Long appointmentId = extract(jp,Long.class);
-                if(!appointmentDataService.isAppointmentDoctorRelationExists(appointmentId,doctorId)){
-                    throw new AccessDeniedException("Invalid appointment id");
-                }
-            }
-        }
+        Long appointmentId = extract(jp,Long.class);
+        accessPolicy.assertCanAccessAppointment(userProvider.get(),appointmentId,access.type());
     }
 }
