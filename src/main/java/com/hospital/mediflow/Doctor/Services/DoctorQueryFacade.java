@@ -39,33 +39,16 @@ public class DoctorQueryFacade {
     }
 
     public Page<DoctorResponseDto> getDoctors(@NotNull Pageable pageable, DoctorFilterDto filter){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN,MANAGER -> service.findDoctors(pageable, filter);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.findDoctors(pageable, filter);
     }
     public List<DoctorResponseDto> getDoctors(DoctorFilterDto filter){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN,MANAGER -> service.findDoctors(filter);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.findDoctors(filter);
     }
-
     public Page<DoctorResponseDto> getDoctorsByDoctorCode(Pageable pageable, String specialty,TitleEnum title){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN,MANAGER -> service.findDoctorsByDoctorCode(pageable, specialty,title);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.findDoctorsByDoctorCode(pageable, specialty,title);
     }
     public List<DoctorResponseDto> getDoctorsByDoctorCode(String specialty, TitleEnum title){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN,MANAGER -> service.findDoctorsByDoctorCode(specialty,title);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.findDoctorsByDoctorCode(specialty,title);
     }
 
     public DoctorResponseDto getDoctorById(Long doctorId){

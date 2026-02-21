@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Common.Queries.Doctor;
 
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorPatientAccess;
+import com.hospital.mediflow.Common.Annotations.AccessType;
 import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
@@ -21,7 +22,6 @@ public class DoctorPatientQuery {
     private final PatientService patientDataService;
 
     public List<PatientResponseDto> findPatient(PatientFilterDto filter) {
-
         Long doctorId = MediflowUserDetailsService.currentUser().getResourceId();
         Specification<Patient> spec = PatientSpecification.hasFilter(filter);
         spec = spec.and(PatientSpecification.withDoctorId(doctorId));
@@ -33,7 +33,7 @@ public class DoctorPatientQuery {
         spec = spec.and(PatientSpecification.withDoctorId(doctorId));
         return patientDataService.findAll(pageable,spec);
     }
-    @DoctorPatientAccess
+    @DoctorPatientAccess(type = AccessType.READ_BY_ID)
     public PatientResponseDto findPatientById(Long patientId) {
         return patientDataService.findById(patientId);
     }
