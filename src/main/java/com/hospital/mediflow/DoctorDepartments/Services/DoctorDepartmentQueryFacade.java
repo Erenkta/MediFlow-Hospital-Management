@@ -1,5 +1,8 @@
 package com.hospital.mediflow.DoctorDepartments.Services;
 
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Queries.Manager.ManagerDoctorDepartmentQuery;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentFilterDto;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentResponseDto;
@@ -20,39 +23,32 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DoctorDepartmentQueryFacade {
     private final DoctorDepartmentService service;
-    private final ManagerDoctorDepartmentQuery managerQuery;
 
     public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable, DoctorDepartmentFilterDto filterDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN,MANAGER   ->  service.findAll(pageable, filterDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.findAll(pageable, filterDto);
     }
 
     public List<DoctorDepartmentResponseDto> findAll(DoctorDepartmentFilterDto filterDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN,MANAGER   ->  service.findAll(filterDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.findAll(filterDto);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.DOCTOR_DEPARTMENT,
+            action = AccessType.UPDATE,
+            idParam = "id",
+            payloadParam = "doctorIds"
+    )
     public DoctorDepartmentResponseDto signDoctorsToDepartment(Long id, Set<Long> doctorIds) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   ->  service.signDoctorsToDepartment(doctorIds.stream().toList(), id);
-            case MANAGER -> managerQuery.signDoctorsToDepartment(doctorIds.stream().toList(),id);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.signDoctorsToDepartment(doctorIds.stream().toList(), id);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.DOCTOR_DEPARTMENT,
+            action = AccessType.DELETE,
+            idParam = "id",
+            payloadParam = "doctorIds"
+    )
     public DoctorDepartmentResponseDto removeDoctorFromDepartment(Long id, Set<Long> doctorIds) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> service.removeDoctorFromDepartment(doctorIds.stream().toList(), id);
-            case MANAGER -> managerQuery.removeDoctorFromDepartment(doctorIds.stream().toList(),id);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.removeDoctorFromDepartment(doctorIds.stream().toList(), id);
     }
 }

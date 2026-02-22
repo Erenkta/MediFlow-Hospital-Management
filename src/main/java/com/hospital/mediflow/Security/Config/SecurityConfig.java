@@ -39,22 +39,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable) // CSRF is disabled now
                 .authorizeHttpRequests(a -> a
-                        //UserController
                         .requestMatchers("/api/v1/users/login")
                         .permitAll()
-//                        //BillingController
-//                        .requestMatchers("/api/v1/billings/**")
-//                        .permitAll()
-//                        //DoctorController
-//                        .requestMatchers("/api/v1/doctors/**")
-//                        .permitAll()
-//                        //
-//                        //DepartmentController
-//                        .requestMatchers("/api/v1/departments/**")
-//                        .permitAll()
-//                        //
-//                        //AppointmentController
-//                        .requestMatchers("/api/v1/appointments/**")
                         .anyRequest().authenticated()
                 ) // Any request should be authenticated.
                 .httpBasic(Customizer.withDefaults()) //

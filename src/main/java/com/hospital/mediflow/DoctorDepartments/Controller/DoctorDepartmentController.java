@@ -23,7 +23,6 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/v1/doctor-department")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class DoctorDepartmentController {
 
     private final DoctorDepartmentQueryFacade facade;
@@ -36,7 +35,7 @@ public class DoctorDepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> findAll(
             @Parameter(description = "Pageable info for pagination", required = true)
             @NotNull Pageable pageable,
@@ -56,7 +55,7 @@ public class DoctorDepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/{department-id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DoctorDepartmentResponseDto> save(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable(name = "department-id") Long id,
@@ -73,7 +72,7 @@ public class DoctorDepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{department-id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DoctorDepartmentResponseDto> delete(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable(name = "department-id") Long id,
