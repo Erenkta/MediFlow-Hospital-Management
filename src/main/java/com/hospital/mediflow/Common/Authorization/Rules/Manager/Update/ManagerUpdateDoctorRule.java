@@ -3,7 +3,6 @@ package com.hospital.mediflow.Common.Authorization.Rules.Manager.Update;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
-import com.hospital.mediflow.Common.Authorization.Model.DoctorAccessData;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
 import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
 import com.hospital.mediflow.Security.Roles.Role;
@@ -35,10 +34,9 @@ public class ManagerUpdateDoctorRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        DoctorAccessData data = (DoctorAccessData)context.getPayload();
-        boolean hasAccess =  docDepDataService.isDepartmentDoctorRelationsExists(data.doctorId(),context.getUser().getResourceId());
+        boolean hasAccess =  docDepDataService.isDepartmentDoctorRelationsExists(context.getResourceId(),context.getUser().getResourceId());
         if (!hasAccess) {
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.doctorId(),action().name(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

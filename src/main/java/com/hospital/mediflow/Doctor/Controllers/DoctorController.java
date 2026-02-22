@@ -37,7 +37,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Invalid request data")
     })
     @PostMapping
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DoctorResponseDto> createDoctor(@Valid @RequestBody DoctorRequestDto request){
         return ResponseEntity.status(HttpStatus.CREATED).body(facade.createDoctor(request));
     }
@@ -48,7 +48,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Invalid pagination or filter parameters")
     })
     @GetMapping
-    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getDoctors(@NotNull Pageable pageable, DoctorFilterDto filter){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(facade.getDoctors(filter))
@@ -66,7 +66,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)),description = "Invalid parameters")
     })
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getDoctorsByDoctorCode(@NotNull Pageable pageable, @RequestParam(value = "specialty",required = false) String specialty,@Valid @RequestParam(value = "title",required = false) TitleEnum title){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(facade.getDoctorsByDoctorCode(specialty,title))
@@ -80,7 +80,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "404",content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Doctor not found")
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getDoctorById(@PathVariable("id") Long id){
         return ResponseEntity.ok(facade.getDoctorById(id));
     }
@@ -93,7 +93,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorResponse.class)), description = "Invalid input data")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('MANAGER','DOCTOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DoctorResponseDto> updateDoctor(@PathVariable("id") Long id,@RequestBody DoctorRequestDto request){
        return ResponseEntity.status(HttpStatus.OK).body(facade.updateDoctor(id,request));
     }

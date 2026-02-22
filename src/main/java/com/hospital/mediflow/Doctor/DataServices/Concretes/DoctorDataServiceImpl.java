@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -50,8 +51,11 @@ public class DoctorDataServiceImpl extends BaseService<Doctor,Long>  implements 
     public DoctorResponseDto update(Long id, DoctorRequestDto requestDto) {
             Doctor entity = this.findByIdOrThrow(id);
             Doctor updatedEntity = mapper.toUpdatedEntity(entity,requestDto);
-            SpecialtyResponseDto specialtyResponseDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
-            updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
+
+            if(Objects.nonNull(requestDto.specialty())){
+                SpecialtyResponseDto specialtyResponseDto =specialtyService.findSpecialtyByCode(requestDto.specialty());
+                updatedEntity.getSpecialty().setName(specialtyResponseDto.name());
+            }
         return mapper.toDto(repository.save(updatedEntity));
     }
 

@@ -5,6 +5,7 @@ import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
 import com.hospital.mediflow.Common.Authorization.Model.DoctorAccessData;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
+import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Security.Roles.Role;
 import com.hospital.mediflow.Specialty.DataServices.Abstracts.SpecialtyDataService;
@@ -36,10 +37,10 @@ public class ManagerCreateDoctorRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        DoctorAccessData data = (DoctorAccessData) context.getPayload();
+        DoctorRequestDto data = (DoctorRequestDto) context.getPayload();
         boolean hasAccess = specialtyDataService.isSpecialtyDepartmentRelationExists(data.specialty(),context.getUser().getResourceId());
         if (!hasAccess) {
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.doctorId(),action().name(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

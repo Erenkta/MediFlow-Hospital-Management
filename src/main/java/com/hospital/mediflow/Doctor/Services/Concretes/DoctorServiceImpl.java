@@ -69,7 +69,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAnyAuthority('doctor:read')")
+    @PreAuthorize("hasAnyAuthority('patient:read','doctor:read')")
     public Page<DoctorResponseDto> findDoctorsByDoctorCode(Pageable pageable, String specialty, TitleEnum title) {
         return dataService.findByDoctorCode(pageable,specialty,title);
     }
