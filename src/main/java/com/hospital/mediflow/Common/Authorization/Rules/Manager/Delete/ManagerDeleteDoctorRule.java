@@ -39,7 +39,7 @@ public class ManagerDeleteDoctorRule implements ActionRule {
         DoctorAccessData data = (DoctorAccessData)context.getPayload();
         boolean hasAccess =  docDepDataService.isDepartmentDoctorRelationsExists(data.doctorId(),context.getUser().getResourceId());
         if (!hasAccess) {
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.doctorId(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.doctorId(),action().name(),role().name(),resource().name()));
         }
     }
 }

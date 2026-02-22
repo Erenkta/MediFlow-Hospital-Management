@@ -1,10 +1,8 @@
-package com.hospital.mediflow.Common.Authorization.Rules.Manager.Delete;
+package com.hospital.mediflow.Common.Authorization.Rules.Patient.Read;
 
-import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
-import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
 import com.hospital.mediflow.Security.Roles.Role;
 import lombok.RequiredArgsConstructor;
@@ -12,32 +10,31 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class ManagerReadByIdBillingRule implements ActionRule {
-    private final BillingDataService billingDataService;
-
+public class PatientReadByIdPatientRule implements ActionRule {
     @Override
     public Role role() {
-        return Role.MANAGER;
+        return Role.PATIENT;
     }
 
     @Override
     public ResourceType resource() {
-        return ResourceType.BILLING;
+        return ResourceType.PATIENT;
     }
 
     @Override
     public AccessType action() {
-        return AccessType.DELETE;
+        return AccessType.READ_BY_ID;
     }
 
     @Override
     public void check(AuthorizationContext context) {
-        BillingAccessData data = (BillingAccessData) context.getPayload();
-        if(!billingDataService.isBillingDepartmentRelationExists(data.billingId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),role().name(),resource().name()));
+        if(!Objects.equals(context.getUser().getResourceId(),context.getResourceId())){
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

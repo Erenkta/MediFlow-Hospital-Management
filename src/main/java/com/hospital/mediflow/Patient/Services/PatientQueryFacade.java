@@ -5,7 +5,6 @@ import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Queries.Doctor.DoctorPatientQuery;
 import com.hospital.mediflow.Common.Queries.Manager.ManagerPatientQuery;
-import com.hospital.mediflow.Common.Queries.Patient.PatientQuery;
 import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
@@ -27,7 +26,6 @@ public class PatientQueryFacade {
 
     private final DoctorPatientQuery doctorQuery;
     private final ManagerPatientQuery managerQuery;
-    private final PatientQuery patientQuery;
     private final PatientService patientService;
 
     public List<PatientResponseDto> findPatient(PatientFilterDto filter) {
@@ -39,6 +37,7 @@ public class PatientQueryFacade {
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
+
     public Page<PatientResponseDto> findPatient(Pageable pageable, PatientFilterDto filter) {
         Role role = MediflowUserDetailsService.currentUserRole();
         return switch (role) {
@@ -48,15 +47,17 @@ public class PatientQueryFacade {
             default -> throw new AccessDeniedException("Unsupported role for the method");
         };
     }
+
+    @ResourceAccess(
+            resource = ResourceType.PATIENT,
+            action = AccessType.READ_BY_ID,
+            idParam = "patientId"
+
+    )
     public PatientResponseDto findPatientById(Long patientId) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case DOCTOR  -> doctorQuery.findPatientById(patientId);
-            case MANAGER -> managerQuery.findPatientById(patientId);
-            case PATIENT -> patientQuery.findPatientById(patientId);
-            case ADMIN   -> patientService.findById(patientId);
-        };
+        return patientService.findById(patientId);
     }
+
     @ResourceAccess(
             action = AccessType.CREATE,
             resource = ResourceType.PATIENT,
@@ -65,23 +66,25 @@ public class PatientQueryFacade {
     public PatientResponseDto save(PatientRequestDto requestDto) {
         return patientService.save(requestDto);
     }
+
+    @ResourceAccess(
+            resource = ResourceType.PATIENT,
+            action = AccessType.UPDATE,
+            idParam = "patientId",
+            payloadParam = "requestDto"
+
+    )
     public PatientResponseDto updatePatient(Long patientId,PatientRequestDto requestDto){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case MANAGER -> managerQuery.updatePatient(patientId,requestDto);
-            case PATIENT -> patientQuery.updatePatient(patientId,requestDto);
-            case ADMIN   -> patientService.update(patientId,requestDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return patientService.update(patientId,requestDto);
     }
+
+    @ResourceAccess(
+            resource = ResourceType.PATIENT,
+            action = AccessType.DELETE,
+            idParam = "patientId"
+    )
     public void deletePatient(Long patientId){
-        Role role = MediflowUserDetailsService.currentUserRole();
-         switch (role) {
-             case PATIENT -> patientQuery.deletePatient(patientId);
-             case MANAGER -> managerQuery.deletePatient(patientId);
-             case ADMIN  -> patientService.deleteById(patientId);
-             default -> throw new AccessDeniedException("Unsupported role for the method");
-        }
+        patientService.deleteById(patientId);
     }
 
 }

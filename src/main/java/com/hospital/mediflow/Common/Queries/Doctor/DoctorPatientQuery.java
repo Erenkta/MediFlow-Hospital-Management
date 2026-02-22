@@ -1,9 +1,5 @@
 package com.hospital.mediflow.Common.Queries.Doctor;
 
-import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorPatientAccess;
-import com.hospital.mediflow.Common.Annotations.Access.AccessType;
-import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
-import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
@@ -34,13 +30,5 @@ public class DoctorPatientQuery {
         Specification<Patient> spec = PatientSpecification.hasFilter(filter);
         spec = spec.and(PatientSpecification.withDoctorId(doctorId));
         return patientDataService.findAll(pageable,spec);
-    }
-    @ResourceAccess(
-            action = AccessType.READ_BY_ID,
-            resource = ResourceType.PATIENT,
-            idParam = "patientId"
-    )
-    public PatientResponseDto findPatientById(Long patientId) {
-        return patientDataService.findById(patientId);
     }
 }

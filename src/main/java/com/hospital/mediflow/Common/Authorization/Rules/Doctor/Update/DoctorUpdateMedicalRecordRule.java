@@ -36,7 +36,7 @@ public class DoctorUpdateMedicalRecordRule implements ActionRule {
     public void check(AuthorizationContext context) {
         boolean isAccessible = medicalRecordDataService.isDoctorRecordRelationExists(context.getResourceId(),context.getUser().getResourceId());
         if(!isAccessible){
-            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

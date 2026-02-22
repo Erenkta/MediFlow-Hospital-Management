@@ -41,13 +41,13 @@ public class ManagerUpdateBillingRule implements ActionRule {
     public void check(AuthorizationContext context) {
         BillingAccessData data = (BillingAccessData) context.getPayload();
         if (!Objects.equals(data.departmentId(), context.getUser().getResourceId())) {
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.departmentId(),role().name(),ResourceType.DEPARTMENT.name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.departmentId(),action().name(),role().name(),ResourceType.DEPARTMENT.name()));
         }
         if(!docDepDataService.isDepartmentAppointmentRelationsExists(context.getUser().getResourceId(),data.appointmentId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),role().name(),ResourceType.APPOINTMENT.name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),action().name(),role().name(),ResourceType.APPOINTMENT.name()));
         }
         if(!billingDataService.isBillingDepartmentRelationExists(data.billingId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),action().name(),role().name(),resource().name()));
         }
     }
 }

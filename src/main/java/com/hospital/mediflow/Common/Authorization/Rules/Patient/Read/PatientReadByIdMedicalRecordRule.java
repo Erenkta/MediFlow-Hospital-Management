@@ -36,7 +36,7 @@ public class PatientReadByIdMedicalRecordRule implements ActionRule {
     public void check(AuthorizationContext context) {
         boolean isAccessible = medicalRecordDataService.isPatientRecordRelationExists(context.getUser().getResourceId(),context.getResourceId());
         if(!isAccessible){
-            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(), resource().name()));
         }
     }
 }

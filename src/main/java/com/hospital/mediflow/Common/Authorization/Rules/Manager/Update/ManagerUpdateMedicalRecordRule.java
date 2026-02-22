@@ -39,7 +39,7 @@ public class ManagerUpdateMedicalRecordRule implements ActionRule {
                         context.getResourceId(), context.getUser().getResourceId()
                 );
         if (!hasAccess) {
-            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

@@ -34,17 +34,17 @@ public class ManagerReadByFilterBillingRule implements ActionRule {
 
     @Override
     public AccessType action() {
-        return AccessType.CREATE;
+        return AccessType.READ_BY_FILTER;
     }
 
     @Override
     public void check(AuthorizationContext context) {
         BillingAccessData data = (BillingAccessData) context.getPayload();
         if(data.appointmentId() != null && !docDepDataService.isDepartmentAppointmentRelationsExists(context.getUser().getResourceId(),data.appointmentId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),role().name(),ResourceType.APPOINTMENT.name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),action().name(),role().name(),ResourceType.APPOINTMENT.name()));
         }
         if(!patientDataService.isDepartmentPatientRelationExists(context.getUser().getResourceId(),data.patientId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.patientId(),context.getUser().getRole().name(),ResourceType.PATIENT.name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.patientId(),action().name(),context.getUser().getRole().name(),ResourceType.PATIENT.name()));
         }
     }
 }

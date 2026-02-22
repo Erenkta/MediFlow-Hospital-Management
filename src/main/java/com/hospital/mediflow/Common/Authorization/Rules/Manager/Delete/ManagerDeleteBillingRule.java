@@ -1,9 +1,10 @@
-package com.hospital.mediflow.Common.Authorization.Rules.Doctor.Delete;
+package com.hospital.mediflow.Common.Authorization.Rules.Manager.Delete;
 
-import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
+import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
+import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
 import com.hospital.mediflow.Security.Roles.Role;
 import lombok.RequiredArgsConstructor;
@@ -14,28 +15,29 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class DoctorPatchAppointmentRule implements ActionRule {
-    private final AppointmentDataService appointmentDataService;
+public class ManagerDeleteBillingRule implements ActionRule {
+    private final BillingDataService billingDataService;
 
     @Override
     public Role role() {
-        return Role.DOCTOR;
+        return Role.MANAGER;
     }
 
     @Override
     public ResourceType resource() {
-        return ResourceType.APPOINTMENT;
+        return ResourceType.BILLING;
     }
 
     @Override
     public AccessType action() {
-        return AccessType.PATCH;
+        return AccessType.DELETE;
     }
 
     @Override
     public void check(AuthorizationContext context) {
-        if(!appointmentDataService.isAppointmentDoctorRelationExists(context.getResourceId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),role().name(), resource().name()));
+        BillingAccessData data = (BillingAccessData) context.getPayload();
+        if(!billingDataService.isBillingDepartmentRelationExists(data.billingId(),context.getUser().getResourceId())){
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),action().name(),role().name(),resource().name()));
         }
     }
 }

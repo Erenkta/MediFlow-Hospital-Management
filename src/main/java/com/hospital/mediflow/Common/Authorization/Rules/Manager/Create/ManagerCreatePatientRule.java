@@ -40,7 +40,7 @@ public class ManagerCreatePatientRule implements ActionRule {
                 );
 
         if (!hasAccess) {
-            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

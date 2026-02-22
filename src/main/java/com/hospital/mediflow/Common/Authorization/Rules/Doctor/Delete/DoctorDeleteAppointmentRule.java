@@ -35,7 +35,7 @@ public class DoctorDeleteAppointmentRule implements ActionRule {
     @Override
     public void check(AuthorizationContext context) {
         if(!appointmentDataService.isAppointmentDoctorRelationExists(context.getResourceId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),role().name(), resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(), resource().name()));
         }
     }
 }

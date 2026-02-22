@@ -38,7 +38,7 @@ public class PatientReadByIdBillingRule implements ActionRule {
     public void check(AuthorizationContext context) {
         BillingAccessData data = (BillingAccessData) context.getPayload();
         if(!billingDataService.isBillingPatientRelationExists(data.billingId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),role().name(),resource().name()));
+            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),action().name(),role().name(),resource().name()));
         }
     }
 }
