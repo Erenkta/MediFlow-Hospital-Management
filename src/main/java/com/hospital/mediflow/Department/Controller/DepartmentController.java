@@ -38,7 +38,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
-    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<? extends Iterable<DepartmentResponseDto>> getDepartments(
             @Parameter(description = "Pageable info for pagination", required = true)
             @NotNull Pageable pageable,
@@ -58,7 +58,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DepartmentResponseDto> getDepartmentById(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id) {
@@ -73,7 +73,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DepartmentResponseDto> createDepartment(
             @Parameter(description = "Department data to create", required = true)
             @Valid @RequestBody DepartmentRequestDto requestDto) {
@@ -88,7 +88,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DepartmentResponseDto> updateDepartment(
             @Parameter(description = "ID of the department to update", required = true)
             @PathVariable Long id,
@@ -105,7 +105,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PatchMapping("/{id}/add-specialties")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DepartmentResponseDto> addSpecialties(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id,
@@ -122,7 +122,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PatchMapping("/{id}/remove-specialties")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DepartmentResponseDto> removeSpecialties(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id,
@@ -138,7 +138,7 @@ public class DepartmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteDepartment(
             @Parameter(description = "ID of the department", required = true)
             @PathVariable Long id) {

@@ -1,16 +1,16 @@
 package com.hospital.mediflow.Department.Services;
 
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentFilterDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentRequestDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentResponseDto;
 import com.hospital.mediflow.Department.Services.Abstracts.DepartmentService;
-import com.hospital.mediflow.Security.Roles.Role;
-import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,49 +32,52 @@ public class DepartmentQueryFacade {
         return service.findDepartmentById(id);
     }
 
-
+    @ResourceAccess(
+            resource = ResourceType.DEPARTMENT,
+            action = AccessType.CREATE,
+            payloadParam = "requestDto"
+    )
     public DepartmentResponseDto createDepartment(DepartmentRequestDto requestDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN -> service.createDepartment(requestDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.createDepartment(requestDto);
     }
 
-
+    @ResourceAccess(
+            resource = ResourceType.DEPARTMENT,
+            action = AccessType.UPDATE,
+            idParam = "id",
+            payloadParam = "requestDto"
+    )
     public DepartmentResponseDto updateDepartment(Long id, DepartmentRequestDto requestDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN -> service.updateDepartment(id, requestDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.updateDepartment(id, requestDto);
     }
 
 
-
+    @ResourceAccess(
+            resource = ResourceType.DEPARTMENT,
+            action = AccessType.PATCH,
+            idParam = "id",
+            payloadParam = "specialties"
+    )
     public DepartmentResponseDto addSpecialties(Long id, List<String> specialties) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN -> service.addSpecialties(id, specialties);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.addSpecialties(id, specialties);
     }
 
-
+    @ResourceAccess(
+            resource = ResourceType.DEPARTMENT,
+            action = AccessType.PATCH,
+            idParam = "id",
+            payloadParam = "specialties"
+    )
     public DepartmentResponseDto removeSpecialties(Long id, List<String> specialties) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN -> service.removeSpecialties(id, specialties);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return service.removeSpecialties(id, specialties);
     }
 
-
-    public void deleteDepartment( Long id) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        switch (role) {
-            case ADMIN ->service.deleteDepartment(id);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        }
+    @ResourceAccess(
+            resource = ResourceType.DEPARTMENT,
+            action = AccessType.DELETE,
+            idParam = "id"
+    )
+    public void deleteDepartment(Long id) {
+        service.deleteDepartment(id);
     }
 }
