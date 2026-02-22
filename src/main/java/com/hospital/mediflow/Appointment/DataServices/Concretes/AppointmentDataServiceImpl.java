@@ -112,6 +112,11 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
     }
 
     @Override
+    public boolean isAppointmentExists(Long doctorId, Long patientId) {
+        return extendedRepository.isAppointmentExists(doctorId,patientId);
+    }
+
+    @Override
     public AppointmentResponseDto update(Long id, Appointment appointment) {
         repository.save(appointment);
         return mapper.toDto(appointment);

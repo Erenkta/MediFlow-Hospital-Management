@@ -1,8 +1,6 @@
 package com.hospital.mediflow.Common.Queries.Patient;
 
 import com.hospital.mediflow.Common.Annotations.Access.Patient.AutoFillPatientId;
-import com.hospital.mediflow.Common.Annotations.Access.Patient.PatientRecordAccess;
-import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;
@@ -30,10 +28,6 @@ public class PatientMedicalRecQuery {
     @AutoFillPatientId
     public List<MedicalRecordResponseDto> findAllMedicalRecords(MedicalRecordFilterDto filter) {
         return service.findAllMedicalRecords(builder.buildWithDto(filter));
-    }
-    @PatientRecordAccess(type = AccessType.READ_BY_ID)
-    public MedicalRecordResponseDto findMedicalRecordById(Long recordId) {
-        return service.findMedicalRecordById(recordId);
     }
 
 }

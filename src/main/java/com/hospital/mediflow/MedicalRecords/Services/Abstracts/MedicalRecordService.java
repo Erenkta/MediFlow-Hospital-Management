@@ -1,6 +1,6 @@
 package com.hospital.mediflow.MedicalRecords.Services.Abstracts;
 
-import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
+
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;
 import com.querydsl.core.types.Predicate;
@@ -18,6 +18,6 @@ public interface MedicalRecordService {
     Page<MedicalRecordResponseDto> findAllMedicalRecords(Pageable pageable, Predicate medicalRecordFilter);
     MedicalRecordResponseDto findMedicalRecordById(@NotNull Long id);
     MedicalRecordResponseDto createMedicalRecord(@Valid MedicalRecordRequestDto medicalRecord);
-    MedicalRecordResponseDto updateMedicalRecord(@NotNull Long id,@Valid MedicalRecordRequestDto medicalRecord);
+    MedicalRecordResponseDto updateMedicalRecord(@NotNull Long id, MedicalRecordRequestDto medicalRecord);
     void deleteMedicalRecord(@NotNull Long id);
 }

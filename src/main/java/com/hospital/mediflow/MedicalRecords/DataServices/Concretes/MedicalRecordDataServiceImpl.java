@@ -1,6 +1,8 @@
 package com.hospital.mediflow.MedicalRecords.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.BaseService;
+import com.hospital.mediflow.Doctor.DataServices.Abstracts.DoctorDataService;
+import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Mappers.MedicalRecordMapper;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
@@ -8,6 +10,8 @@ import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto
 import com.hospital.mediflow.MedicalRecords.Domain.Entity.MedicalRecord;
 
 import com.hospital.mediflow.MedicalRecords.Repository.MedicalRecordRepository;
+import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
+import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,12 +26,15 @@ import java.util.Optional;
 public class MedicalRecordDataServiceImpl extends BaseService<MedicalRecord,Long> implements MedicalRecordDataService {
     private final MedicalRecordRepository repository;
     private final MedicalRecordMapper mapper;
+    private final DoctorDataService doctorDataService;
+    private final PatientDataService patientDataService;
 
-    public MedicalRecordDataServiceImpl(MedicalRecordRepository repository,MedicalRecordMapper mapper) {
+    public MedicalRecordDataServiceImpl(MedicalRecordRepository repository,MedicalRecordMapper mapper,DoctorDataService doctorDataService,PatientDataService patientDataService) {
         super(repository);
         this.repository = repository;
         this.mapper = mapper;
-
+        this.doctorDataService = doctorDataService;
+        this.patientDataService = patientDataService;
     }
 
     @Override
@@ -46,6 +53,11 @@ public class MedicalRecordDataServiceImpl extends BaseService<MedicalRecord,Long
     }
 
     @Override
+    public MedicalRecord findReferenceById(Long recordId) {
+        return this.findByIdOrThrow(recordId);
+    }
+
+    @Override
     public boolean isPatientRecordRelationExists(Long recordId, Long patientId) {
         return repository.isPatientRecordRelationExists(recordId,patientId);
     }
@@ -53,10 +65,6 @@ public class MedicalRecordDataServiceImpl extends BaseService<MedicalRecord,Long
     @Override
     public boolean isDoctorRecordRelationExists(Long recordId, Long doctorId) {
         return repository.isDoctorRecordRelationExists(recordId,doctorId);
-    }
-    @Override
-    public boolean isManagerRecordRelationExists(Long recordId, Long departmentId) {
-        return repository.isManagerRecordRelationExists(recordId,departmentId);
     }
 
     @Override
@@ -67,6 +75,11 @@ public class MedicalRecordDataServiceImpl extends BaseService<MedicalRecord,Long
     @Override
     public MedicalRecordResponseDto createMedicalRecord(MedicalRecordRequestDto medicalRecord) {
         MedicalRecord entity = mapper.toEntity(medicalRecord);
+        Doctor doctor = doctorDataService.getReferenceById(medicalRecord.doctorId());
+        Patient patient = patientDataService.getReferenceById(medicalRecord.patientId());
+        entity.setDoctor(doctor);
+        entity.setPatient(patient);
+
         return mapper.toDto(repository.save(entity));
     }
 

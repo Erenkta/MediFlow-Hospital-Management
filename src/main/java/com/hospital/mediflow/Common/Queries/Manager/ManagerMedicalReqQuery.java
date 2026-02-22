@@ -41,24 +41,4 @@ public class ManagerMedicalReqQuery {
         );
         return service.findAllMedicalRecords(withDepartmentFiltered);
     }
-
-    @ManagerRecordAccess(type = AccessType.READ_BY_ID)
-    public MedicalRecordResponseDto findMedicalRecordById(Long recordId){
-        return service.findMedicalRecordById(recordId);
-    }
-
-    @ManagerRecordAccess(type = AccessType.CREATE)
-    public MedicalRecordResponseDto createMedicalRecord(MedicalRecordRequestDto requestDto) {
-        return service.createMedicalRecord(requestDto);
-    }
-
-    @ManagerRecordAccess(type = AccessType.UPDATE)
-    public MedicalRecordResponseDto updateMedicalRecord(Long recordId, MedicalRecordRequestDto requestDto) {
-        return service.updateMedicalRecord(recordId,requestDto);
-    }
-
-    @ManagerRecordAccess(type = AccessType.DELETE)
-    public void deleteMedicalRecord(Long recordId) {
-        service.deleteMedicalRecord(recordId);
-    }
 }

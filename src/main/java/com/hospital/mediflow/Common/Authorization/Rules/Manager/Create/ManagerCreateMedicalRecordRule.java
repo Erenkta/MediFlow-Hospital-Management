@@ -5,6 +5,7 @@ import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
 import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
+import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.Security.Roles.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +35,10 @@ public class ManagerCreateMedicalRecordRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
+        Long doctorId = ((MedicalRecordRequestDto)context.getPayload()).doctorId();
         boolean hasAccess =
                 docDepDataService.isDepartmentDoctorRelationsExists(
-                        context.getResourceId(), context.getUser().getResourceId()
+                        doctorId, context.getUser().getResourceId()
                 );
         if (!hasAccess) {
             throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
