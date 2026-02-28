@@ -1,6 +1,5 @@
 package com.hospital.mediflow.Billing.DataServices.Abstracts;
 
-import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.querydsl.core.types.Predicate;

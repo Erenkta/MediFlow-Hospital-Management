@@ -1,8 +1,6 @@
 package com.hospital.mediflow.MedicalRecords.Services.Concretes;
 
-import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
-import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordResponseDto;
 import com.hospital.mediflow.MedicalRecords.Services.Abstracts.MedicalRecordService;

@@ -20,7 +20,7 @@ public class MedicalRecordController {
     private final MedicalRecordQueryFacade facade;
 
     @GetMapping()
-    @PreAuthorize("hasAnyRole('PATIENT','DOCTOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMedicalRecords(@NotNull Pageable pageable, MedicalRecordFilterDto filter){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(facade.getMedicalRecords(filter))
@@ -28,30 +28,32 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PATIENT','DOCTOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MedicalRecordResponseDto> getMedicalRecordById(@PathVariable Long id) {
         MedicalRecordResponseDto record = facade.getMedicalRecordById(id);
         return ResponseEntity.ok(record);
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MedicalRecordResponseDto> createMedicalRecord( @RequestBody @Valid MedicalRecordRequestDto requestDto) {
         MedicalRecordResponseDto created = facade.createMedicalRecord(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MedicalRecordResponseDto> updateMedicalRecord(
             @PathVariable Long id,
-            @RequestBody @Valid MedicalRecordRequestDto requestDto) {
+            @RequestBody MedicalRecordRequestDto requestDto) {
         MedicalRecordResponseDto updated = facade.updateMedicalRecord(id, requestDto);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public void deleteMedicalRecord(@PathVariable Long id) {
         facade.deleteMedicalRecord(id);
     }

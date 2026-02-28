@@ -6,8 +6,6 @@ import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -25,6 +23,7 @@ public interface AppointmentDataService {
     boolean isAppointmentPatientRelationExists(Long appointmentId, Long patientId);
     boolean isAppointmentDoctorRelationExists(Long appointmentId, Long doctorId);
     boolean isAppointmentManagerRelationExists(Long appointmentId, Long departmentId);
+    boolean isAppointmentExists(Long doctorId,Long patientId);
     List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDateTime startDateTime,LocalDateTime endDateTime);
     AppointmentResponseDto update(Long id, Appointment appointment);
     void deleteById(Long id);

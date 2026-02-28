@@ -5,23 +5,22 @@ import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentRequestDto;
 import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
-import com.hospital.mediflow.Common.Queries.Doctor.DoctorAppointmentQuery;
-import com.hospital.mediflow.Common.Queries.Manager.ManagerAppointmentQuery;
-import com.hospital.mediflow.Common.Queries.Patient.PatientAppointmentQuery;
 import com.hospital.mediflow.Security.Roles.Role;
 import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
+
 
 @Component
 @RequiredArgsConstructor
@@ -29,9 +28,6 @@ import java.util.Objects;
 public class AppointmentQueryFacade {
     private final AppointmentService appointmentService;
     private final CurrentUserProvider userProvider;
-    private final ManagerAppointmentQuery managerQuery;
-    private final DoctorAppointmentQuery doctorQuery;
-    private final PatientAppointmentQuery patientQuery;
 
 
     public  List<AppointmentResponseDto> findAll(AppointmentFilterDto filterDto){
@@ -70,88 +66,49 @@ public class AppointmentQueryFacade {
         };
     }
 
+    @ResourceAccess(
+            resource = ResourceType.APPOINTMENT,
+            action = AccessType.CREATE,
+            payloadParam = "requestDto"
+    )
     public AppointmentResponseDto save(AppointmentRequestDto requestDto){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        Long resourceId = userProvider.get().getResourceId();
-         switch (role) {
-            case ADMIN   -> {
-                return appointmentService.save(requestDto);
-            }
-            case MANAGER -> {
-                if(!Objects.equals(resourceId, requestDto.departmentId())){
-                    throw new AccessDeniedException("Access is denied");
-                }
-                return appointmentService.save(requestDto);
-            }
-            case PATIENT -> {
-                if(!Objects.equals(resourceId, requestDto.patientId())){
-                    throw new AccessDeniedException("Access is denied");
-                }
-                return appointmentService.save(requestDto);
-            }
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-
-        }
+        return appointmentService.save(requestDto);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.APPOINTMENT,
+            action = AccessType.UPDATE,
+            idParam = "id",
+            payloadParam = "requestDto"
+    )
     public AppointmentResponseDto update(Long id,AppointmentRequestDto requestDto){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        Long resourceId = userProvider.get().getResourceId();
-         switch (role) {
-            case ADMIN   -> {
-                return appointmentService.update(id, requestDto);
-            }
-            case MANAGER -> {
-                if(!Objects.equals(resourceId, requestDto.departmentId())){
-                    throw new AccessDeniedException("Access is denied");
-                }
-                return appointmentService.update(id, requestDto);
-            }
-            case DOCTOR  -> {
-                if(!Objects.equals(resourceId, requestDto.doctorId())){
-                    throw new AccessDeniedException("Access is denied");
-                }
-                return appointmentService.update(id, requestDto);
-            }
-            case PATIENT -> {
-                if(!Objects.equals(resourceId, requestDto.patientId())){
-                    throw new AccessDeniedException("Access is denied");
-                }
-                return appointmentService.update(id, requestDto);
-            }
-             default -> throw new AccessDeniedException("Unsupported role for the method");
-
-         }
+        return appointmentService.update(id, requestDto);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.APPOINTMENT,
+            action = AccessType.PATCH,
+            idParam = "id"
+    )
     public AppointmentResponseDto updateStatus(Long id,AppointmentStatusEnum newStatus){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> appointmentService.updateStatus(id, newStatus);
-            case MANAGER -> managerQuery.updateStatus(id, newStatus);
-            case DOCTOR  -> doctorQuery.updateStatus(id, newStatus);
-            case PATIENT -> patientQuery.updateStatus(id, newStatus);
-
-        };
+        return appointmentService.updateStatus(id, newStatus);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.APPOINTMENT,
+            action = AccessType.RESCHEDULE,
+            idParam = "id"
+    )
     public AppointmentResponseDto rescheduleAppointment(Long id,LocalDateTime newDate){
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> appointmentService.rescheduleAppointment(id, newDate);
-            case MANAGER -> managerQuery.rescheduleAppointment(id, newDate);
-            case DOCTOR  -> doctorQuery.rescheduleAppointment(id, newDate);
-            case PATIENT -> patientQuery.rescheduleAppointment(id, newDate);
-        };
+        return appointmentService.rescheduleAppointment(id, newDate);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.APPOINTMENT,
+            action = AccessType.DELETE,
+            idParam = "id"
+    )
     public void delete(Long id){
-        Role role = MediflowUserDetailsService.currentUserRole();
-         switch (role) {
-             case ADMIN   ->  appointmentService.deleteById(id);
-             case MANAGER ->  managerQuery.deleteById(id);
-             case PATIENT ->  patientQuery.deleteById(id);
-             default -> throw new AccessDeniedException("Unsupported role for the method");
-         }
+        appointmentService.deleteById(id);
     }
 }

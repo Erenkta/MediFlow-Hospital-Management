@@ -1,6 +1,6 @@
 package com.hospital.mediflow.Patient.Services.Abstracts;
 
-import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
+
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;

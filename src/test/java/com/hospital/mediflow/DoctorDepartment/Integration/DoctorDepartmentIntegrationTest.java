@@ -12,8 +12,6 @@ import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
 import com.hospital.mediflow.DoctorDepartments.Repositories.DoctorDepartmentRepository;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
 import com.hospital.mediflow.Specialty.Repositories.SpecialtyRepository;
-import jakarta.persistence.EntityManager;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +23,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

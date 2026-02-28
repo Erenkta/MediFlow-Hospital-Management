@@ -4,8 +4,6 @@ import com.hospital.mediflow.Common.Exceptions.ErrorResponse;
 import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyRequestDto;
 import com.hospital.mediflow.Specialty.Domain.Dtos.SpecialtyResponseDto;
 import com.hospital.mediflow.Specialty.Services.Abstracts.SpecialtyService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

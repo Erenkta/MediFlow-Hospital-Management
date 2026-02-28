@@ -5,7 +5,6 @@ import com.hospital.mediflow.Common.Annotations.ValidateEnum;
 import com.hospital.mediflow.Common.Annotations.ValidatePhone;
 import com.hospital.mediflow.Patient.Enums.BloodGroupEnum;
 import com.hospital.mediflow.Patient.Enums.GenderEnum;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

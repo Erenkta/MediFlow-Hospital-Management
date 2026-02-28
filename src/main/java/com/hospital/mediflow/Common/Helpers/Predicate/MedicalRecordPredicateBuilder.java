@@ -12,7 +12,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class MedicalRecordPredicateBuilder {
         return this;
     }
     public MedicalRecordPredicateBuilder withDoctorName(String doctorName) {
-        if(!doctorName.isEmpty()){
+        if(Objects.nonNull(doctorName) && !doctorName.isEmpty()){
             QDoctor qDoctor = qMedicalRecord.doctor;
             StringExpression fullName = qDoctor.firstName.concat(" ").concat(qDoctor.lastName);
             predicates.add(fullName.like(doctorName));
@@ -44,7 +43,7 @@ public class MedicalRecordPredicateBuilder {
         return this;
     }
     public MedicalRecordPredicateBuilder withPatientName(String patientName) {
-        if(!patientName.isEmpty()){
+        if(Objects.nonNull(patientName) && !patientName.isEmpty()){
             QPatient qPatient = qMedicalRecord.patient;
             StringExpression fullName = qPatient.firstName.concat(" ").concat(qPatient.lastName);
             predicates.add(fullName.like(patientName));
@@ -52,7 +51,7 @@ public class MedicalRecordPredicateBuilder {
         return this;
     }
     public MedicalRecordPredicateBuilder withDepartmentName(String departmentName) {
-        if(!departmentName.isEmpty()){
+        if(Objects.nonNull(departmentName) && !departmentName.isEmpty()){
             QDepartment qDepartment = qMedicalRecord.doctor.specialty.department;
             predicates.add(qDepartment.name.like(departmentName));
         }

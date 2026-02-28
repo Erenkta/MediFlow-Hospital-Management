@@ -4,10 +4,11 @@ import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Helpers.Predicate.BillingPredicateBuilder;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
-import com.hospital.mediflow.Common.Queries.Manager.ManagerBillingQuery;
-import com.hospital.mediflow.Common.Queries.Patient.PatientBillingQuery;
 import com.hospital.mediflow.Security.Roles.Role;
 import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import com.querydsl.core.types.Predicate;
@@ -25,12 +26,15 @@ import java.util.List;
 @Slf4j
 public class BillingQueryFacade {
     private final BillingService billingService;
-    private final ManagerBillingQuery managerQuery;
     private final BillingPredicateBuilder filterBuilder;
     private final CurrentUserProvider userProvider;
-    private final PatientBillingQuery patientQuery;
 
 
+//    @ResourceAccess(
+//            resource = ResourceType.BILLING,
+//            action = AccessType.READ_BY_FILTER,
+//            filterParam = "filterDto"
+//    )
     public List<BillingResponseDto> getBillings(BillingFilterDto filterDto){
         Role role = MediflowUserDetailsService.currentUserRole();
         Long resourceId = userProvider.get().getResourceId();
@@ -41,7 +45,8 @@ public class BillingQueryFacade {
                 return billingService.findAllBillings(filter);
             }
             case MANAGER -> {
-                return managerQuery.findAllBillings(filterDto.ManagerFilter(resourceId,filterDto.appointmentId()));
+                Predicate filter = filterBuilder.build(filterDto.ManagerFilter(resourceId,filterDto.appointmentId()));
+                return billingService.findAllBillings(filter);
             }
             case PATIENT -> {
                 Predicate filter = filterBuilder.build(filterDto.PatientFilter(resourceId));
@@ -51,6 +56,11 @@ public class BillingQueryFacade {
         }
     }
 
+//    @ResourceAccess(
+//            resource = ResourceType.BILLING,
+//            action = AccessType.READ_BY_FILTER,
+//            filterParam = "filterDto"
+//    )
     public Page<BillingResponseDto> getBillings(Pageable pageable, BillingFilterDto filterDto){
         Role role = MediflowUserDetailsService.currentUserRole();
         Long resourceId = userProvider.get().getResourceId();
@@ -60,7 +70,8 @@ public class BillingQueryFacade {
                 return billingService.findAllBillings(pageable,filter);
             }
             case MANAGER -> {
-                return managerQuery.findAllBillings(pageable,filterDto.ManagerFilter(resourceId,filterDto.appointmentId()));
+                Predicate filter = filterBuilder.build(filterDto.ManagerFilter(resourceId,filterDto.appointmentId()));
+                return billingService.findAllBillings(pageable,filter);
             }
             case PATIENT -> {
                 Predicate filter = filterBuilder.build(filterDto.PatientFilter(resourceId));
@@ -70,40 +81,40 @@ public class BillingQueryFacade {
         }
     }
 
+    @ResourceAccess(
+            resource = ResourceType.BILLING,
+            action = AccessType.READ_BY_ID,
+            idParam = "id"
+    )
     public BillingResponseDto getBillingById(Long id) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> billingService.findBillingById(id);
-            case MANAGER -> managerQuery.findBillingById(id);
-            case PATIENT -> patientQuery.findBillingById(id);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return billingService.findBillingById(id);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.BILLING,
+            action = AccessType.CREATE,
+            payloadParam = "requestDto"
+    )
     public BillingResponseDto createBilling(BillingRequestDto requestDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> billingService.createBilling(requestDto);
-            case MANAGER -> managerQuery.createBilling(requestDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return billingService.createBilling(requestDto);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.BILLING,
+            action = AccessType.UPDATE,
+            idParam = "id",
+            payloadParam = "requestDto"
+    )
     public BillingResponseDto updateBilling(Long id, BillingRequestDto requestDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> billingService.updateBilling(id, requestDto);
-            case MANAGER -> managerQuery.updateBilling(id, requestDto);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        };
+        return billingService.updateBilling(id, requestDto);
     }
 
+    @ResourceAccess(
+            resource = ResourceType.BILLING,
+            action = AccessType.DELETE,
+            idParam = "id"
+    )
     public void deleteBilling(Long id) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-         switch (role) {
-            case ADMIN   -> billingService.deleteBilling(id);
-            case MANAGER -> managerQuery.deleteBilling(id);
-            default -> throw new AccessDeniedException("Unsupported role for the method");
-        }
+        billingService.deleteBilling(id);
     }
 }

@@ -3,7 +3,6 @@ package com.hospital.mediflow.Patient.Controller;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
-import com.hospital.mediflow.Patient.Services.Abstracts.PatientService;
 import com.hospital.mediflow.Patient.Services.PatientQueryFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +17,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('DOCTOR','PATIENT')")
 public class PatientController {
-    private final PatientService patientService;
     private final PatientQueryFacade facade;
 
     @GetMapping
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<? extends Iterable<PatientResponseDto>> findAll(Pageable pageable, PatientFilterDto filterDto){
         return ResponseEntity.status(HttpStatus.OK).body(
                 pageable.isUnpaged()
@@ -31,22 +29,22 @@ public class PatientController {
         );
     }
     @GetMapping("/{patient-id}")
-    @PreAuthorize("hasAnyRole('PATIENT','DOCTOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PatientResponseDto> findById(@PathVariable("patient-id") Long patientId){
         return ResponseEntity.status(HttpStatus.OK).body(facade.findPatientById(patientId));
     }
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PatientResponseDto> save(@RequestBody @Validated(PatientRequestDto.OnUpdate.class) PatientRequestDto requestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(facade.save(requestDto));
     }
     @PutMapping("/{patient-id}")
-    @PreAuthorize("hasRole('PATIENT')")
-    public ResponseEntity<PatientResponseDto> update(@PathVariable(name = "patient-id") Long id,@Validated(PatientRequestDto.OnUpdate.class) @RequestBody PatientRequestDto requestDto){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<PatientResponseDto> update(@PathVariable(name = "patient-id") Long id, @RequestBody PatientRequestDto requestDto){
         return ResponseEntity.status(HttpStatus.OK).body(facade.updatePatient(id, requestDto));
     }
     @DeleteMapping("/{patient-id}")
-    @PreAuthorize("hasRole('PATIENT')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> delete(@PathVariable(name = "patient-id") Long id){
         facade.deletePatient(id);
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -1,7 +1,6 @@
 package com.hospital.mediflow.Department.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.RecordAlreadyExistException;
 import com.hospital.mediflow.Common.Specifications.DepartmentSpecification;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;

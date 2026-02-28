@@ -3,6 +3,9 @@ package com.hospital.mediflow.Common.Specifications;
 import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentFilterDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
+import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
+import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
+import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -18,6 +21,16 @@ public class AppointmentSpecification extends BaseSpecification<Appointment> {
     public static Specification<Appointment> hasDoctor(Long doctorId) {
         return (root, query, cb) ->
                 doctorId == null ? null : cb.equal(root.get("doctor").get("id"), doctorId);
+    }
+    public static Specification<Appointment> hasDepartment(Long departmentId) {
+        if(departmentId == null) return null;
+
+        return (root,query,criteriaBuilder) ->{
+            Join<Appointment, Doctor> doctorJoin = root.join("doctor");
+            Join<Doctor, DoctorDepartment> ddJoin =
+                    doctorJoin.join("doctorDepartment");
+            return criteriaBuilder.equal(ddJoin.get("department").get("id"),departmentId);
+        };
     }
 
     public static Specification<Appointment> hasReason(String reason) {
@@ -47,6 +60,7 @@ public class AppointmentSpecification extends BaseSpecification<Appointment> {
         return Specification.allOf(
                 hasPatient(filter.patientId()),
                 hasDoctor(filter.doctorId()),
+                hasDepartment(filter.departmentId()),
                 hasReason(filter.reason()),
                 appointmentDateAfter(filter.appointmentDateAfter()),
                 appointmentDateBefore(filter.appointmentDateBefore()),

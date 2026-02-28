@@ -1,5 +1,8 @@
 package com.hospital.mediflow.MedicalRecords.Services;
 
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Helpers.Predicate.MedicalRecordPredicateBuilder;
 import com.hospital.mediflow.Common.Queries.Doctor.DoctorMedicalRecQuery;
 import com.hospital.mediflow.Common.Queries.Manager.ManagerMedicalReqQuery;
@@ -14,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,39 +49,41 @@ public class MedicalRecordQueryFacade {
             case PATIENT -> patientQuery.findAllMedicalRecords(pageable,filter);
         };
     }
+
+    @ResourceAccess(
+            resource = ResourceType.MEDICAL_RECORD,
+            action = AccessType.READ_BY_ID,
+            idParam = "recordId"
+    )
     public MedicalRecordResponseDto getMedicalRecordById(Long recordId) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> service.findMedicalRecordById(recordId);
-            case MANAGER -> managerQuery.findMedicalRecordById(recordId);
-            case DOCTOR  -> doctorQuery.findMedicalRecordById(recordId);
-            case PATIENT -> patientQuery.findMedicalRecordById(recordId);
-        };
+        return  service.findMedicalRecordById(recordId);
     }
+
+    @ResourceAccess(
+            resource = ResourceType.MEDICAL_RECORD,
+            action = AccessType.CREATE,
+            payloadParam = "requestDto"
+    )
     public MedicalRecordResponseDto createMedicalRecord(MedicalRecordRequestDto requestDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> service.createMedicalRecord(requestDto);
-            case MANAGER -> managerQuery.createMedicalRecord(requestDto);
-            case DOCTOR  -> doctorQuery.createMedicalRecord(requestDto);
-            default -> throw new AccessDeniedException("Access is denied");
-        };
+        return service.createMedicalRecord(requestDto);
     }
+
+    @ResourceAccess(
+            resource = ResourceType.MEDICAL_RECORD,
+            action = AccessType.UPDATE,
+            idParam = "recordId",
+            payloadParam = "requestDto"
+    )
     public MedicalRecordResponseDto updateMedicalRecord(Long recordId, MedicalRecordRequestDto requestDto) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-        return switch (role) {
-            case ADMIN   -> service.updateMedicalRecord(recordId,requestDto);
-            case MANAGER -> managerQuery.updateMedicalRecord(recordId,requestDto);
-            case DOCTOR  -> doctorQuery.updateMedicalRecord(recordId,requestDto);
-            default -> throw new AccessDeniedException("Access is denied");
-        };
+        return service.updateMedicalRecord(recordId,requestDto);
     }
+
+    @ResourceAccess(
+            resource = ResourceType.MEDICAL_RECORD,
+            action = AccessType.DELETE,
+            idParam = "recordId"
+    )
     public void deleteMedicalRecord(Long recordId) {
-        Role role = MediflowUserDetailsService.currentUserRole();
-         switch (role) {
-            case ADMIN   -> service.deleteMedicalRecord(recordId);
-            case MANAGER -> managerQuery.deleteMedicalRecord(recordId);
-            default -> throw new AccessDeniedException("Access is denied");
-        };
+        service.deleteMedicalRecord(recordId);
     }
 }

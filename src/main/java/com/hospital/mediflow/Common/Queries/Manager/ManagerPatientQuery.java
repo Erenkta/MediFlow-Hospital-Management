@@ -1,10 +1,8 @@
 package com.hospital.mediflow.Common.Queries.Manager;
 
-import com.hospital.mediflow.Common.Annotations.Access.Manager.ManagerPatientAccess;
-import com.hospital.mediflow.Common.Annotations.AccessType;
+
 import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
-import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import com.hospital.mediflow.Patient.Services.Abstracts.PatientService;
@@ -34,24 +32,5 @@ public class ManagerPatientQuery {
         Specification<Patient> spec = PatientSpecification.hasFilter(filter);
         spec = spec.and(PatientSpecification.withDepartmentId(departmentId));
         return patientService.findAll(pageable,spec);
-    }
-    @ManagerPatientAccess(type = AccessType.READ_BY_ID)
-    public PatientResponseDto findPatientById(Long patientId) {
-        return patientService.findById(patientId);
-    }
-
-    @ManagerPatientAccess(type = AccessType.UPDATE)
-    public PatientResponseDto updatePatient(Long patientId, PatientRequestDto requestDto) {
-        return patientService.update(patientId,new PatientRequestDto(requestDto.phone(),requestDto.email()));
-    }
-
-    @ManagerPatientAccess(type = AccessType.DELETE)
-    public void deletePatient(Long patientId) {
-        patientService.deleteById(patientId);
-    }
-
-    @ManagerPatientAccess(type = AccessType.CREATE)
-    public PatientResponseDto save(PatientRequestDto requestDto) {
-        return patientService.save(requestDto);
     }
 }

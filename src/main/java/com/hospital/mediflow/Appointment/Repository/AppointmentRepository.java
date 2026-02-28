@@ -77,4 +77,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
      where a.id = :appointment_id and dd.department.id = :department_id
 """)
     boolean isAppointmentManagerRelationExists(@Param("appointment_id") Long appointmentId,@Param("department_id") Long departmentId);
+
+
+    @Query("""
+    select count(a) > 0 from Appointment a where a.doctor.id = :doctor_id and a.patient.id = :patient_id
+""")
+    boolean isAppointmentExists(@Param("doctor_id") Long doctorId,  @Param("patient_id") Long patientId);
 }

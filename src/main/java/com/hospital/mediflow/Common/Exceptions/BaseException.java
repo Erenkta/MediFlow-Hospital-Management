@@ -1,10 +1,7 @@
 package com.hospital.mediflow.Common.Exceptions;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

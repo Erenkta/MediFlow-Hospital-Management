@@ -2,7 +2,6 @@ package com.hospital.mediflow.Security.Services.Concretes;
 
 import com.hospital.mediflow.Security.Dtos.Entity.User;
 import com.hospital.mediflow.Security.Services.Abstracts.JWTService;
-import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

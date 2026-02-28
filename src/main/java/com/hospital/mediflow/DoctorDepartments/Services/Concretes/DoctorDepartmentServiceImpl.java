@@ -22,14 +22,14 @@ public class DoctorDepartmentServiceImpl implements DoctorDepartmentService {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('manager:read')")
+    @PreAuthorize("hasAnyAuthority('doctor:read','patient:read')")
     public List<DoctorDepartmentResponseDto> findAll(DoctorDepartmentFilterDto filterDto) {
         return dataService.findAll(filterDto);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAuthority('manager:read')")
+    @PreAuthorize("hasAnyAuthority('doctor:read','patient:read')")
     public Page<DoctorDepartmentResponseDto> findAll(Pageable pageable, DoctorDepartmentFilterDto filterDto) {
         return dataService.findAll(pageable,filterDto);
     }

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 public record MedicalRecordResponseDto(
         Long id,
         String doctorName,
-        String department,
         String patientName,
         String diagnosis,
         String treatment,

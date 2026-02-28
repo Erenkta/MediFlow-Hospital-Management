@@ -56,12 +56,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentResponseDto save(AppointmentRequestDto appointmentRequestDto) {
         // Check if we can request an appointment to given department
         boolean isDepartmentAvailable = appointmentDataService.isDepartmentAvailable(appointmentRequestDto.patientId(),appointmentRequestDto.departmentId());
+        if(!isDepartmentAvailable){
+            throw new AppointmentNotAvailableException("There is already an appointment for the given department.");
+        }
         // Check if requested appointment date is free.
         boolean isAppointmentAvailable = appointmentDataService.isAppointmentAvailable(
                 appointmentRequestDto.doctorId(),
                 appointmentRequestDto.appointmentDate()
         );
-        if( isAppointmentAvailable && isDepartmentAvailable){
+
+        if(isAppointmentAvailable){
             try{
                 return appointmentDataService.saveAndFlush(appointmentRequestDto);
             }catch (DataIntegrityViolationException ex){

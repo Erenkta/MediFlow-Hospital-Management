@@ -4,5 +4,5 @@ public enum BillingStatus {
     PENDING,
     APPROVED,
     TRANSFERRED,
-    INVOINCED
+    INVOICED
 }
