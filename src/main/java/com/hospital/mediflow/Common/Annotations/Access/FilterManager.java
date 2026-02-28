@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Annotations.Access.Patient;
+package com.hospital.mediflow.Common.Annotations.Access;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoFillPatientId {
+public @interface FilterManager {
+    ResourceType resourceType();
+    Class<? extends Record> filterClass();
+    String filterParam() default  "";
 }

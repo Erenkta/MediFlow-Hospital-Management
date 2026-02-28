@@ -16,8 +16,8 @@ public record BillingFilterDto(
         LocalDateTime billingDateStart,
         LocalDateTime billingDateEnd
 ) {
-    public BillingFilterDto ManagerFilter(Long departmentId,Long appointmentId){
-        return new BillingFilterDto(this.patientId,appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);
+    public BillingFilterDto ManagerFilter(Long departmentId){
+        return new BillingFilterDto(this.patientId,this.appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);
     }
     public BillingFilterDto PatientFilter(Long patientId){
         return new BillingFilterDto(patientId,appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);

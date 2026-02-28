@@ -41,7 +41,7 @@ public class ManagerReadByFilterBillingRule implements ActionRule {
         if(data.appointmentId() != null && !docDepDataService.isDepartmentAppointmentRelationsExists(context.getUser().getResourceId(),data.appointmentId())){
             throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),action().name(),role().name(),ResourceType.APPOINTMENT.name()));
         }
-        if(!patientDataService.isDepartmentPatientRelationExists(context.getUser().getResourceId(),data.patientId())){
+        if( data.patientId() != null && !patientDataService.isDepartmentPatientRelationExists(context.getUser().getResourceId(),data.patientId())){
             throw new AccessDeniedException(generateRelationExceptionMessage(data.patientId(),action().name(),context.getUser().getRole().name(),ResourceType.PATIENT.name()));
         }
     }

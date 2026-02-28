@@ -50,6 +50,8 @@ public class PatientSpecification extends BaseSpecification<Patient> {
     }
 
     public static Specification<Patient> withDoctorId(Long doctorId){
+        if(doctorId == null) return null;
+
         return (root,query,cb) ->{
             Subquery<Long> subquery = query.subquery(Long.class);
             Root<Appointment> appt = subquery.from(Appointment.class);
@@ -65,6 +67,7 @@ public class PatientSpecification extends BaseSpecification<Patient> {
         };
     }
     public static Specification<Patient> withDepartmentId(Long departmentId){
+        if(departmentId == null) return null;
         return (root,query,cb) ->{
 
             Subquery<Long> doctorSubquery = query.subquery(Long.class);
@@ -92,6 +95,8 @@ public class PatientSpecification extends BaseSpecification<Patient> {
         return Specification.allOf(
                 hasFirstName(filter.firstName()),
                 hasLastName(filter.lastName()),
+                withDoctorId(filter.doctorId()),
+                withDepartmentId(filter.departmentId()),
                 hasBirthFilter(filter.birthAfter(),filter.birthBefore()),
                 hasBloodGroup(filter.bloodGroup()),
                 hasGender(filter.gender())

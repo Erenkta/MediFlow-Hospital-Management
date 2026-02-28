@@ -66,18 +66,23 @@ public class MedicalRecordPredicateBuilder {
         }
         return this;
     }
-    public Predicate departmentScope(Long departmentId){
-        QDoctorDepartment docDep = QDoctorDepartment.doctorDepartment;
+    public MedicalRecordPredicateBuilder withDepartmentId(Long departmentId){
+        if(departmentId != null){
+            QDoctorDepartment docDep = QDoctorDepartment.doctorDepartment;
+            BooleanExpression departmentScope = JPAExpressions
+                    .selectOne()
+                    .from(docDep)
+                    .where(
+                            docDep.department.id.eq(departmentId)
+                                    .and(docDep.doctor.id.eq(qMedicalRecord.doctor.id))
+                    )
+                    .exists();
+            predicates.add(departmentScope);
+        }
 
-        return JPAExpressions
-                .selectOne()
-                .from(docDep)
-                .where(
-                        docDep.department.id.eq(departmentId)
-                                .and(docDep.doctor.id.eq(qMedicalRecord.doctor.id))
-                )
-                .exists();
+        return this;
     }
+
     public Predicate build(){
         return predicates.stream()
                 .filter(Objects::nonNull)
@@ -90,6 +95,7 @@ public class MedicalRecordPredicateBuilder {
                 .withDoctorName(medicalRecordFilter.doctorName())
                 .withPatientId(medicalRecordFilter.patientId())
                 .withPatientName(medicalRecordFilter.patientName())
+                .withDepartmentId(medicalRecordFilter.departmentId())
                 .withDepartmentName(medicalRecordFilter.departmentName())
                 .withRecordDate(medicalRecordFilter.recordDateStart(),medicalRecordFilter.recordDateEnd())
                 .build();
