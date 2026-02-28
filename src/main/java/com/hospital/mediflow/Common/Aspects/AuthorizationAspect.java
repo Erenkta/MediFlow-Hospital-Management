@@ -1,12 +1,16 @@
 package com.hospital.mediflow.Common.Aspects;
 
+import com.hospital.mediflow.Common.Annotations.Access.FilterManager;
 import com.hospital.mediflow.Common.Annotations.ResourceAccess;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
+import com.hospital.mediflow.Common.Authorization.Model.FilterManagerContext;
 import com.hospital.mediflow.Common.Authorization.Services.AuthorizationService;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -57,5 +61,33 @@ public class AuthorizationAspect extends BaseAspect{
                 );
 
         authorizationService.authorize(context);
+    }
+
+    @Around("@annotation(filterManager)")
+    public Object manageFilter(ProceedingJoinPoint jp, FilterManager filterManager) throws Throwable {
+        MethodSignature signature = (MethodSignature) jp.getSignature();
+        String[] paramNames = signature.getParameterNames();
+        Object[] args = jp.getArgs();
+
+        int filterIndex = -1;
+
+        for (int i = 0; i < paramNames.length; i++) {
+            if (paramNames[i].equals(filterManager.filterParam())) {
+                filterIndex = i;
+                break;
+            }
+        }
+        if (filterIndex != -1) {
+            FilterManagerContext context = new FilterManagerContext(
+                    filterManager.resourceType(),
+                    userProvider.get(),
+                    args[filterIndex]
+            );
+
+            args[filterIndex] = authorizationService.manageFilter(filterManager.filterClass(), context);
+        }
+
+        return jp.proceed(args);
+
     }
 }

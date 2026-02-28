@@ -1,0 +1,31 @@
+package com.hospital.mediflow.Common.Authorization.Rules.Doctor.Filter;
+
+import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
+import com.hospital.mediflow.Common.Authorization.Model.FilterManagerContext;
+import com.hospital.mediflow.Common.Authorization.Rules.FilterManageRule;
+import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
+import com.hospital.mediflow.Security.Roles.Role;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class DoctorPatientFilterRule implements FilterManageRule {
+    @Override
+    public Role role() {
+        return Role.DOCTOR;
+    }
+
+    @Override
+    public ResourceType resource() {
+        return ResourceType.PATIENT;
+    }
+
+    @Override
+    public Object manageFilter(FilterManagerContext context) {
+        PatientFilterDto existingFilter = (PatientFilterDto) context.getFilter();
+        return existingFilter.DoctorFilter(context.getUser().getResourceId());
+    }
+}
