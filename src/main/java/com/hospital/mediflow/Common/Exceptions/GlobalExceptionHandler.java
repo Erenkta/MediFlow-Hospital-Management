@@ -14,6 +14,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -51,6 +52,19 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(response,HttpStatus.valueOf(response.statusCode()));
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+        log.warn("Access denied: {}", ex.getMessage());
+        String errorMessage = String.format("This operation is not accessible, Exception Details : %s",request.getDescription(true));
+        ErrorResponse response = ErrorResponse.builder()
+                .message(errorMessage)
+                .path(request.getContextPath())
+                .errorCode(ErrorCode.FORBIDDEN)
+                .build();
+
+        return new ResponseEntity<>(response,HttpStatus.valueOf(response.statusCode()));
+
     }
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(WebRequest request,ConstraintViolationException exception) {
