@@ -20,7 +20,7 @@ public class BillingController {
     private final BillingQueryFacade facade;
 
     @GetMapping()
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getBillings(@NotNull Pageable pageable, BillingFilterDto filter){
         return pageable.isUnpaged()
                 ? ResponseEntity.status(HttpStatus.OK).body(facade.getBillings(filter))
@@ -28,20 +28,22 @@ public class BillingController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('MANAGER','PATIENT')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BillingResponseDto> getBillingById(@PathVariable Long id) {
         BillingResponseDto record = facade.getBillingById(id);
         return ResponseEntity.ok(record);
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BillingResponseDto> createBilling( @RequestBody @Valid BillingRequestDto requestDto) {
         BillingResponseDto created = facade.createBilling(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BillingResponseDto> updateBilling(
             @PathVariable Long id,
             @RequestBody @Valid BillingRequestDto requestDto) {
@@ -51,7 +53,7 @@ public class BillingController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     public void deleteBilling(@PathVariable Long id) {
         facade.deleteBilling(id);
     }

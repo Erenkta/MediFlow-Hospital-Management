@@ -1,12 +1,12 @@
 package com.hospital.mediflow.Common.Authorization.Rules.Patient.Read;
 
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
 import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
-import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.Security.Roles.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +36,8 @@ public class PatientReadByIdBillingRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        BillingAccessData data = (BillingAccessData) context.getPayload();
-        if(!billingDataService.isBillingPatientRelationExists(data.billingId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),action().name(),role().name(),resource().name()));
+        if(!billingDataService.isBillingPatientRelationExists(context.getResourceId(),context.getUser().getResourceId())){
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

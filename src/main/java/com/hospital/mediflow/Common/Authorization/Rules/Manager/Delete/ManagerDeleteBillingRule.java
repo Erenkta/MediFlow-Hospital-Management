@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Common.Authorization.Rules.Manager.Delete;
 
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
@@ -35,9 +36,8 @@ public class ManagerDeleteBillingRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        BillingAccessData data = (BillingAccessData) context.getPayload();
-        if(!billingDataService.isBillingDepartmentRelationExists(data.billingId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),action().name(),role().name(),resource().name()));
+        if(!billingDataService.isBillingDepartmentRelationExists(context.getResourceId(),context.getUser().getResourceId())){
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Common.Authorization.Rules.Manager.Update;
 
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
@@ -39,15 +40,18 @@ public class ManagerUpdateBillingRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        BillingAccessData data = (BillingAccessData) context.getPayload();
-        if (!Objects.equals(data.departmentId(), context.getUser().getResourceId())) {
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.departmentId(),action().name(),role().name(),ResourceType.DEPARTMENT.name()));
+        BillingRequestDto data = (BillingRequestDto) context.getPayload();
+        if(data.departmentId() != null){
+            if (!Objects.equals(data.departmentId(), context.getUser().getResourceId())) {
+                throw new AccessDeniedException(generateRelationExceptionMessage(data.departmentId(),action().name(),role().name(),ResourceType.DEPARTMENT.name()));
+            }
+            if(data.departmentId() != null && !docDepDataService.isDepartmentAppointmentRelationsExists(context.getUser().getResourceId(),data.appointmentId())){
+                throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),action().name(),role().name(),ResourceType.APPOINTMENT.name()));
+            }
         }
-        if(!docDepDataService.isDepartmentAppointmentRelationsExists(context.getUser().getResourceId(),data.appointmentId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),action().name(),role().name(),ResourceType.APPOINTMENT.name()));
-        }
-        if(!billingDataService.isBillingDepartmentRelationExists(data.billingId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(data.billingId(),action().name(),role().name(),resource().name()));
+
+        if(!billingDataService.isBillingDepartmentRelationExists(context.getResourceId(),context.getUser().getResourceId())){
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

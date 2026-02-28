@@ -1,5 +1,7 @@
 package com.hospital.mediflow.Common.Authorization.Rules.Manager.Read;
 
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
@@ -12,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -39,7 +39,7 @@ public class ManagerReadByFilterBillingRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        BillingAccessData data = (BillingAccessData) context.getPayload();
+        BillingFilterDto data = (BillingFilterDto) context.getFilter();
         if(data.appointmentId() != null && !docDepDataService.isDepartmentAppointmentRelationsExists(context.getUser().getResourceId(),data.appointmentId())){
             throw new AccessDeniedException(generateRelationExceptionMessage(data.appointmentId(),action().name(),role().name(),ResourceType.APPOINTMENT.name()));
         }

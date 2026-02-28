@@ -3,7 +3,6 @@ package com.hospital.mediflow.Common.Authorization.Model;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Security.Dtos.Entity.User;
-import com.hospital.mediflow.Security.Roles.Role;
 import lombok.Getter;
 
 @Getter

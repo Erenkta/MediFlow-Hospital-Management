@@ -1,7 +1,6 @@
 package com.hospital.mediflow.Specialty.DataServices.Concretes;
 
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Exceptions.SpecialtyNotFoundException;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Mappers.SpecialtyMapper;

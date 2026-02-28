@@ -1,7 +1,6 @@
 package com.hospital.mediflow.Billing.Services.Concretes;
 
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
-import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;

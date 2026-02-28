@@ -4,7 +4,6 @@ import com.hospital.mediflow.Common.Exceptions.ErrorResponse;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentFilterDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentRequestDto;
 import com.hospital.mediflow.Department.Domain.Dtos.DepartmentResponseDto;
-import com.hospital.mediflow.Department.Services.Abstracts.DepartmentService;
 import com.hospital.mediflow.Department.Services.DepartmentQueryFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

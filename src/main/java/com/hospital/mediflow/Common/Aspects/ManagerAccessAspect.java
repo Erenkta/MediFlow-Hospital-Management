@@ -1,9 +1,5 @@
 package com.hospital.mediflow.Common.Aspects;
 
-import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
-import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
-import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
-import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Common.Annotations.Access.Manager.*;
 import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
 import com.hospital.mediflow.Common.Authorization.Model.DoctorAccessData;
@@ -12,17 +8,12 @@ import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.Common.Resolvers.Billing.BillingAccessDataResolver;
 import com.hospital.mediflow.Common.Resolvers.Doctor.DoctorAccessDataResolver;
 import com.hospital.mediflow.Common.Resolvers.Doctor.DoctorIdResolver;
-import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
-import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Aspect
 @RequiredArgsConstructor

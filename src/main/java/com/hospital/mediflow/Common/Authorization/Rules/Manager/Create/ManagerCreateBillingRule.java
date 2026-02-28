@@ -1,14 +1,13 @@
 package com.hospital.mediflow.Common.Authorization.Rules.Manager.Create;
 
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
 import com.hospital.mediflow.Common.Authorization.Model.BillingAccessData;
-import com.hospital.mediflow.Common.Authorization.Model.DoctorAccessData;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
 import com.hospital.mediflow.DoctorDepartments.DataServices.Abstracts.DoctorDepartmentDataService;
 import com.hospital.mediflow.Security.Roles.Role;
-import com.hospital.mediflow.Specialty.DataServices.Abstracts.SpecialtyDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,7 +38,7 @@ public class ManagerCreateBillingRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        BillingAccessData data = (BillingAccessData) context.getPayload();
+        BillingRequestDto data = (BillingRequestDto) context.getPayload();
         if (!Objects.equals(context.getUser().getResourceId(), data.departmentId())) {
             throw new AccessDeniedException(generateRelationExceptionMessage(data.departmentId(),action().name(),role().name(),ResourceType.DEPARTMENT.name()));
         }

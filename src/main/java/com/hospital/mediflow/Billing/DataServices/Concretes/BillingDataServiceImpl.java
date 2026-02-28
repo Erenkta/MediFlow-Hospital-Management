@@ -1,12 +1,18 @@
 package com.hospital.mediflow.Billing.DataServices.Concretes;
 
+import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
+import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Billing.Repositories.BillingRepository;
 import com.hospital.mediflow.Common.BaseService;
+import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
+import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Mappers.BillingMapper;
+import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
+import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +26,17 @@ import java.util.List;
 public class BillingDataServiceImpl extends BaseService<Billing,Long> implements BillingDataService {
     private final BillingMapper mapper;
     private final BillingRepository repository;
-    public BillingDataServiceImpl(BillingRepository repository,BillingMapper mapper) {
+    private final AppointmentDataService appointmentDataService;
+    private final DepartmentDataService departmentDataService;
+    private final PatientDataService patientDataService;
+
+    public BillingDataServiceImpl(BillingRepository repository, BillingMapper mapper, AppointmentDataService appointmentDataService, DepartmentDataService departmentDataService, PatientDataService patientDataService) {
         super(repository);
         this.repository = repository;
         this.mapper = mapper;
+        this.appointmentDataService = appointmentDataService;
+        this.departmentDataService = departmentDataService;
+        this.patientDataService = patientDataService;
     }
 
     @Override
@@ -42,8 +55,16 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     }
 
     @Override
-    public BillingResponseDto createBilling(BillingRequestDto medicalRecord) {
-        Billing entity = mapper.toEntity(medicalRecord);
+    public BillingResponseDto createBilling(BillingRequestDto billingRequestDto) {
+        Billing entity = mapper.toEntity(billingRequestDto);
+        Appointment appointment = appointmentDataService.getReferenceById(billingRequestDto.appointmentId());
+        Department department = departmentDataService.getReferenceById(billingRequestDto.departmentId());
+        Patient patient = patientDataService.getReferenceById(billingRequestDto.patientId());
+
+        entity.setPatient(patient);
+        entity.setAppointment(appointment);
+        entity.setDepartment(department);
+
         return mapper.toDto(repository.save(entity));
     }
 

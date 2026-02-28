@@ -5,7 +5,6 @@ import com.hospital.mediflow.Security.Roles.Permission;
 import com.hospital.mediflow.Security.Roles.Role;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserService {
 

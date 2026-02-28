@@ -1,12 +1,10 @@
 package com.hospital.mediflow.Common.Aspects;
 
-import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorAppointmentAccess;
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorPatientAccess;
 import com.hospital.mediflow.Common.Annotations.Access.Doctor.DoctorRecordAccess;
 import com.hospital.mediflow.Common.Authorization.Policy.Doctor.DoctorPolicyDeprecated;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
-import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordFilterDto;
 import com.hospital.mediflow.Security.UserDetails.MediflowUserDetailsService;
 import lombok.RequiredArgsConstructor;

@@ -3,11 +3,9 @@ package com.hospital.mediflow.Common.Helpers.Predicate;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Entity.QBilling;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
-import com.hospital.mediflow.Patient.Domain.Entity.QPatient;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringExpression;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

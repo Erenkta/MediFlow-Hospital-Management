@@ -5,7 +5,6 @@ import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
 import com.hospital.mediflow.Common.Authorization.Rules.ActionRule;
-import com.hospital.mediflow.MedicalRecords.DataServices.Abstracts.MedicalRecordDataService;
 import com.hospital.mediflow.MedicalRecords.Domain.Dtos.MedicalRecordRequestDto;
 import com.hospital.mediflow.Security.Roles.Role;
 import lombok.RequiredArgsConstructor;

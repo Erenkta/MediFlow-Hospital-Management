@@ -2,15 +2,10 @@ package com.hospital.mediflow.Common.Specifications;
 
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
-import com.hospital.mediflow.Doctor.Domain.Entities.QDoctor;
 import com.hospital.mediflow.DoctorDepartments.Domain.Dtos.DoctorDepartmentFilterDto;
 import com.hospital.mediflow.DoctorDepartments.Domain.Entity.DoctorDepartment;
-import com.hospital.mediflow.DoctorDepartments.Domain.Entity.QDoctorDepartment;
 import com.hospital.mediflow.Specialty.Domain.Entity.Specialty;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;

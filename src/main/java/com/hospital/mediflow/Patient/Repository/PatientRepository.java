@@ -1,6 +1,5 @@
 package com.hospital.mediflow.Patient.Repository;
 
-import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

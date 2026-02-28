@@ -1,6 +1,5 @@
 package com.hospital.mediflow.Common.Authorization.Rules.Manager.Update;
 
-import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;

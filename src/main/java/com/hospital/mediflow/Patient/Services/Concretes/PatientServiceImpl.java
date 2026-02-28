@@ -1,8 +1,6 @@
 package com.hospital.mediflow.Patient.Services.Concretes;
 
-import com.hospital.mediflow.Common.Specifications.PatientSpecification;
 import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
-import com.hospital.mediflow.Patient.Domain.Dtos.PatientFilterDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientRequestDto;
 import com.hospital.mediflow.Patient.Domain.Dtos.PatientResponseDto;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;

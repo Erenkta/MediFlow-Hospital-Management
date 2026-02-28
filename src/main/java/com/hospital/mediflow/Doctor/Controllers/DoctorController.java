@@ -5,7 +5,6 @@ import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorFilterDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorRequestDto;
 import com.hospital.mediflow.Doctor.Domain.Dtos.DoctorResponseDto;
 import com.hospital.mediflow.Doctor.Enums.TitleEnum;
-import com.hospital.mediflow.Doctor.Services.Abstracts.DoctorService;
 import com.hospital.mediflow.Doctor.Services.DoctorQueryFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
