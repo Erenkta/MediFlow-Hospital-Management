@@ -25,9 +25,6 @@ public class AuthorizationService {
                 ));
     }
     public void authorize(AuthorizationContext context) {
-        if(context.getUser().getRole().equals(Role.ADMIN)){
-            return;
-        }
         RuleKey key = new RuleKey(
                 context.getUser().getRole(),
                 context.getResource(),
@@ -35,6 +32,9 @@ public class AuthorizationService {
         );
         ActionRule rule = ruleMap.get(key);
         if (rule == null) {
+            if(context.getUser().getRole().equals(Role.ADMIN)){
+                return;
+            }
             String message = String.format(
                     "No rule defined for the User Id: %s , User Role : %s , Resource : %s , ResourceId : %s and action : %s ."
                     ,context.getUser().getResourceId(),context.getUser().getRole().name(),context.getResource().name(),context.getResourceId(),context.getAction().name()

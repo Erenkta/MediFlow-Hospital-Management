@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Authorization.Rules.Doctor.Delete;
+package com.hospital.mediflow.Common.Authorization.Rules.Manager.Update;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
@@ -11,15 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class DoctorDeleteAppointmentRule implements ActionRule {
+public class ManagerUpdateAppointmentRule implements ActionRule {
     private final AppointmentDataService appointmentDataService;
-
     @Override
     public Role role() {
-        return Role.DOCTOR;
+        return Role.MANAGER;
     }
 
     @Override
@@ -29,13 +29,13 @@ public class DoctorDeleteAppointmentRule implements ActionRule {
 
     @Override
     public AccessType action() {
-        return AccessType.DELETE;
+        return AccessType.UPDATE;
     }
 
     @Override
     public void check(AuthorizationContext context) {
-        if(!appointmentDataService.isAppointmentDoctorRelationExists(context.getResourceId(),context.getUser().getResourceId())){
-            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(), resource().name()));
+        if(!appointmentDataService.isAppointmentManagerRelationExists(context.getResourceId(),context.getUser().getResourceId())){
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getUser().getResourceId(),action().name(),role().name(),resource().name()));
         }
     }
 }

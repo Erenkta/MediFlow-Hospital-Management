@@ -11,12 +11,8 @@ public interface ActionRule {
     AccessType action();
     void check(AuthorizationContext context);
 
-
-    default String generateAccessExceptionMessage(AccessType action,String subject){
-        return String.format("Invalid access type for %s user. Access Type : %s",subject,action.name());
-    }
     default String generateRelationExceptionMessage(Long resourceId,String action,String subject,String resource){
-        return String.format("Access is Denied. Current %s user does not have %s access to %s with id : %s",subject,action,resource,resourceId);
+        return String.format("Access is Denied. Current %s user with id : %s does not have %s access to %s. Please validate the payload.",subject,resourceId,action,resource);
     }
 }
 
