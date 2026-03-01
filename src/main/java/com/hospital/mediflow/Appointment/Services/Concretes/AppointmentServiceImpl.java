@@ -7,6 +7,8 @@ import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Audit.Audit;
 import com.hospital.mediflow.Common.Configuration.AppointmentProperties;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
 import com.hospital.mediflow.Mappers.AppointmentMapper;

@@ -2,11 +2,14 @@ package com.hospital.mediflow.Billing.DataServices.Concretes;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
+import com.hospital.mediflow.Audit.Event.DomainEvent;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Billing.Repositories.BillingRepository;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Audit.Audit;
 import com.hospital.mediflow.Common.BaseService;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
@@ -15,6 +18,7 @@ import com.hospital.mediflow.Patient.DataServices.Abstracts.PatientDataService;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,14 +33,16 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     private final AppointmentDataService appointmentDataService;
     private final DepartmentDataService departmentDataService;
     private final PatientDataService patientDataService;
+    private final ApplicationEventPublisher publisher;
 
-    public BillingDataServiceImpl(BillingRepository repository, BillingMapper mapper, AppointmentDataService appointmentDataService, DepartmentDataService departmentDataService, PatientDataService patientDataService) {
+    public BillingDataServiceImpl(BillingRepository repository, BillingMapper mapper, AppointmentDataService appointmentDataService, DepartmentDataService departmentDataService, PatientDataService patientDataService, ApplicationEventPublisher publisher) {
         super(repository);
         this.repository = repository;
         this.mapper = mapper;
         this.appointmentDataService = appointmentDataService;
         this.departmentDataService = departmentDataService;
         this.patientDataService = patientDataService;
+        this.publisher = publisher;
     }
 
     @Override
@@ -86,8 +92,12 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     }
 
     @Override
+    @Audit(action = AccessType.DELETE,returns = Billing.class)
     public void deleteBilling(Long id) {
         this.isExistsOrThrow(id);
+        Billing deletedEntity = repository.findById(id).get();
+        publisher.publishEvent(new DomainEvent<BillingResponseDto>(mapper.toDto(deletedEntity),AccessType.DELETE,id, 90));
+
         repository.deleteById(id);
     }
 }
