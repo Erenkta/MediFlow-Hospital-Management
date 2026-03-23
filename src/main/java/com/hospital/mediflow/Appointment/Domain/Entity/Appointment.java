@@ -3,6 +3,7 @@ package com.hospital.mediflow.Appointment.Domain.Entity;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Enums.States.*;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
+import com.hospital.mediflow.Common.Helpers.SpringContextHelper;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import jakarta.persistence.*;
@@ -61,10 +62,11 @@ public class Appointment extends BaseEntity {
     @Transient
     public AppointmentState getState() {
         return switch (status) {
-            case PENDING -> new PendingState();
-            case APPROVED -> new ApprovedState();
-            case CANCELLED -> new CancelledState();
-            default -> new NoActionState();
+            case PENDING -> SpringContextHelper.getBean(PendingState.class);
+            case APPROVED -> SpringContextHelper.getBean(ApprovedState.class);
+            case CANCELLED -> SpringContextHelper.getBean(CancelledState.class);
+            case ON_GOING -> SpringContextHelper.getBean(OnGoingState.class);
+            default -> SpringContextHelper.getBean(NoActionState.class);
         };
     }
 }
