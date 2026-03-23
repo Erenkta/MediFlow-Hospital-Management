@@ -54,7 +54,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @PreAuthorize("hasAuthority('manager:delete')")
     public void deleteBilling(Long id) {
         dataService.deleteBilling(id);

@@ -7,6 +7,8 @@ import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Repository.AppointmentRepository;
+import com.hospital.mediflow.Common.Annotations.Access.AccessType;
+import com.hospital.mediflow.Common.Annotations.Audit.Audit;
 import com.hospital.mediflow.Common.BaseService;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Specifications.AppointmentSpecification;
@@ -71,6 +73,7 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
         return mapper.toDto(repository.save(appointment));
     }
     @Override
+    @Audit(action = AccessType.CREATE, returns = AppointmentResponseDto.class)
     public AppointmentResponseDto saveAndFlush(AppointmentRequestDto appointmentRequestDto) {
         Appointment appointment = mapper.toEntity(appointmentRequestDto);
         Patient patient = patientDataService.getReferenceById(appointmentRequestDto.patientId());

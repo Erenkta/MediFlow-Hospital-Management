@@ -59,6 +59,15 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Source: https://mvnrepository.com/artifact/io.hypersistence/hypersistence-utils-hibernate-63 -->
+		<dependency>
+			<groupId>io.hypersistence</groupId>
+			<artifactId>hypersistence-utils-hibernate-63</artifactId>
+			<version>3.8.3</version>
+			<scope>compile</scope>
+		</dependency>
+
+
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -72,6 +81,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.restdocs</groupId>
