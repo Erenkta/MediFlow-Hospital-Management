@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BillingRepository extends BaseRepository<Billing,Long>, QuerydslPredicateExecutor<Billing> {
@@ -27,4 +28,11 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
             Select count(b) > 0 from Billing b where b.id = :billing_id and b.patient.id = :patient_id
             """)
     boolean isBillingPatientRelationExists(@Param("billing_id") Long billingId, @Param("patient_id") Long patientId);
+
+    @Query(
+    """
+    select b from Billing b where b.appointment.id = :appointment_id
+    """
+    )
+    Billing findBillingByAppointment(@Param("appointment_id") Long appointmentId);
 }

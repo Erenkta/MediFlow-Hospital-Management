@@ -2,6 +2,7 @@ package com.hospital.mediflow.Billing.Domain.Entity;
 
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Billing.Enums.States.*;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
@@ -63,4 +64,15 @@ public class Billing extends BaseEntity {
     private BillingStatus status;
 
     private LocalDateTime billingDate;
+
+    @Transient
+    public BillingState getBillingState(){
+        return switch (status) {
+            case PENDING -> new PendingState();
+            case APPROVED -> new ApprovedState();
+            case CANCELLED -> new CancelledState();
+            case TRANSFERRED -> new TransferredState();
+            default -> new NoActionState();
+        };
+    }
 }

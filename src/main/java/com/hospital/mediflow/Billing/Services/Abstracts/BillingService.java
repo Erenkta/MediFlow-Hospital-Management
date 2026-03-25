@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Billing.Services.Abstracts;
 
+import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.querydsl.core.types.Predicate;
@@ -17,6 +18,8 @@ public interface BillingService {
     Page<BillingResponseDto> findAllBillings(Pageable pageable, Predicate billingFilterDto);
     BillingResponseDto findBillingById(@NotNull Long id);
     BillingResponseDto createBilling(@Valid BillingRequestDto billingRequestDto);
+    BillingResponseDto createBilling(Appointment appointment,double amount);
+    BillingResponseDto cancelBilling(Long appointmentId);
     BillingResponseDto updateBilling(@NotNull Long id,@Valid BillingRequestDto billingRequestDto);
     void deleteBilling(@NotNull Long id);
 }

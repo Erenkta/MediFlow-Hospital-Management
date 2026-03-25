@@ -7,10 +7,12 @@ import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
+import com.hospital.mediflow.Billing.Enums.BillingStatus;
 import com.hospital.mediflow.Billing.Repositories.BillingRepository;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Audit.Audit;
 import com.hospital.mediflow.Common.BaseService;
+import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Mappers.BillingMapper;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -82,6 +85,14 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     }
 
     @Override
+    public BillingResponseDto updateBillingStatus(Long billingId, BillingStatus status) {
+        Billing entiy = this.findByIdOrThrow(billingId);
+        entiy.getBillingState().handleTransition(entiy,status);
+        repository.save(entiy);
+        return mapper.toDto(entiy);
+    }
+
+    @Override
     public boolean isBillingDepartmentRelationExists(Long billingId, Long departmentId) {
         return repository.isBillingDepartmentRelationExists(billingId, departmentId);
     }
@@ -99,5 +110,11 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
         publisher.publishEvent(new DomainEvent<BillingResponseDto>(mapper.toDto(deletedEntity),AccessType.DELETE,id, 90));
 
         repository.deleteById(id);
+    }
+
+    @Override
+    public Optional<BillingResponseDto> findBillingByAppointment(Long appointmentId) {
+        Billing billing = repository.findBillingByAppointment(appointmentId);
+        return billing == null ? Optional.empty() : Optional.of(mapper.toDto(billing));
     }
 }

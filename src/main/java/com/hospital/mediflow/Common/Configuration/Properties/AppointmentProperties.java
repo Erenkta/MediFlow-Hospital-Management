@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Configuration;
+package com.hospital.mediflow.Common.Configuration.Properties;
 
 
 import lombok.Getter;
