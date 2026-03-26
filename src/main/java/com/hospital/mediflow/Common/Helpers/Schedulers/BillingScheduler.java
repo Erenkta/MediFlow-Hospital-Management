@@ -36,18 +36,7 @@ public class BillingScheduler {
         List<InvoicePdfProjection> pendingInvoices = dataService.findBillingsByDateRanged(startOfDay,endOfDay);
         pendingInvoices.parallelStream().forEach(invoice ->{
             byte[] pdf = pdfService.generateInvoicePDF(invoice);
-            saveToFile(invoice.getId(),pdf);
+            pdfService.saveToFile(pdfSavePath+"/invoice-" + invoice.getId(),pdf);
         });
-    }
-
-    private void saveToFile(Long billingId, byte[] pdf) {
-        try {
-            Files.write(
-                    Path.of(pdfSavePath+"/invoice-" + billingId + ".pdf"),
-                    pdf
-            );
-        } catch (IOException e) {
-            throw new BaseException(e.getMessage(), ErrorCode.IO_ERROR);
-        }
     }
 }
