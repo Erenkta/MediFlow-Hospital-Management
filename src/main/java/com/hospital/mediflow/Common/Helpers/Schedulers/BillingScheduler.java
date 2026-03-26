@@ -27,7 +27,7 @@ public class BillingScheduler {
     @Value("${mediflow.pdf.path}")
     private String pdfSavePath;
 
-    @Scheduled(cron = "0 0 02 * * * ")
+    @Scheduled(cron = "0 0 2 * * * ")
     public void generateInvoicePdf(){
         LocalDate today = LocalDate.now();
         LocalDateTime startOfDay = today.atStartOfDay();
