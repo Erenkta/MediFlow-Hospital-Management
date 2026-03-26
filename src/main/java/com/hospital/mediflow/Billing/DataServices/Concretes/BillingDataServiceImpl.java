@@ -88,10 +88,10 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
 
     @Override
     public BillingResponseDto updateBillingStatus(Long billingId, BillingStatus status) {
-        Billing entiy = this.findByIdOrThrow(billingId);
-        entiy.getBillingState().handleTransition(entiy,status);
-        repository.save(entiy);
-        return mapper.toDto(entiy);
+        Billing entity = this.findByIdOrThrow(billingId);
+        entity.getBillingState().handleTransition(entity,status);
+        repository.save(entity);
+        return mapper.toDto(entity);
     }
 
     @Override

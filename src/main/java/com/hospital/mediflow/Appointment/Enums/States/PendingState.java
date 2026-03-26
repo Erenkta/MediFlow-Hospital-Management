@@ -29,6 +29,7 @@ public class PendingState extends AppointmentState{
     public void rescheduled(Appointment appointment){
         appointment.setStatus(AppointmentStatusEnum.PENDING);
     }
+
     @Override
     @Transactional
     public void cancel(Appointment appointment) {
