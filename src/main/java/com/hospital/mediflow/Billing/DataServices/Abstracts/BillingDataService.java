@@ -4,10 +4,12 @@ import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +25,5 @@ public interface BillingDataService {
     void deleteBilling(Long id);
 
     Optional<BillingResponseDto>  findBillingByAppointment(Long appointmentId);
+    List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime start,LocalDateTime end);
 }

@@ -13,7 +13,8 @@ public enum ErrorCode {
     METHOD_ARGUMENT_NOT_VALID("400"),
     RECORD_ALREADY_EXISTS("400"),
     AUTHENTICATION_EXCEPTION("400"),
-    FORBIDDEN("401")
+    FORBIDDEN("401"),
+    IO_ERROR("400")
 
     ;
 

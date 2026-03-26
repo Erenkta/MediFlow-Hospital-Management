@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Billing.DataServices.Concretes;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
+import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Audit.Event.DomainEvent;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
@@ -12,7 +13,7 @@ import com.hospital.mediflow.Billing.Repositories.BillingRepository;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Audit.Audit;
 import com.hospital.mediflow.Common.BaseService;
-import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
+import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.hospital.mediflow.Department.DataServices.Abstracts.DepartmentDataService;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Mappers.BillingMapper;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,5 +118,11 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     public Optional<BillingResponseDto> findBillingByAppointment(Long appointmentId) {
         Billing billing = repository.findBillingByAppointment(appointmentId);
         return billing == null ? Optional.empty() : Optional.of(mapper.toDto(billing));
+    }
+
+    @Override
+    @Audit(action = AccessType.READ_BY_FILTER, returns = AppointmentResponseDto.class)
+    public List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime start, LocalDateTime end) {
+        return repository.findBillingsByDateRanged(start,end);
     }
 }
