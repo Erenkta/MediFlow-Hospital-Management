@@ -32,7 +32,7 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
 
     @Query(
     """
-    select b from Billing b where b.appointment.id = :appointment_id
+    select b from Billing b where b.appointment.id = :appointment_id and b.appointment.status = 'PENDING'
     """
     )
     Billing findBillingByAppointment(@Param("appointment_id") Long appointmentId);

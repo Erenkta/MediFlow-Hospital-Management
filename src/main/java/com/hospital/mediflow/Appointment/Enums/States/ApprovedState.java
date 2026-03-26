@@ -26,6 +26,7 @@ public class ApprovedState extends AppointmentState{
     public void ongoing(Appointment appointment) {
         appointment.setStatus(AppointmentStatusEnum.ON_GOING);
     }
+    @Override
     public void handleTransition(Appointment appointment,AppointmentStatusEnum newStatus){
         switch (newStatus) {
             case REJECTED -> reject(appointment);

@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Billing.Services.Concretes;
 
+import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
@@ -7,6 +8,7 @@ import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
 import com.hospital.mediflow.Common.Configuration.Properties.BillingProperties;
+import com.hospital.mediflow.Common.Exceptions.AppointmentNotExistsException;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ import java.util.List;
 @Slf4j
 public class BillingServiceImpl implements BillingService {
     private final BillingDataService dataService;
-    private final BillingProperties configuration;
+    private final AppointmentDataService appointmentService;
 
     @Override
     @PreAuthorize("hasAuthority('patient:read')")
@@ -56,8 +58,16 @@ public class BillingServiceImpl implements BillingService {
     @Override
     @Transactional
     public BillingResponseDto createBilling(Appointment appointment, double amount) {
+        
+        Long patientId = appointment.getPatient().getId();
+        boolean isAppointmentExists = appointmentService.isAppointmentPatientRelationExists(appointment.getId(),patientId);
+        if(!isAppointmentExists){
+            String message = String.format("Appoinment with id : '%s' couldn't be find for the patient with id '%s'",appointment.getId(),patientId);
+            throw new AppointmentNotExistsException(message);
+        }
+
         BillingRequestDto requestDto = new BillingRequestDto(
-                appointment.getPatient().getId(),
+                patientId,
                 appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getId().getDepartmentId(),
                 appointment.getId(),
                 BigDecimal.valueOf(amount),
