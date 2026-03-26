@@ -2,6 +2,7 @@ package com.hospital.mediflow.Billing.Repositories;
 
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Common.BaseRepository;
+import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,8 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface BillingRepository extends BaseRepository<Billing,Long>, QuerydslPredicateExecutor<Billing> {
@@ -35,4 +36,23 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
     """
     )
     Billing findBillingByAppointment(@Param("appointment_id") Long appointmentId);
+
+    @Query(
+        """
+        Select 
+        b.id as id,
+        p.firstName as customerName,
+        p.lastName as customerLastName,
+        b.billingDate as billingDate,
+        a.appointmentDate as appointmentDate,
+        a.reason as appointmentDescription,
+        b.amount as amount
+        from Billing b
+        inner join Appointment a on b.appointment.id = a.id
+        inner join Patient p on b.patient.id = p.id
+        
+        where b.billingDate >= :start AND b.billingDate < :end
+        """
+    )
+    List<InvoicePdfProjection> findBillingsByDateRanged(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
