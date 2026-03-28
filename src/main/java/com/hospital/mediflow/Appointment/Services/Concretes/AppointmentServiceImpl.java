@@ -8,10 +8,14 @@ import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
 import com.hospital.mediflow.Common.Configuration.Properties.AppointmentProperties;
+import com.hospital.mediflow.Common.Events.EventType;
+import com.hospital.mediflow.Common.Events.InternalNotificationEvent;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
+import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.Mappers.AppointmentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -31,6 +36,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentDataService appointmentDataService;
     private final AppointmentMapper mapper;
     private final AppointmentProperties appointmentProperties;
+    private final ApplicationEventPublisher eventPublisher;
+    private final CurrentUserProvider userProvider;
+
 
     @Override
     @PreAuthorize("hasAnyAuthority('doctor:read','patient:read')")
@@ -67,7 +75,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         if(isAppointmentAvailable){
             try{
-                return appointmentDataService.saveAndFlush(appointmentRequestDto);
+                AppointmentResponseDto response = appointmentDataService.saveAndFlush(appointmentRequestDto);
+                NotifyPatient(response.id(),EventType.APPOINTMENT_CREATED);
+                return  response;
             }catch (DataIntegrityViolationException ex){
                 log.error("Appointment has already been occupied.");
                 throw new AppointmentNotAvailableException("Appointment has already been occupied. Please try with another appointment time.");
@@ -130,5 +140,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     @PreAuthorize("hasAuthority('patient:delete')")
     public void deleteById(Long id) {
         appointmentDataService.deleteById(id);
+    }
+
+    private void NotifyPatient(Long appointmentId,EventType type){
+        Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
+        eventPublisher.publishEvent(new InternalNotificationEvent(
+                appointment,
+                userProvider.get().getResourceId(),
+                type,
+                Map.of("doctorName",appointment.getDoctor().getFullName(),
+                        "departmentName",appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getDepartment().getName(),
+                        "date",appointment.getAppointmentDate().toString())
+
+        ));
     }
 }
