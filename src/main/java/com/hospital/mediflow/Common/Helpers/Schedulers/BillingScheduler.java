@@ -1,11 +1,13 @@
 package com.hospital.mediflow.Common.Helpers.Schedulers;
 
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
+import com.hospital.mediflow.Common.Configuration.Properties.SchedulerProperties;
 import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.hospital.mediflow.Common.Exceptions.BaseException;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Helpers.PDFService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class BillingScheduler {
     private final BillingDataService dataService;
     private final PDFService pdfService;
@@ -27,7 +30,7 @@ public class BillingScheduler {
     @Value("${mediflow.pdf.path}")
     private String pdfSavePath;
 
-    @Scheduled(cron = "0 0 2 * * * ")
+    @Scheduled(cron = "${mediflow.scheduler.invoice.pdf}")
     public void generateInvoicePdf(){
         LocalDate today = LocalDate.now();
         LocalDateTime startOfDay = today.atStartOfDay();
@@ -38,5 +41,14 @@ public class BillingScheduler {
             byte[] pdf = pdfService.generateInvoicePDF(invoice);
             pdfService.saveToFile(pdfSavePath+"/invoice-" + invoice.getId(),pdf);
         });
+        String message = String.format("Invoice PDFs created at %s",LocalDateTime.now().toString());
+        log.info(message);
+    }
+
+    @Scheduled(cron = "${mediflow.scheduler.overdue.payment}")
+    public void markOverduePayments(){
+      int markedPaymentCount =  dataService.markOverduePayments();
+      String message = String.format("%d payments marked as OVERDUE",markedPaymentCount);
+      log.info(message);
     }
 }

@@ -115,6 +115,11 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     }
 
     @Override
+    public int markOverduePayments() {
+        return repository.markOverduePayments();
+    }
+
+    @Override
     public Optional<BillingResponseDto> findBillingByAppointment(Long appointmentId) {
         Billing billing = repository.findBillingByAppointment(appointmentId);
         return billing == null ? Optional.empty() : Optional.of(mapper.toDto(billing));

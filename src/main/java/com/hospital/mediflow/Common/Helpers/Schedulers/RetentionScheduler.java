@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Common.Helpers.Schedulers;
 
 import com.hospital.mediflow.Audit.Repository.SensitiveBackupRepository;
+import com.hospital.mediflow.Common.Configuration.Properties.SchedulerProperties;
 import com.hospital.mediflow.Common.Exceptions.BaseException;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Helpers.ExcelService;
@@ -25,18 +26,15 @@ public class RetentionScheduler {
     @Value("${mediflow.sensitive.backup.path}")
     public String excelPath;
 
-//   @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(fixedRate = 500000)
+    @Scheduled(cron = "${mediflow.scheduler.clean.backup}")
     @Transactional
     public void cleanupOldBackups() {
-        // Excel'e çevir.
         try{
            byte[] backupAsBytes= excelService.createBackupExcel();
            excelService.saveToFile(excelPath+"/"+ LocalDate.now(),backupAsBytes);
         } catch (IOException e) {
             throw new BaseException(e.getLocalizedMessage(), ErrorCode.IO_ERROR);
         }
-        //Db'deki değerleri sil
         repository.deleteExpiredBackups();
     }
 }
