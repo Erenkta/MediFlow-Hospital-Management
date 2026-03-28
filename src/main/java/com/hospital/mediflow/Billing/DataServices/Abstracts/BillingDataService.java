@@ -23,6 +23,7 @@ public interface BillingDataService {
     boolean isBillingDepartmentRelationExists(Long billingId,Long departmentId);
     boolean isBillingPatientRelationExists(Long billingId,Long patientId);
     void deleteBilling(Long id);
+    int markOverduePayments();
 
     Optional<BillingResponseDto>  findBillingByAppointment(Long appointmentId);
     List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime start,LocalDateTime end);

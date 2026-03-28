@@ -1,4 +1,4 @@
-package com.hospital.mediflow.Common.Config;
+package com.hospital.mediflow.Common.Configuration;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

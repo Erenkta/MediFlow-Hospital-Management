@@ -45,7 +45,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
       LEFT JOIN mediflow_schema.appointments as a
           ON a.patient_id = p.id
       LEFT JOIN mediflow_schema.doctor_department dd
-          ON a.doctor_id = dd.doctor_id AND dd.department_id = d.id and a.status != 'DONE'
+          ON a.doctor_id = dd.doctor_id AND dd.department_id = d.id and a.status != 'DONE' and a.status != 'CANCELLED'
       WHERE p.id = :patient_id and d.id = :department_id
       GROUP BY p.id, p.first_name, d.id, d.name
 """,nativeQuery = true)

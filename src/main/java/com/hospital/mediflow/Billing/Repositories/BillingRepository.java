@@ -6,10 +6,12 @@ import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +34,7 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
 
     @Query(
     """
-    select b from Billing b where b.appointment.id = :appointment_id and b.appointment.status = 'PENDING'
+    select b from Billing b where b.appointment.id = :appointment_id and b.appointment.status = 'PENDING' and b.type = 'DEPOSIT'
     """
     )
     Billing findBillingByAppointment(@Param("appointment_id") Long appointmentId);
@@ -55,4 +57,12 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
         """
     )
     List<InvoicePdfProjection> findBillingsByDateRanged(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Modifying
+    @Query(
+        """
+        UPDATE Billing b SET b.status = 'OVERDUE' where b.paymentDate <= CURRENT_TIMESTAMP and (b.status = 'PENDING' or b.status = 'APPROVED')
+        """)
+    @Transactional
+    int markOverduePayments();
 }

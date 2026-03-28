@@ -2,6 +2,7 @@ package com.hospital.mediflow.Billing.Domain.Entity;
 
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Billing.Enums.States.*;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
@@ -63,7 +64,11 @@ public class Billing extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private BillingStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private BillingType type;
+
     private LocalDateTime billingDate;
+    private LocalDateTime paymentDate;
 
     @Transient
     public BillingState getBillingState(){
