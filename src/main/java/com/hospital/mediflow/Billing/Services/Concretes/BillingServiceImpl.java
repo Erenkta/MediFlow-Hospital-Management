@@ -6,6 +6,7 @@ import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
 import com.hospital.mediflow.Common.Configuration.Properties.BillingProperties;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotExistsException;
@@ -72,6 +73,8 @@ public class BillingServiceImpl implements BillingService {
                 appointment.getId(),
                 BigDecimal.valueOf(amount),
                 BillingStatus.PENDING,
+                BillingType.DEPOSIT,
+                appointment.getAppointmentDate().minusMinutes(30),
                 LocalDateTime.now()
         );
         return dataService.createBilling(requestDto);

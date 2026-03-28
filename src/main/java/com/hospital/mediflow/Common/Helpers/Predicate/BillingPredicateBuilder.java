@@ -3,6 +3,7 @@ package com.hospital.mediflow.Common.Helpers.Predicate;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingFilterDto;
 import com.hospital.mediflow.Billing.Domain.Entity.QBilling;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -34,6 +35,12 @@ public class BillingPredicateBuilder {
         }
         return this;
     }
+    public BillingPredicateBuilder withType(List<BillingType> type) {
+        if(type != null){
+            predicates.add(qBilling.type.in(type));
+        }
+        return this;
+    }
 
     public BillingPredicateBuilder withBillingDate(LocalDateTime billingDateStart, LocalDateTime billingDateEnd) {
         if(billingDateStart != null){
@@ -41,6 +48,15 @@ public class BillingPredicateBuilder {
         }
         if(billingDateEnd != null){
             predicates.add(qBilling.billingDate.before(billingDateEnd));
+        }
+        return this;
+    }
+    public BillingPredicateBuilder withPaymentDate(LocalDateTime paymentDateStart,LocalDateTime paymentDateEnd){
+        if(paymentDateStart != null){
+            predicates.add(qBilling.paymentDate.after(paymentDateStart));
+        }
+        if(paymentDateEnd != null){
+            predicates.add((qBilling.paymentDate.before(paymentDateEnd)));
         }
         return this;
     }
@@ -61,9 +77,10 @@ public class BillingPredicateBuilder {
        return this
                 .withAmount(filter.amountLessThan(),filter.amountGreaterThan())
                 .withBillingDate(filter.billingDateStart(),filter.billingDateEnd())
+                .withPaymentDate(filter.paymentDateStart(),filter.paymentDateEnd())
                 .withStatus(filter.status())
                 .withDepartmentId(filter.departmentId())
-               .withAppointmentId(filter.appointmentId())
+                .withAppointmentId(filter.appointmentId())
                 .build();
     }
 

@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Billing.Domain.Dtos;
 
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Billing.Enums.BillingType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,13 +14,16 @@ public record BillingFilterDto(
         BigDecimal amountLessThan,
         BigDecimal amountGreaterThan,
         List<BillingStatus> status,
+        List<BillingType> type,
         LocalDateTime billingDateStart,
-        LocalDateTime billingDateEnd
+        LocalDateTime billingDateEnd,
+        LocalDateTime paymentDateStart,
+        LocalDateTime paymentDateEnd
 ) {
     public BillingFilterDto ManagerFilter(Long departmentId){
-        return new BillingFilterDto(this.patientId,this.appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);
+        return new BillingFilterDto(this.patientId,this.appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,type,this.billingDateStart,this.billingDateEnd,paymentDateStart,paymentDateEnd);
     }
     public BillingFilterDto PatientFilter(Long patientId){
-        return new BillingFilterDto(patientId,appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,this.billingDateStart,this.billingDateEnd);
+        return new BillingFilterDto(patientId,appointmentId,departmentId,this.amountLessThan,this.amountGreaterThan,this.status,type,this.billingDateStart,this.billingDateEnd,paymentDateStart,paymentDateEnd);
     }
 }

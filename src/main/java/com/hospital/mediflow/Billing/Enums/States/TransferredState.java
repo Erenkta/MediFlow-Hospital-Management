@@ -7,7 +7,6 @@ import com.hospital.mediflow.Common.Exceptions.InvalidStatusTransitionException;
 public class TransferredState extends BillingState{
     @Override
     public void invoiced(Billing billing) {
-        //download the billing as pdf (?)
         billing.setStatus(BillingStatus.APPROVED);
     }
 
