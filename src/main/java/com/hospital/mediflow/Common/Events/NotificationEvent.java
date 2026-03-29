@@ -4,7 +4,8 @@ import java.util.Map;
 
 public record NotificationEvent(
         Long receiverId,
-        String eventType, // make it enum later
+        String eventType,
+        NotificationType type,
         Map<String,String> data
 ) {
 }

@@ -146,7 +146,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
         eventPublisher.publishEvent(new InternalNotificationEvent(
                 appointment,
-                userProvider.get().getResourceId(),
+                userProvider.get(),
                 type,
                 Map.of("doctorName",appointment.getDoctor().getFullName(),
                         "departmentName",appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getDepartment().getName(),
