@@ -1,9 +1,11 @@
 package com.hospital.mediflow.Billing.DataServices.Abstracts;
 
+import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,6 @@ public interface BillingDataService {
     void deleteBilling(Long id);
     int markOverduePayments();
 
-    Optional<BillingResponseDto>  findBillingByAppointment(Long appointmentId);
+    Optional<BillingResponseDto>  findBillingByAppointmentAndType(Long appointmentId, BillingType type, AppointmentStatusEnum statusEnum) ;
     List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime start,LocalDateTime end);
 }

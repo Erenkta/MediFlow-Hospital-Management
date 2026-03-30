@@ -40,7 +40,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentMapper mapper;
     private final AppointmentProperties appointmentProperties;
     private final ApplicationEventPublisher eventPublisher;
-    private final CurrentUserProvider userProvider;
     private final UserRepository userRepository;
 
 

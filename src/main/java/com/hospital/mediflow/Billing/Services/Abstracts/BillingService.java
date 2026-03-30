@@ -3,6 +3,8 @@ package com.hospital.mediflow.Billing.Services.Abstracts;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
+import com.hospital.mediflow.Billing.Enums.BillingType;
+import com.hospital.mediflow.Common.Events.EventType;
 import com.querydsl.core.types.Predicate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Map;
 
 @Validated
 public interface BillingService {
@@ -18,8 +21,10 @@ public interface BillingService {
     Page<BillingResponseDto> findAllBillings(Pageable pageable, Predicate billingFilterDto);
     BillingResponseDto findBillingById(@NotNull Long id);
     BillingResponseDto createBilling(@Valid BillingRequestDto billingRequestDto);
-    BillingResponseDto createBilling(Appointment appointment,double amount);
+    BillingResponseDto createBilling(Appointment appointment, BillingType billingType, double amount);
     BillingResponseDto cancelBilling(Long appointmentId);
     BillingResponseDto updateBilling(@NotNull Long id,@Valid BillingRequestDto billingRequestDto);
+
+    void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String,String> notifyParams);
     void deleteBilling(@NotNull Long id);
 }

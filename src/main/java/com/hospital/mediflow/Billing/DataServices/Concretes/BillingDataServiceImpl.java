@@ -3,12 +3,14 @@ package com.hospital.mediflow.Billing.DataServices.Concretes;
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
 import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
+import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Audit.Event.DomainEvent;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingRequestDto;
 import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Billing.Enums.BillingStatus;
+import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Billing.Repositories.BillingRepository;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Audit.Audit;
@@ -120,8 +122,8 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     }
 
     @Override
-    public Optional<BillingResponseDto> findBillingByAppointment(Long appointmentId) {
-        Billing billing = repository.findBillingByAppointment(appointmentId);
+    public Optional<BillingResponseDto> findBillingByAppointmentAndType(Long appointmentId, BillingType type, AppointmentStatusEnum statusEnum) {
+        Billing billing = repository.findBillingByAppointment(appointmentId,type,statusEnum);
         return billing == null ? Optional.empty() : Optional.of(mapper.toDto(billing));
     }
 
