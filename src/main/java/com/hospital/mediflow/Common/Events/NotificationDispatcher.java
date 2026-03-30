@@ -25,6 +25,10 @@ public class NotificationDispatcher {
     @Async
     public void handleIntervalEvent(InternalNotificationEvent event){
         try {
+            if(event.getUser() == null){
+                log.error("USER is null. Notification could not send.");
+                return;
+            }
             UserPreference userPref = objectMapper.readValue(event.getUser().getPreferences(), UserPreference.class);
             NotificationType userPreference = userPref.notification();
             rabbitTemplate.convertAndSend(

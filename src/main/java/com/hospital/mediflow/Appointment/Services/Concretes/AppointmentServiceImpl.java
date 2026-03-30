@@ -11,8 +11,11 @@ import com.hospital.mediflow.Common.Configuration.Properties.AppointmentProperti
 import com.hospital.mediflow.Common.Events.EventType;
 import com.hospital.mediflow.Common.Events.InternalNotificationEvent;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotAvailableException;
+import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
 import com.hospital.mediflow.Common.Providers.Abstracts.CurrentUserProvider;
 import com.hospital.mediflow.Mappers.AppointmentMapper;
+import com.hospital.mediflow.Security.Dtos.Entity.User;
+import com.hospital.mediflow.Security.UserDetails.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -38,6 +41,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentProperties appointmentProperties;
     private final ApplicationEventPublisher eventPublisher;
     private final CurrentUserProvider userProvider;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -76,7 +80,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         if(isAppointmentAvailable){
             try{
                 AppointmentResponseDto response = appointmentDataService.saveAndFlush(appointmentRequestDto);
-                NotifyPatient(response.id(),EventType.APPOINTMENT_CREATED);
+                NotifyPatient(response.id(),EventType.APPOINTMENT_CREATED,response.patientId());
                 return  response;
             }catch (DataIntegrityViolationException ex){
                 log.error("Appointment has already been occupied.");
@@ -142,16 +146,40 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDataService.deleteById(id);
     }
 
-    private void NotifyPatient(Long appointmentId,EventType type){
+    @Override
+    @Transactional
+    public void NotifyPatient(Long appointmentId,EventType type,Long resourceId){
         Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
+        Map<String,String> defaultParams = Map.of("doctorName",appointment.getDoctor().getFullName(),
+                "departmentName",appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getDepartment().getName(),
+                "date",appointment.getAppointmentDate().toString());
+
+        User user = userRepository.findByResourceId(resourceId);
+
         eventPublisher.publishEvent(new InternalNotificationEvent(
                 appointment,
-                userProvider.get(),
+                user,
                 type,
-                Map.of("doctorName",appointment.getDoctor().getFullName(),
-                        "departmentName",appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getDepartment().getName(),
-                        "date",appointment.getAppointmentDate().toString())
+                defaultParams
+        ));
+    }
 
+    @Override
+    @Transactional
+    public List<Appointment> remindSoonAppointment(LocalDateTime remindDate) {
+        return appointmentDataService.remindSoonAppointment(remindDate);
+    }
+
+    @Override
+    public void NotifyPatient(Long appointmentId,EventType type,Long resourceId,Map<String,String> notifyParams){
+        Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
+        User user = userRepository.findByResourceId(resourceId);
+
+        eventPublisher.publishEvent(new InternalNotificationEvent(
+                appointment,
+                user,
+                type,
+                notifyParams
         ));
     }
 }

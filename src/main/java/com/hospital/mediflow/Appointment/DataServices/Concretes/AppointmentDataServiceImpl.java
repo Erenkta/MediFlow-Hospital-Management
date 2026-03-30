@@ -146,6 +146,11 @@ public class AppointmentDataServiceImpl extends BaseService<Appointment,Long> im
     }
 
     @Override
+    public List<Appointment> remindSoonAppointment(LocalDateTime remindDate) {
+       return extendedRepository.remindSoonAppointment(remindDate);
+    }
+
+    @Override
     public List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDateTime startDateTime,LocalDateTime endDateTime){
         List<LocalTime> appointmentDates = new ArrayList<>();
         LocalDateTime cursor = startDateTime;
