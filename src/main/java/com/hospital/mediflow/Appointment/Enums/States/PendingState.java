@@ -38,7 +38,7 @@ public class PendingState extends AppointmentState{
         //Create a bill based on the configuration.
         appointment.setStatus(AppointmentStatusEnum.APPROVED);
         appointmentService.NotifyPatient(appointment.getId(), EventType.APPOINTMENT_APPROVED,appointment.getPatient().getId());
-        billingService.createBilling(appointment, BillingType.DEPOSIT,configuration.getAmount());
+        billingService.createBilling(appointment, BillingType.DEPOSIT);
 //        entityManager.flush();
         billingService.notifyPatient(appointment.getId(),
                 EventType.BILLING_DEPOSIT_CREATED,

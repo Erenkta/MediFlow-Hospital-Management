@@ -25,7 +25,6 @@ public class OnGoingState extends AppointmentState{
 
     private final BillingService billingService;
 
-    private final BillingProperties configuration;
 
     private final AppointmentService appointmentService;
 
@@ -35,7 +34,7 @@ public class OnGoingState extends AppointmentState{
     public void approve(Appointment appointment) {
         appointment.setStatus(AppointmentStatusEnum.DONE);
         appointmentService.NotifyPatient(appointment.getId(), EventType.APPOINTMENT_DONE,appointment.getPatient().getId());
-        billingService.createBilling(appointment,BillingType.TREATMENT,configuration.getRemainedAmount());
+        billingService.createBilling(appointment,BillingType.TREATMENT);
         billingService.notifyPatient(appointment.getId(),
                 EventType.BILLING_TREATMENT_CREATED,
                 appointment.getPatient().getId(),

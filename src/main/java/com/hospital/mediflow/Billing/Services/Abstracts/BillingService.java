@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Validated
 public interface BillingService {
@@ -21,8 +22,8 @@ public interface BillingService {
     Page<BillingResponseDto> findAllBillings(Pageable pageable, Predicate billingFilterDto);
     BillingResponseDto findBillingById(@NotNull Long id);
     BillingResponseDto createBilling(@Valid BillingRequestDto billingRequestDto);
-    BillingResponseDto createBilling(Appointment appointment, BillingType billingType, double amount);
-    BillingResponseDto cancelBilling(Long appointmentId);
+    BillingResponseDto createBilling(Appointment appointment, BillingType billingType);
+    Optional<BillingResponseDto> cancelBilling(Long appointmentId);
     BillingResponseDto updateBilling(@NotNull Long id,@Valid BillingRequestDto billingRequestDto);
 
     void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String,String> notifyParams);

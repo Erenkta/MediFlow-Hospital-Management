@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Billing.Services.Concretes;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
+import com.hospital.mediflow.Appointment.Domain.Dtos.AppointmentResponseDto;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,6 +47,8 @@ public class BillingServiceImpl implements BillingService {
     private final AppointmentDataService appointmentService;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final BillingProperties configuration;
+
 
 
     @Override
@@ -73,7 +77,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
-    public BillingResponseDto createBilling(Appointment appointment,BillingType billingType, double amount) {
+    public BillingResponseDto createBilling(Appointment appointment,BillingType billingType) {
         
         Long patientId = appointment.getPatient().getId();
         boolean isAppointmentExists = appointmentService.isAppointmentPatientRelationExists(appointment.getId(),patientId);
@@ -86,29 +90,57 @@ public class BillingServiceImpl implements BillingService {
                 patientId,
                 appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getId().getDepartmentId(),
                 appointment.getId(),
-                BigDecimal.valueOf(amount),
+                BigDecimal.valueOf(billingType == BillingType.DEPOSIT ?configuration.getAmount() :configuration.getRemainedAmount()),
                 BillingStatus.PENDING,
                 billingType,
-                appointment.getAppointmentDate().minusMinutes(30),
+                appointment.getAppointmentDate().plusDays(billingType == BillingType.DEPOSIT ? 0 :configuration.getPaymentDateAfterTreatment()),
                 LocalDateTime.now()
         );
         return dataService.createBilling(requestDto);
     }
 
     @Override
-    public BillingResponseDto cancelBilling(Long appointmentId) {
-        BillingResponseDto response = dataService.findBillingByAppointmentAndType(appointmentId,BillingType.DEPOSIT,AppointmentStatusEnum.PENDING).orElseThrow(()->{
-            String message = String.format("Billing with appointment id '%s' cannot found",appointmentId);
-            return new RecordNotFoundException(message);
-        });
-        return dataService.updateBillingStatus(response.id(),BillingStatus.CANCELLED);
+    public Optional<BillingResponseDto> cancelBilling(Long appointmentId) {
+        BillingResponseDto response = dataService
+                .findBillingByAppointmentAndType(appointmentId, BillingType.DEPOSIT, AppointmentStatusEnum.PENDING)
+                .orElse(null); // Bulamazsa null döner, hata fırlatmaz.
+        if(response == null){
+            return Optional.empty();
+        }
+        BillingStatus oldStatus = response.status();
+        response = dataService.updateBillingStatus(response.id(),BillingStatus.CANCELLED);
+        AppointmentResponseDto appointment = appointmentService.findById(appointmentId);
+        notifyPatient(appointmentId,EventType.BILLING_STATUS_UPDATED,appointment.patientId(),Map.of(
+                "oldStatus",oldStatus.name(),
+                "newStatus",response.status().name(),
+                "billingType",BillingType.TREATMENT.name(),
+                "appointmentStatus",AppointmentStatusEnum.DONE.name()
+        ));
+        return Optional.of(response);
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasAuthority('manager:update')")
     public BillingResponseDto updateBilling(Long id, BillingRequestDto billingRequest) {
-        return dataService.updateBilling(id, billingRequest);
+        Long appointmentId = billingRequest.appointmentId();
+        Appointment appoinment= appointmentService.getReferenceById(appointmentId);
+        BillingResponseDto response = dataService.findBillingByAppointmentAndType(appointmentId,BillingType.DEPOSIT,appoinment.getStatus()).orElseThrow(()->{
+            String message = String.format("Billing with appointment id '%s' cannot found",appointmentId);
+            return new RecordNotFoundException(message);
+        });
+
+        BillingStatus oldStatus = response.status();
+        response = dataService.updateBilling(id, billingRequest);
+
+        notifyPatient(appointmentId,EventType.BILLING_STATUS_UPDATED,appoinment.getPatient().getId(), Map.of(
+                "oldStatus",oldStatus.name(),
+                "newStatus",response.status().name(),
+                "billingType",BillingType.TREATMENT.name(),
+                "appointmentStatus",AppointmentStatusEnum.DONE.name(),
+                "appointmentDate",appoinment.getAppointmentDate().toString()
+        ));
+        return response;
     }
 
     @Override
