@@ -74,7 +74,8 @@ public class AppointmentQueryFacade {
     @ResourceAccess(
             resource = ResourceType.APPOINTMENT,
             action = AccessType.PATCH,
-            idParam = "id"
+            idParam = "id",
+            payloadParam = "newStatus"
     )
     public AppointmentResponseDto updateStatus(Long id,AppointmentStatusEnum newStatus){
         return appointmentService.updateStatus(id, newStatus);

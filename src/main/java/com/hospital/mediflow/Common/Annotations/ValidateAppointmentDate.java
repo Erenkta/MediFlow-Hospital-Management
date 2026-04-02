@@ -1,6 +1,6 @@
 package com.hospital.mediflow.Common.Annotations;
 
-import com.hospital.mediflow.Common.Helpers.Annotations.BirthDateValidatorImpl;
+import com.hospital.mediflow.Common.Helpers.Annotations.AppointmentDateValidatorImpl;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = BirthDateValidatorImpl.class)
-public @interface ValidateBirthDate {
-    String message() default "Invalid birth date";
+@Constraint(validatedBy = AppointmentDateValidatorImpl.class)
+public @interface ValidateAppointmentDate {
+    String message() default "Invalid appointment Date";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

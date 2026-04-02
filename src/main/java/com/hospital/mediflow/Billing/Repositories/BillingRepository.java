@@ -1,6 +1,8 @@
 package com.hospital.mediflow.Billing.Repositories;
 
+import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Billing.Domain.Entity.Billing;
+import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Common.BaseRepository;
 import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.querydsl.core.types.Predicate;
@@ -34,10 +36,10 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
 
     @Query(
     """
-    select b from Billing b where b.appointment.id = :appointment_id and b.appointment.status = 'PENDING' and b.type = 'DEPOSIT'
+    select b from Billing b where b.appointment.id = :appointment_id and b.appointment.status = :appointmentType and b.type =:type
     """
     )
-    Billing findBillingByAppointment(@Param("appointment_id") Long appointmentId);
+    Billing findBillingByAppointment(@Param("appointment_id") Long appointmentId, @Param("type")BillingType type, @Param("appointmentType")AppointmentStatusEnum status);
 
     @Query(
         """

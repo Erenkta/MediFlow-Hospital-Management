@@ -27,4 +27,5 @@ public interface AppointmentDataService {
     List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDateTime startDateTime,LocalDateTime endDateTime);
     AppointmentResponseDto update(Long id, Appointment appointment);
     void deleteById(Long id);
+    List<Appointment> remindSoonAppointment(LocalDateTime remindDate);
 }

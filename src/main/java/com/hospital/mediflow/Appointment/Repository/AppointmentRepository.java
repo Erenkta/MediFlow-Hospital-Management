@@ -83,4 +83,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     select count(a) > 0 from Appointment a where a.doctor.id = :doctor_id and a.patient.id = :patient_id
 """)
     boolean isAppointmentExists(@Param("doctor_id") Long doctorId,  @Param("patient_id") Long patientId);
+
+    @Query(
+    """
+    SELECT a from Appointment a where a.appointmentDate <= :date and a.appointmentDate > CURRENT_TIMESTAMP and a.status = 'PENDING'
+    """
+    )
+    List<Appointment> remindSoonAppointment(@Param("date") LocalDateTime remindDate);
 }

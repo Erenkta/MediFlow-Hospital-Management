@@ -7,6 +7,7 @@ import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
+@Scope("prototype")
 public class BillingPredicateBuilder {
     private final QBilling qBilling = QBilling.billing;
     private List<BooleanExpression> predicates = new ArrayList<>();

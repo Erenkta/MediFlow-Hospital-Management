@@ -1,5 +1,6 @@
 package com.hospital.mediflow.Appointment.Domain.Dtos;
 
+import com.hospital.mediflow.Common.Annotations.ValidateAppointmentDate;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
@@ -16,6 +17,7 @@ public record AppointmentRequestDto (
         @NotNull
         Long departmentId,
 
+        @ValidateAppointmentDate
         LocalDateTime appointmentDate,
 
         String reason

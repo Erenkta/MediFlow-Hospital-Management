@@ -72,7 +72,8 @@ public class AppointmentSpecification extends BaseSpecification<Appointment> {
         return Specification.allOf(
                 hasDoctor(doctorId),
                 appointmentDateAfter(dateAfter),
-                appointmentDateBefore(dateBefore)
+                appointmentDateBefore(dateBefore),
+                hasStatus(List.of(AppointmentStatusEnum.PENDING,AppointmentStatusEnum.ON_GOING,AppointmentStatusEnum.APPROVED))
         );
     }
 }

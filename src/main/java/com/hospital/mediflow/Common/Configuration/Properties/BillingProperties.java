@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class BillingProperties {
     private int percentage;
     private double amount;
+    private long paymentDateAfterTreatment;
 
 
     public int getRemainedAmount(){

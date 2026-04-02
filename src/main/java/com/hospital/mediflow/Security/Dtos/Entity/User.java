@@ -1,8 +1,10 @@
 package com.hospital.mediflow.Security.Dtos.Entity;
 
 import com.hospital.mediflow.Security.Roles.Role;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
@@ -28,6 +30,10 @@ public class User{
     private Role role;
 
     private Long resourceId;
+
+    @Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
+    private String preferences;
 
 
     @Transient
