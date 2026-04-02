@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "mediflow.scheduler")
-@Component("schedulerProperties") // İsmi açıkça belirle
+@Component("schedulerProperties")
 public class SchedulerProperties {
      String invoicePdf;
      String overduePayment;

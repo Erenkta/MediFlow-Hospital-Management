@@ -1,6 +1,7 @@
 package com.hospital.mediflow.Common.Authorization.Rules.Patient.Update;
 
 import com.hospital.mediflow.Appointment.DataServices.Abstracts.AppointmentDataService;
+import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Access.ResourceType;
 import com.hospital.mediflow.Common.Authorization.Model.AuthorizationContext;
@@ -34,8 +35,14 @@ public class PatientPatchAppointmentRule implements ActionRule {
 
     @Override
     public void check(AuthorizationContext context) {
-        if(!appointmentDataService.isAppointmentPatientRelationExists(context.getResourceId(),context.getUser().getResourceId())){
+        boolean patientCanAccess= !appointmentDataService.isAppointmentPatientRelationExists(context.getResourceId(),context.getUser().getResourceId());
+        if(patientCanAccess){
             throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(), resource().name()));
         }
+        boolean patientCanUpdate = (context.getPayload()) == AppointmentStatusEnum.CANCELLED;
+        if(!patientCanUpdate){
+            throw new AccessDeniedException(generateRelationExceptionMessage(context.getResourceId(),action().name(),role().name(), resource().name()));
+        }
+
     }
 }
