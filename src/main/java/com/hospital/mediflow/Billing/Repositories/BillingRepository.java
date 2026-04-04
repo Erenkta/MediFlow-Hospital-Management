@@ -67,4 +67,12 @@ public interface BillingRepository extends BaseRepository<Billing,Long>, Queryds
         """)
     @Transactional
     int markOverduePayments();
+
+    @Query(
+        """
+        Select b from Billing b where b.status = 'OVERDUE'
+        """
+    )
+    @Transactional(readOnly = true)
+    List<Billing> getOverduePayments();
 }

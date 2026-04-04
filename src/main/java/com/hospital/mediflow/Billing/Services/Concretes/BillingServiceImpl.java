@@ -12,6 +12,7 @@ import com.hospital.mediflow.Billing.Enums.BillingStatus;
 import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
 import com.hospital.mediflow.Common.Configuration.Properties.BillingProperties;
+import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.hospital.mediflow.Common.Events.EventType;
 import com.hospital.mediflow.Common.Events.InternalNotificationEvent;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotExistsException;
@@ -176,5 +177,21 @@ public class BillingServiceImpl implements BillingService {
     @PreAuthorize("hasAuthority('manager:delete')")
     public void deleteBilling(Long id) {
         dataService.deleteBilling(id);
+    }
+
+    @Override
+    public List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return dataService.findBillingsByDateRanged(startOfDay,endOfDay);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public int markOverduePayments() {
+        return dataService.markOverduePayments();
+    }
+
+    @Override
+    public List<Billing> getOverduePayments() {
+        return dataService.getOverduePayments();
     }
 }

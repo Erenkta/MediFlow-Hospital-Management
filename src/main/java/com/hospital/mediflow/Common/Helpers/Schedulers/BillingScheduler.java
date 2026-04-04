@@ -1,8 +1,11 @@
 package com.hospital.mediflow.Common.Helpers.Schedulers;
 
 import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
+import com.hospital.mediflow.Billing.Domain.Entity.Billing;
+import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
 import com.hospital.mediflow.Common.Configuration.Properties.SchedulerProperties;
 import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
+import com.hospital.mediflow.Common.Events.EventType;
 import com.hospital.mediflow.Common.Exceptions.BaseException;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
 import com.hospital.mediflow.Common.Helpers.PDFService;
@@ -11,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,12 +23,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class BillingScheduler {
-    private final BillingDataService dataService;
+    private final BillingService service;
     private final PDFService pdfService;
 
     @Value("${mediflow.pdf.path}")
@@ -36,7 +41,7 @@ public class BillingScheduler {
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
-        List<InvoicePdfProjection> pendingInvoices = dataService.findBillingsByDateRanged(startOfDay,endOfDay);
+        List<InvoicePdfProjection> pendingInvoices = service.findBillingsByDateRanged(startOfDay,endOfDay);
         pendingInvoices.parallelStream().forEach(invoice ->{
             byte[] pdf = pdfService.generateInvoicePDF(invoice);
             pdfService.saveToFile(pdfSavePath+"/invoice-" + invoice.getId(),pdf);
@@ -45,10 +50,20 @@ public class BillingScheduler {
         log.info(message);
     }
 
-    @Scheduled(cron = "${mediflow.scheduler.overdue.payment}")
+    // @Scheduled(cron = "${mediflow.scheduler.overdue.payment}")
+    @Scheduled(fixedRate = 500000)
+    @Transactional
     public void markOverduePayments(){
-      int markedPaymentCount =  dataService.markOverduePayments();
+      int markedPaymentCount =  service.markOverduePayments();
       String message = String.format("%d payments marked as OVERDUE",markedPaymentCount);
       log.info(message);
+
+      List<Billing> overduePayments = service.getOverduePayments();
+      overduePayments.parallelStream().forEach((billing -> service.notifyPatient(
+              billing.getAppointment().getId(),
+              EventType.BILLING_OVERDUE,
+              billing.getPatient().getId(),
+              Map.of("billingType",billing.getType().name(),
+              "appointmentStatus",billing.getAppointment().getStatus().toString()))));
     }
 }
