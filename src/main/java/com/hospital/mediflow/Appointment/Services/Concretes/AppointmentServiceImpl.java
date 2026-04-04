@@ -149,7 +149,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public void NotifyPatient(Long appointmentId,EventType type,Long resourceId){
         Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
-        Map<String,String> defaultParams = Map.of("doctorName",appointment.getDoctor().getFullName(),
+        Map<String,Object> defaultParams = Map.of("doctorName",appointment.getDoctor().getFullName(),
                 "departmentName",appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getDepartment().getName(),
                 "date",appointment.getAppointmentDate().toString());
 
@@ -170,7 +170,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void NotifyPatient(Long appointmentId,EventType type,Long resourceId,Map<String,String> notifyParams){
+    public void NotifyPatient(Long appointmentId,EventType type,Long resourceId,Map<String,Object> notifyParams){
         Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
         User user = userRepository.findByResourceId(resourceId);
 

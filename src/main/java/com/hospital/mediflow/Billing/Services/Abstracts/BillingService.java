@@ -29,7 +29,7 @@ public interface BillingService {
     Optional<BillingResponseDto> cancelBilling(Long appointmentId);
     BillingResponseDto updateBilling(@NotNull Long id,@Valid BillingRequestDto billingRequestDto);
 
-    void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String,String> notifyParams);
+    void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String,Object> notifyParams);
     void deleteBilling(@NotNull Long id);
 
     List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime startOfDay, LocalDateTime endOfDay);

@@ -145,18 +145,19 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
-    public void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String, String> notifyParams) {
+    public void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String, Object> notifyParams) {
         BillingResponseDto billing = dataService.findBillingByAppointmentAndType(
                 appointmentId,
-                BillingType.valueOf(notifyParams.get("billingType")),
-                AppointmentStatusEnum.valueOf(notifyParams.get("appointmentStatus"))
+                BillingType.valueOf(notifyParams.get("billingType").toString()),
+                AppointmentStatusEnum.valueOf(notifyParams.get("appointmentStatus").toString())
                 ).orElseThrow(()->new RecordNotFoundException("Billing with appointment id '"+appointmentId+"' couldn't be found"));
-        Map<String,String> defaultParams = Map.of(
+
+        Map<String,Object> defaultParams = Map.of(
                 "billingDate",billing.billingDate().toString(),
                 "paymentDate",billing.paymentDate().toString(),
                 "amount",billing.amount().toString());
 
-        Map<String, String> combined = Stream.concat(notifyParams.entrySet().stream(), defaultParams.entrySet().stream())
+        Map<String, Object> combined = Stream.concat(notifyParams.entrySet().stream(), defaultParams.entrySet().stream())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,

@@ -10,9 +10,9 @@ import java.util.Map;
 public class InternalNotificationEvent extends ApplicationEvent {
     private final User user;
     private final EventType eventType;
-    private final Map<String, String> data;
+    private final Map<String, Object> data;
 
-    public InternalNotificationEvent(Object source, User user, EventType eventType, Map<String, String> data) {
+    public InternalNotificationEvent(Object source, User user, EventType eventType, Map<String, Object> data) {
         super(source);
         this.user = user;
         this.eventType = eventType;

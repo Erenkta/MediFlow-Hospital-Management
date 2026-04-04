@@ -24,7 +24,7 @@ public interface AppointmentService {
     AppointmentResponseDto updateStatus(Long id, AppointmentStatusEnum newStatus);
     AppointmentResponseDto rescheduleAppointment(Long id, LocalDateTime newDate);
     List<LocalTime> getAvailableAppointmentDates(Long doctorId, LocalDate appointmentDate);
-    void NotifyPatient(Long appointmentId,EventType type,Long userId,Map<String,String> notifyParams);
+    void NotifyPatient(Long appointmentId,EventType type,Long userId,Map<String,Object> notifyParams);
     void NotifyPatient(Long appointmentId,EventType type,Long userId);
     List<Appointment> remindSoonAppointment(LocalDateTime remindDate);
     void deleteById(Long id);
