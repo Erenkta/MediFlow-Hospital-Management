@@ -50,8 +50,7 @@ public class BillingScheduler {
         log.info(message);
     }
 
-    // @Scheduled(cron = "${mediflow.scheduler.overdue.payment}")
-    @Scheduled(fixedRate = 500000)
+    @Scheduled(cron = "${mediflow.scheduler.overdue.payment}")
     @Transactional
     public void markOverduePayments(){
       int markedPaymentCount =  service.markOverduePayments();
