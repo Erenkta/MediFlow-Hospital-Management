@@ -26,6 +26,7 @@ public interface BillingDataService {
     boolean isBillingPatientRelationExists(Long billingId,Long patientId);
     void deleteBilling(Long id);
     int markOverduePayments();
+    List<Billing> getOverduePayments();
 
     Optional<BillingResponseDto>  findBillingByAppointmentAndType(Long appointmentId, BillingType type, AppointmentStatusEnum statusEnum) ;
     List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime start,LocalDateTime end);
