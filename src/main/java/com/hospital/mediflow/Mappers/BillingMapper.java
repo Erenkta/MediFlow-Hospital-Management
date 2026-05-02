@@ -13,6 +13,11 @@ public interface BillingMapper {
             }
     )
     BillingResponseDto toDto(Billing entity);
+    @Mappings({
+            @Mapping(target = "patient", ignore = true),
+            @Mapping(target = "department", ignore = true),
+            @Mapping(target = "appointment", ignore = true)
+    })
     Billing toEntity(BillingRequestDto requestDto);
     void toEntity(@MappingTarget Billing entity, BillingRequestDto request);
 }

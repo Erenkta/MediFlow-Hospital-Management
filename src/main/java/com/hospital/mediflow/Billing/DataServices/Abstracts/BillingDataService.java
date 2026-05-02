@@ -19,7 +19,7 @@ public interface BillingDataService {
     List<BillingResponseDto> findAllBillings(Predicate medicalRecordFilter);
     Page<BillingResponseDto> findAllBillings(Pageable pageable, Predicate medicalRecordFilter);
     BillingResponseDto findBillingById(Long id);
-    BillingResponseDto createBilling(BillingRequestDto medicalRecord);
+    Billing createBilling(BillingRequestDto medicalRecord);
     BillingResponseDto updateBilling(Long id,BillingRequestDto medicalRecord);
     BillingResponseDto updateBillingStatus(Long billingId, BillingStatus status);
     boolean isBillingDepartmentRelationExists(Long billingId,Long departmentId);
@@ -27,6 +27,7 @@ public interface BillingDataService {
     void deleteBilling(Long id);
     int markOverduePayments();
     List<Billing> getOverduePayments();
+    Billing findReferenceById(Long billingId);
 
     Optional<BillingResponseDto>  findBillingByAppointmentAndType(Long appointmentId, BillingType type, AppointmentStatusEnum statusEnum) ;
     List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime start,LocalDateTime end);

@@ -16,4 +16,8 @@ public class NotificationContext {
     private ObjectType objectType;
     private Map<String,Object> data = new HashMap<>();
     private Object entity;
+
+    public NotificationContext(Map<String,Object> additionalData){
+        this.data = new HashMap<>(additionalData); // to make this mutable.
+    }
 }

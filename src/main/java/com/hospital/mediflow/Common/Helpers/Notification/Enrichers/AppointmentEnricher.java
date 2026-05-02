@@ -3,8 +3,9 @@ package com.hospital.mediflow.Common.Helpers.Notification.Enrichers;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Common.Helpers.Notification.NotificationContext;
 import com.hospital.mediflow.Common.Helpers.Notification.ObjectType;
+import org.springframework.stereotype.Service;
 
-import java.util.Map;
+@Service
 
 public class AppointmentEnricher implements NotificationEnricher{
     @Override
@@ -20,6 +21,6 @@ public class AppointmentEnricher implements NotificationEnricher{
 
         context.getData().putIfAbsent("doctorName",appointment.getDoctor().getFullName());
         context.getData().putIfAbsent("departmentName",appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getDepartment().getName());
-        context.getData().putIfAbsent("date",appointment.getAppointmentDate());
+        context.getData().putIfAbsent("date",appointment.getAppointmentDate().toString());
     }
 }

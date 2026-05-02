@@ -17,6 +17,8 @@ import com.hospital.mediflow.Common.Events.EventType;
 import com.hospital.mediflow.Common.Events.InternalNotificationEvent;
 import com.hospital.mediflow.Common.Exceptions.AppointmentNotExistsException;
 import com.hospital.mediflow.Common.Exceptions.RecordNotFoundException;
+import com.hospital.mediflow.Common.Helpers.Notification.NotificationPipeline;
+import com.hospital.mediflow.Mappers.BillingMapper;
 import com.hospital.mediflow.Security.Dtos.Entity.User;
 import com.hospital.mediflow.Security.UserDetails.Repository.UserRepository;
 import com.querydsl.core.types.Predicate;
@@ -49,6 +51,8 @@ public class BillingServiceImpl implements BillingService {
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final BillingProperties configuration;
+    private final BillingMapper mapper;
+
 
 
 
@@ -74,11 +78,11 @@ public class BillingServiceImpl implements BillingService {
     @Transactional
     @PreAuthorize("hasAuthority('manager:create')")
     public BillingResponseDto createBilling(BillingRequestDto billingRequest) {
-        return dataService.createBilling(billingRequest);
+        return mapper.toDto(dataService.createBilling(billingRequest));
     }
 
     @Override
-    public BillingResponseDto createBilling(Appointment appointment,BillingType billingType) {
+    public Billing createBilling(Appointment appointment,BillingType billingType) {
         
         Long patientId = appointment.getPatient().getId();
         boolean isAppointmentExists = appointmentService.isAppointmentPatientRelationExists(appointment.getId(),patientId);
@@ -97,7 +101,8 @@ public class BillingServiceImpl implements BillingService {
                 appointment.getAppointmentDate().plusDays(billingType == BillingType.DEPOSIT ? 0 :configuration.getPaymentDateAfterTreatment()),
                 LocalDateTime.now()
         );
-        return dataService.createBilling(requestDto);
+        Billing response = dataService.createBilling(requestDto);
+        return response;
     }
 
     @Override
@@ -108,15 +113,15 @@ public class BillingServiceImpl implements BillingService {
         if(response == null){
             return Optional.empty();
         }
-        BillingStatus oldStatus = response.status();
+//        BillingStatus oldStatus = response.status();
         response = dataService.updateBillingStatus(response.id(),BillingStatus.CANCELLED);
         AppointmentResponseDto appointment = appointmentService.findById(appointmentId);
-        notifyPatient(appointmentId,EventType.BILLING_STATUS_UPDATED,appointment.patientId(),Map.of(
-                "oldStatus",oldStatus.name(),
-                "newStatus",response.status().name(),
-                "billingType",BillingType.TREATMENT.name(),
-                "appointmentStatus",AppointmentStatusEnum.DONE.name()
-        ));
+//        notifyPatient(appointmentId,EventType.BILLING_STATUS_UPDATED,appointment.patientId(),Map.of(
+//                "oldStatus",oldStatus.name(),
+//                "newStatus",response.status().name(),
+//                "billingType",BillingType.TREATMENT.name(),
+//                "appointmentStatus",AppointmentStatusEnum.DONE.name()
+//        ));
         return Optional.of(response);
     }
 
@@ -131,16 +136,16 @@ public class BillingServiceImpl implements BillingService {
             return new RecordNotFoundException(message);
         });
 
-        BillingStatus oldStatus = response.status();
+//        BillingStatus oldStatus = response.status();
         response = dataService.updateBilling(id, billingRequest);
 
-        notifyPatient(appointmentId,EventType.BILLING_STATUS_UPDATED,appoinment.getPatient().getId(), Map.of(
-                "oldStatus",oldStatus.name(),
-                "newStatus",response.status().name(),
-                "billingType",BillingType.TREATMENT.name(),
-                "appointmentStatus",AppointmentStatusEnum.DONE.name(),
-                "appointmentDate",appoinment.getAppointmentDate().toString()
-        ));
+//        notifyPatient(appointmentId,EventType.BILLING_STATUS_UPDATED,appoinment.getPatient().getId(), Map.of(
+//                "oldStatus",oldStatus.name(),
+//                "newStatus",response.status().name(),
+//                "billingType",BillingType.TREATMENT.name(),
+//                "appointmentStatus",AppointmentStatusEnum.DONE.name(),
+//                "appointmentDate",appoinment.getAppointmentDate().toString()
+//        ));
         return response;
     }
 

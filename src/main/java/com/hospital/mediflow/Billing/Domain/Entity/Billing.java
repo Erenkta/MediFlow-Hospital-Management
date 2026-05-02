@@ -5,6 +5,9 @@ import com.hospital.mediflow.Billing.Enums.BillingStatus;
 import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Billing.Enums.States.*;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
+import com.hospital.mediflow.Common.Events.Listeners.AppointmentPersistListener;
+import com.hospital.mediflow.Common.Helpers.Notification.NotificationPipeline;
+import com.hospital.mediflow.Common.Helpers.SpringContextHelper;
 import com.hospital.mediflow.Department.Domain.Entity.Department;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
 import jakarta.persistence.*;
@@ -73,11 +76,11 @@ public class Billing extends BaseEntity {
     @Transient
     public BillingState getBillingState(){
         return switch (status) {
-            case PENDING -> new PendingState();
-            case APPROVED -> new ApprovedState();
-            case CANCELLED -> new CancelledState();
-            case TRANSFERRED -> new TransferredState();
-            default -> new NoActionState();
+            case PENDING -> SpringContextHelper.getBean("billingPendingState",PendingState.class);
+            case APPROVED -> SpringContextHelper.getBean("billingApprovedState",ApprovedState.class);
+            case CANCELLED -> SpringContextHelper.getBean("billingCancelledState",CancelledState.class);
+            case TRANSFERRED -> SpringContextHelper.getBean("billingTransferredState",TransferredState.class);
+            default -> SpringContextHelper.getBean("billingNoActionState",NoActionState.class);
         };
     }
 }

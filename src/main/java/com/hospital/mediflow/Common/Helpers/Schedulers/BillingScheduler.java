@@ -8,6 +8,8 @@ import com.hospital.mediflow.Common.Dto.InvoicePdfProjection;
 import com.hospital.mediflow.Common.Events.EventType;
 import com.hospital.mediflow.Common.Exceptions.BaseException;
 import com.hospital.mediflow.Common.Exceptions.ErrorCode;
+import com.hospital.mediflow.Common.Helpers.Notification.NotificationPipeline;
+import com.hospital.mediflow.Common.Helpers.Notification.ObjectType;
 import com.hospital.mediflow.Common.Helpers.PDFService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ import java.util.Map;
 public class BillingScheduler {
     private final BillingService service;
     private final PDFService pdfService;
+    private final NotificationPipeline notificationPipeline;
 
     @Value("${mediflow.pdf.path}")
     private String pdfSavePath;
@@ -58,11 +61,6 @@ public class BillingScheduler {
       log.info(message);
 
       List<Billing> overduePayments = service.getOverduePayments();
-      overduePayments.parallelStream().forEach((billing -> service.notifyPatient(
-              billing.getAppointment().getId(),
-              EventType.BILLING_OVERDUE,
-              billing.getPatient().getId(),
-              Map.of("billingType",billing.getType().name(),
-              "appointmentStatus",billing.getAppointment().getStatus().toString()))));
+      overduePayments.parallelStream().forEach((billing -> notificationPipeline.processAndNotify(billing, ObjectType.BILLING,EventType.BILLING_OVERDUE)));
     }
 }
