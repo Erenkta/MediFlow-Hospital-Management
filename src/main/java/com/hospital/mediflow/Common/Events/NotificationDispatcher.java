@@ -6,6 +6,7 @@ import com.hospital.mediflow.Common.Annotations.Access.AccessType;
 import com.hospital.mediflow.Common.Annotations.Audit.Audit;
 import com.hospital.mediflow.Common.Configuration.RabbitMQConfig;
 import com.hospital.mediflow.Security.Dtos.UserPreference;
+import jakarta.persistence.PostPersist;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

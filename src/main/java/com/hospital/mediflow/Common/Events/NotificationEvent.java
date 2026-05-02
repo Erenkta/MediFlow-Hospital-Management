@@ -6,6 +6,6 @@ public record NotificationEvent(
         Long receiverId,
         String eventType,
         NotificationType type,
-        Map<String,String> data
+        Map<String,Object> data
 ) {
 }

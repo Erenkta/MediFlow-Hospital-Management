@@ -78,9 +78,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         if(isAppointmentAvailable){
             try{
-                AppointmentResponseDto response = appointmentDataService.saveAndFlush(appointmentRequestDto);
-                NotifyPatient(response.id(),EventType.APPOINTMENT_CREATED,response.patientId());
-                return  response;
+                return appointmentDataService.saveAndFlush(appointmentRequestDto);
             }catch (DataIntegrityViolationException ex){
                 log.error("Appointment has already been occupied.");
                 throw new AppointmentNotAvailableException("Appointment has already been occupied. Please try with another appointment time.");
@@ -145,23 +143,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDataService.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public void NotifyPatient(Long appointmentId,EventType type,Long resourceId){
-        Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
-        Map<String,String> defaultParams = Map.of("doctorName",appointment.getDoctor().getFullName(),
-                "departmentName",appointment.getDoctor().getDoctorDepartment().stream().findFirst().get().getDepartment().getName(),
-                "date",appointment.getAppointmentDate().toString());
-
-        User user = userRepository.findByResourceId(resourceId);
-
-        eventPublisher.publishEvent(new InternalNotificationEvent(
-                appointment,
-                user,
-                type,
-                defaultParams
-        ));
-    }
 
     @Override
     @Transactional
@@ -169,16 +150,4 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDataService.remindSoonAppointment(remindDate);
     }
 
-    @Override
-    public void NotifyPatient(Long appointmentId,EventType type,Long resourceId,Map<String,String> notifyParams){
-        Appointment appointment = appointmentDataService.getReferenceById(appointmentId);
-        User user = userRepository.findByResourceId(resourceId);
-
-        eventPublisher.publishEvent(new InternalNotificationEvent(
-                appointment,
-                user,
-                type,
-                notifyParams
-        ));
-    }
 }

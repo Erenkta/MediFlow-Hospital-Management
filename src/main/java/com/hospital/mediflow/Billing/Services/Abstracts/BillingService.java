@@ -25,11 +25,11 @@ public interface BillingService {
     Page<BillingResponseDto> findAllBillings(Pageable pageable, Predicate billingFilterDto);
     BillingResponseDto findBillingById(@NotNull Long id);
     BillingResponseDto createBilling(@Valid BillingRequestDto billingRequestDto);
-    BillingResponseDto createBilling(Appointment appointment, BillingType billingType);
+    Billing createBilling(Appointment appointment, BillingType billingType);
     Optional<BillingResponseDto> cancelBilling(Long appointmentId);
     BillingResponseDto updateBilling(@NotNull Long id,@Valid BillingRequestDto billingRequestDto);
 
-    void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String,String> notifyParams);
+    void notifyPatient(Long appointmentId, EventType type, Long userId, Map<String,Object> notifyParams);
     void deleteBilling(@NotNull Long id);
 
     List<InvoicePdfProjection> findBillingsByDateRanged(LocalDateTime startOfDay, LocalDateTime endOfDay);

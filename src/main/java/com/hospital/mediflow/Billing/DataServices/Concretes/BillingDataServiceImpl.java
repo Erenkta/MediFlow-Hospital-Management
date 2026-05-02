@@ -68,7 +68,7 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     }
 
     @Override
-    public BillingResponseDto createBilling(BillingRequestDto billingRequestDto) {
+    public Billing createBilling(BillingRequestDto billingRequestDto) {
         Billing entity = mapper.toEntity(billingRequestDto);
         Appointment appointment = appointmentDataService.getReferenceById(billingRequestDto.appointmentId());
         Department department = departmentDataService.getReferenceById(billingRequestDto.departmentId());
@@ -78,7 +78,7 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
         entity.setAppointment(appointment);
         entity.setDepartment(department);
 
-        return mapper.toDto(repository.save(entity));
+        return repository.save(entity);
     }
 
     @Override
@@ -124,6 +124,11 @@ public class BillingDataServiceImpl extends BaseService<Billing,Long> implements
     @Override
     public List<Billing> getOverduePayments() {
         return repository.getOverduePayments();
+    }
+
+    @Override
+    public Billing findReferenceById(Long billingId) {
+        return findByIdOrThrow(billingId);
     }
 
     @Override

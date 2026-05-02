@@ -3,6 +3,8 @@ package com.hospital.mediflow.Common.Helpers.Schedulers;
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
 import com.hospital.mediflow.Common.Events.EventType;
+import com.hospital.mediflow.Common.Helpers.Notification.NotificationPipeline;
+import com.hospital.mediflow.Common.Helpers.Notification.ObjectType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,13 +19,13 @@ import java.util.List;
 @Slf4j
 public class ReminderScheduler {
     private final AppointmentService appointmentService;
-
+    private final NotificationPipeline notificationPipeline;
 
     @Scheduled(fixedRate = 30 * 60 * 1000)
     @Transactional
     public void appointmentReminder() {
         LocalDateTime remindDate = LocalDateTime.now().plusMinutes(30);
         List<Appointment> appointments = appointmentService.remindSoonAppointment(remindDate);
-        appointments.parallelStream().forEach(appointment -> appointmentService.NotifyPatient(appointment.getId(), EventType.APPOINTMENT_SOON,appointment.getPatient().getId()));
+        appointments.parallelStream().forEach(appointment -> notificationPipeline.processAndNotify(appointment, ObjectType.APPOINTMENT,EventType.APPOINTMENT_SOON));
     }
 }

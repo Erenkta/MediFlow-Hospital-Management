@@ -15,4 +15,7 @@ public class SpringContextHelper implements ApplicationContextAware {
     public static <T> T getBean(Class<T> beanClass){
         return context.getBean(beanClass);
     }
+    public static <T> T getBean(String name, Class<T> requiredType) {
+        return context.getBean(name, requiredType);
+    }
 }

@@ -2,34 +2,29 @@ package com.hospital.mediflow.Appointment.Enums.States;
 
 import com.hospital.mediflow.Appointment.Domain.Entity.Appointment;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
-import com.hospital.mediflow.Appointment.Services.Abstracts.AppointmentService;
+import com.hospital.mediflow.Billing.DataServices.Abstracts.BillingDataService;
+import com.hospital.mediflow.Billing.Domain.Dtos.BillingResponseDto;
+import com.hospital.mediflow.Billing.Domain.Entity.Billing;
 import com.hospital.mediflow.Billing.Enums.BillingType;
 import com.hospital.mediflow.Billing.Services.Abstracts.BillingService;
-import com.hospital.mediflow.Common.Configuration.Properties.BillingProperties;
 import com.hospital.mediflow.Common.Events.EventType;
 import com.hospital.mediflow.Common.Exceptions.InvalidStatusTransitionException;
-import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.hospital.mediflow.Common.Helpers.Notification.NotificationPipeline;
+import com.hospital.mediflow.Common.Helpers.Notification.ObjectType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 
 @Component
 public class PendingState extends AppointmentState{
 
     private final BillingService billingService;
+    private final NotificationPipeline notificationPipeline;
 
-    private final BillingProperties configuration;
 
-    private final AppointmentService appointmentService;
-    private final EntityManager entityManager;
-
-    public PendingState(BillingService billingService, BillingProperties configuration, AppointmentService appointmentService, EntityManager entityManager) {
+    public PendingState(BillingService billingService, NotificationPipeline notificationPipeline) {
         this.billingService = billingService;
-        this.configuration = configuration;
-        this.appointmentService = appointmentService;
-        this.entityManager = entityManager;
+        this.notificationPipeline = notificationPipeline;
     }
 
     @Override
@@ -37,18 +32,11 @@ public class PendingState extends AppointmentState{
     public void approve(Appointment appointment) {
         //Create a bill based on the configuration.
         appointment.setStatus(AppointmentStatusEnum.APPROVED);
-        appointmentService.NotifyPatient(appointment.getId(), EventType.APPOINTMENT_APPROVED,appointment.getPatient().getId());
-        billingService.createBilling(appointment, BillingType.DEPOSIT);
-//        entityManager.flush();
-        billingService.notifyPatient(appointment.getId(),
-                EventType.BILLING_DEPOSIT_CREATED,
-                appointment.getPatient().getId(),
-                Map.of(
-                        "appointmentDate",appointment.getAppointmentDate().toString(),
-                        "billingType",BillingType.DEPOSIT.name(),
-                        "appointmentStatus",AppointmentStatusEnum.APPROVED.name()
+        notificationPipeline.processAndNotify(appointment, ObjectType.APPOINTMENT,EventType.APPOINTMENT_APPROVED);
 
-                ));
+        Billing response =  billingService.createBilling(appointment, BillingType.DEPOSIT);
+        notificationPipeline.processAndNotify(response,ObjectType.BILLING,EventType.BILLING_DEPOSIT_CREATED);
+
     }
     @Override
     public void rescheduled(Appointment appointment){

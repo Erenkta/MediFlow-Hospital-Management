@@ -3,6 +3,7 @@ package com.hospital.mediflow.Appointment.Domain.Entity;
 import com.hospital.mediflow.Appointment.Enums.AppointmentStatusEnum;
 import com.hospital.mediflow.Appointment.Enums.States.*;
 import com.hospital.mediflow.Common.Entities.BaseEntity;
+import com.hospital.mediflow.Common.Events.Listeners.AppointmentPersistListener;
 import com.hospital.mediflow.Common.Helpers.SpringContextHelper;
 import com.hospital.mediflow.Doctor.Domain.Entities.Doctor;
 import com.hospital.mediflow.Patient.Domain.Entity.Patient;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @Slf4j
 @Builder(toBuilder = true)
+@EntityListeners(AppointmentPersistListener.class)
 public class Appointment extends BaseEntity {
 
     @SequenceGenerator(name ="appointment_id_seq",sequenceName = "mediflow_schema.id_generator_seq",allocationSize = 10)
